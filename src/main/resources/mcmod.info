@@ -1,0 +1,14 @@
+[
+  {
+    "modid": "morbtweaker",
+    "name": "MorbTweaker",
+    "description": "A simple mod that adds a CraftTweaker interface for enabling morb capture for certain mobs.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "updateUrl": "",
+    "authorList": ["Enginecrafter77"],
+    "credits": "Enginecrafter77",
+    "screenshots": [],
+    "dependencies": ["crafttweaker"]
+  }
+]
