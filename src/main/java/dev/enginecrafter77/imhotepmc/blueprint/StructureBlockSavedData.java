@@ -2,12 +2,10 @@ package dev.enginecrafter77.imhotepmc.blueprint;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.INBTSerializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -15,12 +13,8 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class StructureBlockSavedData implements INBTSerializable<NBTTagCompound> {
+public class StructureBlockSavedData {
 	private static final Log LOGGER = LogFactory.getLog(StructureBlockSavedData.class);
-
-	private static final String NBT_KEY_BLOCKSTATE = "block_state";
-	private static final String NBT_KEY_TILEENTITY = "tile_entity";
-	private static final String NBT_KEY_TILEENTITY_EXISTS = "tile_entity";
 
 	private IBlockState blockState;
 
@@ -75,35 +69,9 @@ public class StructureBlockSavedData implements INBTSerializable<NBTTagCompound>
 	}
 
 	@Override
-	public NBTTagCompound serializeNBT()
+	public String toString()
 	{
-		NBTTagCompound compound = new NBTTagCompound();
-
-		NBTTagCompound state = NBTUtil.writeBlockState(new NBTTagCompound(), this.blockState);
-		compound.setTag(NBT_KEY_BLOCKSTATE, state);
-
-		if(this.tileEntity != null)
-		{
-			compound.setBoolean(NBT_KEY_TILEENTITY_EXISTS, true);
-			compound.setTag(NBT_KEY_TILEENTITY, this.tileEntity);
-		}
-		else
-		{
-			compound.setBoolean(NBT_KEY_TILEENTITY_EXISTS, false);
-		}
-		return compound;
-	}
-
-	@Override
-	public void deserializeNBT(NBTTagCompound nbt)
-	{
-		NBTTagCompound state = nbt.getCompoundTag(NBT_KEY_BLOCKSTATE);
-		this.blockState = NBTUtil.readBlockState(state);
-
-		this.tileEntity = null;
-		boolean tileEntityPresent = nbt.getBoolean(NBT_KEY_TILEENTITY_EXISTS);
-		if(tileEntityPresent)
-			this.tileEntity = nbt.getCompoundTag(NBT_KEY_TILEENTITY);
+		return this.getBlockState().toString();
 	}
 
 	public void insert(World world, BlockPos position)

@@ -5,16 +5,20 @@ import dev.enginecrafter77.imhotepmc.blueprint.StructureBlockSavedData;
 import dev.enginecrafter77.imhotepmc.blueprint.StructureBlueprint;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
+
 public class TestBlueprintLitematicaSerialize {
 	@Test
 	public void testSimpleSerialize()
 	{
-		Bootstrap.register();
+		if(!Bootstrap.isRegistered())
+			Bootstrap.register();
 
 		StructureBlockSavedData block = new StructureBlockSavedData(Blocks.IRON_BLOCK.getDefaultState(), null);
 
@@ -36,5 +40,27 @@ public class TestBlueprintLitematicaSerialize {
 
 			Assertions.assertEquals(blueprint, rec);
 		});
+	}
+
+	@Test
+	public void testLoadRealFile()
+	{
+		if(!Bootstrap.isRegistered())
+			Bootstrap.register();
+
+		InputStream inputStream = TestBlueprintLitematicaSerialize.class.getResourceAsStream("/benchy_OTS.litematic");
+		Assertions.assertNotNull(inputStream);
+
+		try
+		{
+			NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
+			LitematicaBlueprintSerializer serializer = new LitematicaBlueprintSerializer();
+			StructureBlueprint blueprint = serializer.deserializeBlueprint(tag);
+			blueprint.getTotalVolume();
+		}
+		catch(Exception exc)
+		{
+			Assertions.fail(exc);
+		}
 	}
 }

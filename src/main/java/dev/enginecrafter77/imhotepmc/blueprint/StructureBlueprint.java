@@ -6,11 +6,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
 public class StructureBlueprint {
+	private static final StructureBlueprint EMPTY = new StructureBlueprint(ImmutableMap.of(), Vec3i.NULL_VECTOR);
+
 	private final Map<Vec3i, StructureBlockSavedData> blocks;
 	private final Vec3i size;
 
@@ -59,12 +60,6 @@ public class StructureBlueprint {
 		return this.blocks;
 	}
 
-	public Iterator<StructureBlockSavedData> getOrderedIterator()
-	{
-		return this.getStructureBlocks().entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).iterator();
-	}
-
-	private static final StructureBlueprint EMPTY = new StructureBlueprint(ImmutableMap.of(), Vec3i.NULL_VECTOR);
 	public static StructureBlueprint empty()
 	{
 		return EMPTY;
@@ -101,10 +96,12 @@ public class StructureBlueprint {
 					minX = pos.getX();
 				if(pos.getX() > maxX)
 					maxX = pos.getX();
+
 				if(pos.getY() < minY)
 					minY = pos.getY();
 				if(pos.getY() > maxY)
 					maxY = pos.getY();
+
 				if(pos.getZ() < minZ)
 					minZ = pos.getZ();
 				if(pos.getZ() > maxZ)

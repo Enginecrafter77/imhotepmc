@@ -1,14 +1,14 @@
 [
   {
-    "modid": "morbtweaker",
-    "name": "MorbTweaker",
-    "description": "A simple mod that adds a CraftTweaker interface for enabling morb capture for certain mobs.",
+    "modid": "imhotepmc",
+    "name": "Imhotep",
+    "description": "A simple minecraft mod that adds schematic tools.",
     "version": "${version}",
     "mcversion": "${mcversion}",
     "updateUrl": "",
     "authorList": ["Enginecrafter77"],
     "credits": "Enginecrafter77",
     "screenshots": [],
-    "dependencies": ["crafttweaker"]
+    "dependencies": []
   }
 ]

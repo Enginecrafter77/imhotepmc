@@ -1,22 +1,33 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLongArray;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-import java.lang.reflect.Field;
+import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
+	private final BlockMapper blockMapper;
+
+	public LitematicaBlueprintSerializer(BlockMapper mapper)
+	{
+		this.blockMapper = mapper;
+	}
+
+	public LitematicaBlueprintSerializer()
+	{
+		this(BlockMapper.identity());
+	}
+
 	public NBTTagCompound serializeVector(Vec3i size)
 	{
 		NBTTagCompound compound = new NBTTagCompound();
@@ -91,33 +102,20 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		}
 		region.setTag("BlockStatePalette", palette);
 
-		int paletteLength = unique.size();
-		int bitCount = (int)Math.ceil(Math.log(paletteLength) / Math.log(2));
-		int arraySize = (int)Math.ceil((double)blueprint.getTotalBlocks() / (double)bitCount / (float)(Long.BYTES * 8));
-
-		long[] stateArray = new long[arraySize];
-		int slotIndex, shift;
-		int entryIndex = 0;
-
-		int entriesPerSlot = (Long.BYTES * 8) / bitCount;
-		long mask = ~(-1L << bitCount);
-
 		Vec3i size = blueprint.getSize();
-		BlockPos last = new BlockPos(size.getX() - 1, size.getY() - 1, size.getZ() - 1);
-		for(BlockPos.MutableBlockPos pos : BlockPos.getAllInBoxMutable(BlockPos.ORIGIN, new BlockPos(last)))
-		{
-			StructureBlockSavedData block = blueprint.getStructureBlocks().get(pos);
-			long paletteIndex = 0;
-			if(block != null)
-				paletteIndex = unique.indexOf(block);
+		int vecSize = size.getX() * size.getY() * size.getZ();
+		CompactPalettedBitVector<StructureBlockSavedData> vector = new CompactPalettedBitVector<StructureBlockSavedData>(unique, vecSize);
+		BlockPosIndexer indexer = new LitematicaBlockPosIndexer(size);
 
-			slotIndex = entryIndex / entriesPerSlot;
-			shift = (entriesPerSlot - 1 - (entryIndex % entriesPerSlot)) * bitCount;
-			stateArray[slotIndex] |= ((paletteIndex & mask) << shift);
-			++entryIndex;
+		for(int index = 0; index < vector.getLength(); ++index)
+		{
+			BlockPos pos = indexer.fromIndex(index);
+			StructureBlockSavedData block = blueprint.getStructureBlocks().get(pos);
+			if(block != null)
+				vector.set(index, block);
 		}
 
-		NBTTagLongArray stateArrayTag = new NBTTagLongArray(stateArray);
+		NBTTagLongArray stateArrayTag = vector.serializeNBT();
 		region.setTag("BlockStates", stateArrayTag);
 
 		return region;
@@ -133,7 +131,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		root.setTag("Metadata", this.createMetadataTag(blueprint));
 
 		NBTTagCompound regions = new NBTTagCompound();
-		regions.setTag("Main", this.createRegionTag(blueprint));
+		regions.setTag("Unnamed", this.createRegionTag(blueprint));
 		root.setTag("Regions", regions);
 
 		return root;
@@ -150,54 +148,72 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	@Override
 	public StructureBlueprint deserializeBlueprint(NBTTagCompound source)
 	{
-		Field DATA_FIELD = ObfuscationReflectionHelper.findField(NBTTagLongArray.class, "data"); // field_193587_b
-
 		NBTTagCompound regions = source.getCompoundTag("Regions");
-		NBTTagCompound mainRegion = regions.getCompoundTag("Main");
+		NBTTagCompound mainRegion = regions.getCompoundTag("Unnamed");
 
-		Vec3i size = this.parseVector(mainRegion.getCompoundTag("Size"));
+		Vec3i size = this.absolutizeVector(this.parseVector(mainRegion.getCompoundTag("Size")));
 
 		NBTTagList paletteTag = mainRegion.getTagList("BlockStatePalette", 10);
 		List<StructureBlockSavedData> paletteList = new ArrayList<StructureBlockSavedData>(paletteTag.tagCount());
+		Set<StructureBlockSavedData> paletteSet = new HashSet<StructureBlockSavedData>();
 
 		for(int index = 0; index < paletteTag.tagCount(); ++index)
 		{
-			NBTTagCompound paletteTagEntry = paletteTag.getCompoundTagAt(index);
-			Block block = Block.getBlockFromName(paletteTagEntry.getString("Name"));
-			StructureBlockSavedData savedData = new StructureBlockSavedData(block.getDefaultState(), null);
+			IBlockState state = this.readStateFromTag(paletteTag.getCompoundTagAt(index));
+			if(state == null)
+				continue;
+			StructureBlockSavedData savedData = new StructureBlockSavedData(state, null);
+			if(paletteSet.contains(savedData))
+				continue;
 			paletteList.add(savedData);
+			paletteSet.add(savedData);
 		}
-
-		int paletteLength = paletteList.size();
-		int bitCount = (int)Math.ceil(Math.log(paletteLength) / Math.log(2));
-
-		StructureBlueprint.Builder builder = new StructureBlueprint.Builder();
 
 		NBTTagLongArray arrayTag = (NBTTagLongArray)mainRegion.getTag("BlockStates");
-		try
-		{
-			long[] arr = (long[])DATA_FIELD.get(arrayTag);
-			int slotIndex, shift;
-			int entryIndex = 0;
+		CompactPalettedBitVector<StructureBlockSavedData> vector = CompactPalettedBitVector.readFromNBT(paletteList, arrayTag);
+		BlockPosIndexer indexer = new LitematicaBlockPosIndexer(size);
 
-			int entriesPerSlot = (Long.BYTES * 8) / bitCount;
-			long mask = ~(-1L << bitCount);
-
-			BlockPos last = new BlockPos(size.getX() - 1, size.getY() - 1, size.getZ() - 1);
-			for(BlockPos.MutableBlockPos pos : BlockPos.getAllInBoxMutable(BlockPos.ORIGIN, last))
-			{
-				slotIndex = entryIndex / entriesPerSlot;
-				shift = (entriesPerSlot - 1 - (entryIndex % entriesPerSlot)) * bitCount;
-				int paletteIndex = (int)((arr[slotIndex] >> shift) & mask);
-				if(paletteIndex != 0)
-					builder.addBlock(pos.toImmutable(), paletteList.get(paletteIndex));
-				++entryIndex;
-			}
-		}
-		catch(IllegalAccessException e)
+		StructureBlueprint.Builder builder = new StructureBlueprint.Builder();
+		for(int index = 0; index < vector.getLength(); ++index)
 		{
-			throw new RuntimeException(e);
+			StructureBlockSavedData block = vector.get(index);
+			if(block.getBlockState().getBlock() == Blocks.AIR)
+				continue;
+			BlockPos pos = indexer.fromIndex(index);
+			builder.addBlock(pos, block);
 		}
+
+		NBTTagList tileEntities = mainRegion.getTagList("TileEntities", 10);
+		for(int index = 0; index < tileEntities.tagCount(); ++index)
+		{
+			NBTTagCompound tileTag = tileEntities.getCompoundTagAt(index);
+			BlockPos pos = new BlockPos(this.parseVector(tileTag)); // Position is embedded in the tile entity data
+			int vectorIndex = indexer.toIndex(pos);
+			StructureBlockSavedData data = vector.get(vectorIndex);
+			data = new StructureBlockSavedData(data.getBlockState(), tileTag);
+			builder.addBlock(pos, data);
+		}
+
 		return builder.build();
+	}
+
+	private Vec3i absolutizeVector(Vec3i other)
+	{
+		return new Vec3i(Math.abs(other.getX()), Math.abs(other.getY()), Math.abs(other.getZ()));
+	}
+
+	@Nullable
+	private IBlockState readStateFromTag(NBTTagCompound tag)
+	{
+		if(tag.hasKey("Name"))
+		{
+			ResourceLocation name = new ResourceLocation(tag.getString("Name"));
+			ResourceLocation translatedName = this.blockMapper.translate(name);
+			if(translatedName == null)
+				return null;
+			tag = tag.copy();
+			tag.setString("Name", translatedName.toString());
+		}
+		return NBTUtil.readBlockState(tag);
 	}
 }
