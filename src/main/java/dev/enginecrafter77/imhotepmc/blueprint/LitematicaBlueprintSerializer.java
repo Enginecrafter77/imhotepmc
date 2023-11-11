@@ -9,10 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
@@ -37,25 +34,25 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		return compound;
 	}
 
-	protected NBTTagCompound createMetadataTag(StructureBlueprint blueprint)
+	protected NBTTagCompound createMetadataTag(SchematicBlueprint blueprint)
 	{
 		NBTTagCompound tag = new NBTTagCompound();
 
-		Instant created = Instant.now();
-		tag.setLong("TimeCreated", created.toEpochMilli());
-		tag.setLong("TimeModified", created.toEpochMilli());
-		tag.setString("Description", "");
+		tag.setLong("TimeCreated", blueprint.getCreateTime().toEpochMilli());
+		tag.setLong("TimeModified", blueprint.getModifyTime().toEpochMilli());
+		tag.setString("Description", blueprint.getDescription());
+		tag.setString("Author", blueprint.getAuthor());
 		tag.setTag("Size", this.serializeVector(blueprint.getSize()));
-		tag.setInteger("RegionCount", 1);
-		tag.setInteger("TotalBlocks", blueprint.getTotalBlocks());
+
+		tag.setInteger("RegionCount", blueprint.getRegionCount());
+		tag.setInteger("TotalBlocks", blueprint.getBlockCount());
 		tag.setInteger("TotalVolume", blueprint.getTotalVolume());
-		tag.setString("Author", "");
-		tag.setString("Name", "");
+		tag.setString("Name", "Unnamed");
 
 		return tag;
 	}
 
-	protected NBTTagCompound createRegionTag(StructureBlueprint blueprint)
+	protected NBTTagCompound createRegionTag(RegionBlueprint blueprint)
 	{
 		NBTTagCompound region = new NBTTagCompound();
 
@@ -116,7 +113,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	}
 
 	@Override
-	public NBTTagCompound serializeBlueprint(StructureBlueprint blueprint)
+	public NBTTagCompound serializeBlueprint(SchematicBlueprint blueprint)
 	{
 		NBTTagCompound root = new NBTTagCompound();
 
@@ -125,21 +122,44 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		root.setTag("Metadata", this.createMetadataTag(blueprint));
 
 		NBTTagCompound regions = new NBTTagCompound();
-		regions.setTag("Unnamed", this.createRegionTag(blueprint));
+		for(String regionName : blueprint.getRegions())
+		{
+			RegionBlueprint region = blueprint.getRegion(regionName).getRegionBlueprint();
+			regions.setTag(regionName, this.createRegionTag(region));
+		}
 		root.setTag("Regions", regions);
 
 		return root;
 	}
 
 	@Override
-	public StructureBlueprint deserializeBlueprint(NBTTagCompound source)
+	public SchematicBlueprint deserializeBlueprint(NBTTagCompound source)
 	{
+		SchematicBlueprint blueprint = new SchematicBlueprint();
+
+		NBTTagCompound meta = source.getCompoundTag("Metadata");
+		blueprint.setCreateTime(Instant.ofEpochMilli(meta.getLong("TimeCreated")));
+		blueprint.setModifyTime(Instant.ofEpochMilli(meta.getLong("TimeModified")));
+		blueprint.setAuthor(meta.getString("Author"));
+		blueprint.setDescription(meta.getString("Description"));
+
 		NBTTagCompound regions = source.getCompoundTag("Regions");
-		NBTTagCompound mainRegion = regions.getCompoundTag("Unnamed");
+		for(String name : regions.getKeySet())
+		{
+			NBTTagCompound regionTag = regions.getCompoundTag(name);
+			RegionBlueprint region = deserializeRegionBlueprint(regionTag);
+			BlockPos offset = new BlockPos(readVector(regionTag.getCompoundTag("Position")));
+			blueprint.addRegion(name, region, offset);
+		}
 
-		Vec3i size = absolutizeVector(readVector(mainRegion.getCompoundTag("Size")));
+		return blueprint;
+	}
 
-		NBTTagList paletteTag = mainRegion.getTagList("BlockStatePalette", 10);
+	public RegionBlueprint deserializeRegionBlueprint(NBTTagCompound regionTag)
+	{
+		Vec3i size = absolutizeVector(readVector(regionTag.getCompoundTag("Size")));
+
+		NBTTagList paletteTag = regionTag.getTagList("BlockStatePalette", 10);
 		List<SavedBlockState> paletteList = new ArrayList<SavedBlockState>(paletteTag.tagCount());
 		Set<SavedBlockState> paletteSet = new HashSet<SavedBlockState>();
 
@@ -152,12 +172,12 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 			paletteSet.add(savedData);
 		}
 
-		NBTTagLongArray arrayTag = (NBTTagLongArray)mainRegion.getTag("BlockStates");
+		NBTTagLongArray arrayTag = (NBTTagLongArray)regionTag.getTag("BlockStates");
 		CompactPalettedBitVector<SavedBlockState> vector = CompactPalettedBitVector.readFromNBT(paletteList, arrayTag);
 		BlockPosIndexer indexer = new LitematicaBlockPosIndexer(size);
 		SavedBlockState air = paletteList.get(0);
 
-		StructureBlueprint.Builder builder = StructureBlueprint.builder();
+		RegionBlueprint.Builder builder = RegionBlueprint.builder();
 		for(int index = 0; index < vector.getLength(); ++index)
 		{
 			SavedBlockState block = vector.get(index);
@@ -167,7 +187,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 			builder.addBlock(pos, block);
 		}
 
-		NBTTagList tileEntities = mainRegion.getTagList("TileEntities", 10);
+		NBTTagList tileEntities = regionTag.getTagList("TileEntities", 10);
 		for(int index = 0; index < tileEntities.tagCount(); ++index)
 		{
 			NBTTagCompound tileTag = tileEntities.getCompoundTagAt(index);

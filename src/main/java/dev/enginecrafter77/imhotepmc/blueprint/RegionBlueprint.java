@@ -9,25 +9,40 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class StructureBlueprint {
-	private static final StructureBlueprint EMPTY = new StructureBlueprint(ImmutableMap.of(), Vec3i.NULL_VECTOR);
+public class RegionBlueprint implements Blueprint {
+	private static final RegionBlueprint EMPTY = new RegionBlueprint(ImmutableMap.of(), Vec3i.NULL_VECTOR);
 
 	private final Map<BlockPos, ResolvedBlueprintBlock> blocks;
 	private final Vec3i size;
 
-	public StructureBlueprint(Map<BlockPos, ResolvedBlueprintBlock> blocks, Vec3i size)
+	public RegionBlueprint(Map<BlockPos, ResolvedBlueprintBlock> blocks, Vec3i size)
 	{
 		this.blocks = blocks;
 		this.size = size;
 	}
 
+	@Override
 	public Vec3i getSize()
 	{
 		return this.size;
+	}
+
+	@Nullable
+	@Override
+	public ResolvedBlueprintBlock getBlockAt(BlockPos position)
+	{
+		return this.blocks.get(position);
+	}
+
+	@Override
+	public int getBlockCount()
+	{
+		return this.blocks.size();
 	}
 
 	@Override
@@ -39,9 +54,9 @@ public class StructureBlueprint {
 	@Override
 	public boolean equals(Object obj)
 	{
-		if(!(obj instanceof StructureBlueprint))
+		if(!(obj instanceof RegionBlueprint))
 			return false;
-		StructureBlueprint other = (StructureBlueprint)obj;
+		RegionBlueprint other = (RegionBlueprint)obj;
 
 		if(!Objects.equals(this.size, other.size))
 			return false;
@@ -49,14 +64,14 @@ public class StructureBlueprint {
 		return Objects.equals(this.blocks, other.blocks);
 	}
 
-	public StructureBlueprint translate(BlueprintTranslation mapper)
+	public RegionBlueprint translate(BlueprintTranslation mapper)
 	{
 		return this.edit().translate(mapper).build();
 	}
 
-	public StructureBlueprint.Builder edit()
+	public RegionBlueprint.Builder edit()
 	{
-		StructureBlueprint.Builder builder = new StructureBlueprint.Builder();
+		RegionBlueprint.Builder builder = new RegionBlueprint.Builder();
 		builder.merge(this);
 		return builder;
 	}
@@ -76,7 +91,7 @@ public class StructureBlueprint {
 		return this.blocks;
 	}
 
-	public static StructureBlueprint empty()
+	public static RegionBlueprint empty()
 	{
 		return EMPTY;
 	}
@@ -95,24 +110,24 @@ public class StructureBlueprint {
 			this.data = new HashMap<BlockPos, SavedTileState>();
 		}
 
-		public void merge(StructureBlueprint other)
+		public void merge(RegionBlueprint other)
 		{
 			for(Map.Entry<BlockPos, ResolvedBlueprintBlock> entry : other.getStructureBlocks().entrySet())
 				this.data.put(entry.getKey(), entry.getValue().save());
 		}
 
-		public StructureBlueprint.Builder addBlock(BlockPos position, SavedBlockState data)
+		public RegionBlueprint.Builder addBlock(BlockPos position, SavedBlockState data)
 		{
 			return this.addBlock(position, new SavedTileState(data, null));
 		}
 
-		public StructureBlueprint.Builder addBlock(BlockPos position, SavedTileState data)
+		public RegionBlueprint.Builder addBlock(BlockPos position, SavedTileState data)
 		{
 			this.data.put(position, data);
 			return this;
 		}
 
-		public StructureBlueprint.Builder addTileEntity(BlockPos position, NBTTagCompound tileEntityData)
+		public RegionBlueprint.Builder addTileEntity(BlockPos position, NBTTagCompound tileEntityData)
 		{
 			SavedTileState state = this.data.get(position);
 			if(state == null)
@@ -122,7 +137,7 @@ public class StructureBlueprint {
 			return this;
 		}
 
-		public StructureBlueprint.Builder translate(BlueprintTranslation mapper)
+		public RegionBlueprint.Builder translate(BlueprintTranslation mapper)
 		{
 			BlueprintTranslationContext ctx = new CommonTranslationContext(mapper, this.data::get);
 
@@ -138,10 +153,10 @@ public class StructureBlueprint {
 			return this;
 		}
 
-		public StructureBlueprint build()
+		public RegionBlueprint build()
 		{
 			if(this.data.isEmpty())
-				return StructureBlueprint.empty();
+				return RegionBlueprint.empty();
 
 			int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE, minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
 			for(Vec3i pos : this.data.keySet())
@@ -172,7 +187,7 @@ public class StructureBlueprint {
 				mb.put(offset, blueprintBlock);
 			}
 
-			return new StructureBlueprint(mb.build(), size);
+			return new RegionBlueprint(mb.build(), size);
 		}
 	}
 }

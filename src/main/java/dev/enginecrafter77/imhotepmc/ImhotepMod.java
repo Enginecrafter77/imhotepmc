@@ -3,7 +3,8 @@ package dev.enginecrafter77.imhotepmc;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.ResolvedBlueprintBlock;
-import dev.enginecrafter77.imhotepmc.blueprint.StructureBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
@@ -26,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Map;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(modid = ImhotepMod.MOD_ID)
@@ -41,7 +41,7 @@ public class ImhotepMod {
     public static ImhotepMod instance;
 
     private File schematicsDir;
-    private StructureBlueprint sampleSchamatic;
+    private SchematicBlueprint sampleSchamatic;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
@@ -85,10 +85,10 @@ public class ImhotepMod {
 
         World world = event.getWorld();
         BlockPos start = event.getPos().up();
-        for(Map.Entry<BlockPos, ResolvedBlueprintBlock> entry : sampleSchamatic.getStructureBlocks().entrySet())
+        for(BlueprintVoxel entry : this.sampleSchamatic)
         {
-            BlockPos dest = start.add(entry.getKey());
-            ResolvedBlueprintBlock data = entry.getValue();
+            BlockPos dest = start.add(entry.getPosition());
+            ResolvedBlueprintBlock data = entry.getBlock();
             IBlockState state = data.getBlockState();
 
             world.setBlockState(dest, state, 2);

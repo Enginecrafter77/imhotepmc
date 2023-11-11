@@ -8,12 +8,12 @@ import net.minecraftforge.common.util.INBTSerializable;
 import javax.annotation.Nonnull;
 
 public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
-	private static final String KEY_NBT_SOURCE_X = "s_x";
-	private static final String KEY_NBT_SOURCE_Y = "s_y";
-	private static final String KEY_NBT_SOURCE_Z = "s_z";
-	private static final String KEY_NBT_DEST_X = "d_x";
-	private static final String KEY_NBT_DEST_Y = "d_y";
-	private static final String KEY_NBT_DEST_Z = "d_z";
+	private static final String KEY_NBT_SOURCE_X = "x1";
+	private static final String KEY_NBT_SOURCE_Y = "y1";
+	private static final String KEY_NBT_SOURCE_Z = "z1";
+	private static final String KEY_NBT_DEST_X = "x2";
+	private static final String KEY_NBT_DEST_Y = "y2";
+	private static final String KEY_NBT_DEST_Z = "z2";
 
 	private final BlockPos.MutableBlockPos start;
 	private final BlockPos.MutableBlockPos end;
@@ -59,7 +59,44 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 		return new Vec3i(sx, sy, sz);
 	}
 
-	public Iterable<BlockPos.MutableBlockPos> volume()
+	public boolean contains(Vec3i vector)
+	{
+		return vector.getX() >= this.start.getX() && vector.getX() <= this.end.getX() &&
+				vector.getY() >= this.start.getY() && vector.getY() <= this.end.getY() &&
+				vector.getZ() >= this.start.getZ() && vector.getZ() <= this.end.getZ();
+	}
+
+	public void interect(BlockSelectionBox other)
+	{
+		int dmx = Math.max(this.start.getX(), other.start.getX());
+		int dmy = Math.max(this.start.getY(), other.start.getY());
+		int dmz = Math.max(this.start.getZ(), other.start.getZ());
+		int dMx = Math.min(this.end.getX(), other.end.getX());
+		int dMy = Math.min(this.end.getY(), other.end.getY());
+		int dMz = Math.min(this.end.getZ(), other.end.getZ());
+		this.start.setPos(dmx, dmy, dmz);
+		this.end.setPos(dMx, dMy, dMz);
+	}
+
+	public void union(BlockSelectionBox other)
+	{
+		int dmx = Math.min(this.start.getX(), other.start.getX());
+		int dmy = Math.min(this.start.getY(), other.start.getY());
+		int dmz = Math.min(this.start.getZ(), other.start.getZ());
+		int dMx = Math.max(this.end.getX(), other.end.getX());
+		int dMy = Math.max(this.end.getY(), other.end.getY());
+		int dMz = Math.max(this.end.getZ(), other.end.getZ());
+		this.start.setPos(dmx, dmy, dmz);
+		this.end.setPos(dMx, dMy, dMz);
+	}
+
+	public int getVolume()
+	{
+		Vec3i size = this.getSize();
+		return size.getX() * size.getY() * size.getZ();
+	}
+
+	public Iterable<BlockPos.MutableBlockPos> internalBlocks()
 	{
 		return BlockPos.getAllInBoxMutable(this.start, this.end);
 	}

@@ -2,7 +2,8 @@ package dev.enginecrafter77.imhotepmc.test;
 
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SavedTileState;
-import dev.enginecrafter77.imhotepmc.blueprint.StructureBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.RegionBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -22,7 +23,7 @@ public class TestBlueprintLitematicaSerialize {
 
 		SavedTileState block = SavedTileState.ofBlock(Blocks.IRON_BLOCK);
 
-		StructureBlueprint.Builder builder = StructureBlueprint.builder();
+		RegionBlueprint.Builder builder = RegionBlueprint.builder();
 		builder.addBlock(new BlockPos(14, 1, 14), block);
 		builder.addBlock(new BlockPos(13, 1, 14), block);
 		builder.addBlock(new BlockPos(14, 1, 13), block);
@@ -30,13 +31,16 @@ public class TestBlueprintLitematicaSerialize {
 		builder.addBlock(new BlockPos(14, 1, 15), block);
 		builder.addBlock(new BlockPos(14, 0, 14), block);
 		builder.addBlock(new BlockPos(14, 2, 14), block);
-		StructureBlueprint blueprint = builder.build();
+		RegionBlueprint region = builder.build();
+
+		SchematicBlueprint blueprint = new SchematicBlueprint();
+		blueprint.addRegion("Main", region, BlockPos.ORIGIN);
 
 		LitematicaBlueprintSerializer serializer = new LitematicaBlueprintSerializer();
 
 		Assertions.assertDoesNotThrow(() -> {
 			NBTTagCompound com = serializer.serializeBlueprint(blueprint);
-			StructureBlueprint rec = serializer.deserializeBlueprint(com);
+			SchematicBlueprint rec = serializer.deserializeBlueprint(com);
 
 			Assertions.assertEquals(blueprint, rec);
 		});
@@ -55,8 +59,8 @@ public class TestBlueprintLitematicaSerialize {
 		{
 			NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
 			LitematicaBlueprintSerializer serializer = new LitematicaBlueprintSerializer();
-			StructureBlueprint blueprint = serializer.deserializeBlueprint(tag);
-			blueprint.getTotalVolume();
+			SchematicBlueprint blueprint = serializer.deserializeBlueprint(tag);
+			Assertions.assertEquals(1, blueprint.getRegionCount());
 		}
 		catch(Exception exc)
 		{
