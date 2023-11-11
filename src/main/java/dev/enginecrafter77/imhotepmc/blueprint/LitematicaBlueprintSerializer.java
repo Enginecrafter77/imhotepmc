@@ -1,10 +1,10 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLongArray;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
@@ -16,16 +16,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
-	private final BlockRecordMapper blockRecordMapper;
+	private final BlueprintTranslation blueprintTranslation;
 
-	public LitematicaBlueprintSerializer(BlockRecordMapper mapper)
+	public LitematicaBlueprintSerializer(BlueprintTranslation mapper)
 	{
-		this.blockRecordMapper = mapper;
+		this.blueprintTranslation = mapper;
 	}
 
 	public LitematicaBlueprintSerializer()
 	{
-		this(BlockRecordMapper.identity());
+		this(BlueprintTranslation.identity());
 	}
 
 	protected NBTTagCompound serializeVector(Vec3i size)
@@ -171,11 +171,11 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		for(int index = 0; index < tileEntities.tagCount(); ++index)
 		{
 			NBTTagCompound tileTag = tileEntities.getCompoundTagAt(index);
-			BlockPos pos = NBTUtil.getPosFromTag(tileTag);
+			BlockPos pos = new BlockPos(readVector(tileTag));
 			builder.addTileEntity(pos, tileTag);
 		}
 
-		builder.translate(this.blockRecordMapper);
+		builder.translate(this.blueprintTranslation);
 
 		return builder.build();
 	}

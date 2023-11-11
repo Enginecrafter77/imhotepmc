@@ -27,12 +27,27 @@ public class SavedBlockState {
 		this.blockProps = blockProps;
 	}
 
-	public SavedBlockState withProperty(String key, String name)
+	public SavedBlockState withProperties(Map<String, String> properties)
+	{
+		return new SavedBlockState(this.name, properties);
+	}
+
+	public SavedBlockState withProperty(String key, String val)
 	{
 		ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-		builder.putAll(this.blockProps);
-		builder.put(key, name);
-		return new SavedBlockState(this.name, builder.build());
+		for(Map.Entry<String, String> propEntry : this.blockProps.entrySet())
+		{
+			String value = propEntry.getValue();
+			if(Objects.equals(propEntry.getKey(), key))
+				value = val;
+			builder.put(propEntry.getKey(), value);
+		}
+		return this.withProperties(builder.build());
+	}
+
+	public SavedBlockState withProperty(IProperty<?> prop, String val)
+	{
+		return this.withProperty(prop.getName(), val);
 	}
 
 	public SavedBlockState withoutProperty(String key)
@@ -43,7 +58,7 @@ public class SavedBlockState {
 			if(!Objects.equals(propEntry.getKey(), key))
 				builder.put(propEntry.getKey(), propEntry.getValue());
 		}
-		return new SavedBlockState(this.name, builder.build());
+		return this.withProperties(builder.build());
 	}
 
 	public ResourceLocation getBlockName()
@@ -54,6 +69,16 @@ public class SavedBlockState {
 	public Map<String, String> getBlockProperties()
 	{
 		return this.blockProps;
+	}
+
+	public String getProperty(String key)
+	{
+		return this.blockProps.get(key);
+	}
+
+	public String getProperty(@Nonnull IProperty<?> prop)
+	{
+		return this.getProperty(prop.getName());
 	}
 
 	@Nonnull

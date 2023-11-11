@@ -1,6 +1,9 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import com.google.common.collect.ImmutableMap;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationContext;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.CommonTranslationContext;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -13,10 +16,10 @@ import java.util.Objects;
 public class StructureBlueprint {
 	private static final StructureBlueprint EMPTY = new StructureBlueprint(ImmutableMap.of(), Vec3i.NULL_VECTOR);
 
-	private final Map<Vec3i, ResolvedBlueprintBlock> blocks;
+	private final Map<BlockPos, ResolvedBlueprintBlock> blocks;
 	private final Vec3i size;
 
-	public StructureBlueprint(Map<Vec3i, ResolvedBlueprintBlock> blocks, Vec3i size)
+	public StructureBlueprint(Map<BlockPos, ResolvedBlueprintBlock> blocks, Vec3i size)
 	{
 		this.blocks = blocks;
 		this.size = size;
@@ -46,7 +49,7 @@ public class StructureBlueprint {
 		return Objects.equals(this.blocks, other.blocks);
 	}
 
-	public StructureBlueprint translate(BlockRecordMapper mapper)
+	public StructureBlueprint translate(BlueprintTranslation mapper)
 	{
 		return this.edit().translate(mapper).build();
 	}
@@ -68,7 +71,7 @@ public class StructureBlueprint {
 		return this.size.getX() * this.size.getY() * this.size.getZ();
 	}
 
-	public Map<Vec3i, ResolvedBlueprintBlock> getStructureBlocks()
+	public Map<BlockPos, ResolvedBlueprintBlock> getStructureBlocks()
 	{
 		return this.blocks;
 	}
@@ -85,16 +88,16 @@ public class StructureBlueprint {
 
 	public static class Builder
 	{
-		private final Map<Vec3i, SavedTileState> data;
+		private final Map<BlockPos, SavedTileState> data;
 
 		public Builder()
 		{
-			this.data = new HashMap<Vec3i, SavedTileState>();
+			this.data = new HashMap<BlockPos, SavedTileState>();
 		}
 
 		public void merge(StructureBlueprint other)
 		{
-			for(Map.Entry<Vec3i, ResolvedBlueprintBlock> entry : other.getStructureBlocks().entrySet())
+			for(Map.Entry<BlockPos, ResolvedBlueprintBlock> entry : other.getStructureBlocks().entrySet())
 				this.data.put(entry.getKey(), entry.getValue().save());
 		}
 
@@ -119,12 +122,14 @@ public class StructureBlueprint {
 			return this;
 		}
 
-		public StructureBlueprint.Builder translate(BlockRecordMapper mapper)
+		public StructureBlueprint.Builder translate(BlueprintTranslation mapper)
 		{
-			for(Vec3i key : this.data.keySet())
+			BlueprintTranslationContext ctx = new CommonTranslationContext(mapper, this.data::get);
+
+			for(BlockPos key : this.data.keySet())
 			{
 				SavedTileState currentState = this.data.get(key);
-				SavedTileState translated = mapper.translate(currentState);
+				SavedTileState translated = mapper.translate(ctx, key, currentState);
 				if(translated == null)
 					this.data.remove(key);
 				else
@@ -159,10 +164,10 @@ public class StructureBlueprint {
 			Vec3i size = new Vec3i(maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1);
 			Vec3i origin = new Vec3i(minX, minY, minZ);
 			
-			ImmutableMap.Builder<Vec3i, ResolvedBlueprintBlock> mb = ImmutableMap.builder();
-			for(Map.Entry<Vec3i, SavedTileState> entry : this.data.entrySet())
+			ImmutableMap.Builder<BlockPos, ResolvedBlueprintBlock> mb = ImmutableMap.builder();
+			for(Map.Entry<BlockPos, SavedTileState> entry : this.data.entrySet())
 			{
-				Vec3i offset = VecUtil.difference(entry.getKey(), origin);
+				BlockPos offset = new BlockPos(VecUtil.difference(entry.getKey(), origin));
 				ResolvedBlueprintBlock blueprintBlock = ResolvedBlueprintBlock.from(entry.getValue());
 				mb.put(offset, blueprintBlock);
 			}

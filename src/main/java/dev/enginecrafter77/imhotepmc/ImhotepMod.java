@@ -1,6 +1,10 @@
 package dev.enginecrafter77.imhotepmc;
 
-import dev.enginecrafter77.imhotepmc.blueprint.*;
+import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
+import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
+import dev.enginecrafter77.imhotepmc.blueprint.ResolvedBlueprintBlock;
+import dev.enginecrafter77.imhotepmc.blueprint.StructureBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -8,7 +12,6 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -82,7 +85,7 @@ public class ImhotepMod {
 
         World world = event.getWorld();
         BlockPos start = event.getPos().up();
-        for(Map.Entry<Vec3i, ResolvedBlueprintBlock> entry : sampleSchamatic.getStructureBlocks().entrySet())
+        for(Map.Entry<BlockPos, ResolvedBlueprintBlock> entry : sampleSchamatic.getStructureBlocks().entrySet())
         {
             BlockPos dest = start.add(entry.getKey());
             ResolvedBlueprintBlock data = entry.getValue();
