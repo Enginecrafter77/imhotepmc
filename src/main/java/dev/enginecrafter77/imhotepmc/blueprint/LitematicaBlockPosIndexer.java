@@ -14,6 +14,9 @@ public class LitematicaBlockPosIndexer implements BlockPosIndexer {
 	{
 		this.origin = BlockPos.ORIGIN;
 		Vec3i size = VecUtil.difference(from, to);
+		if(size.getX() == 0 || size.getY() == 0 || size.getZ() == 0)
+			throw new IllegalArgumentException("Attempting to create indexer of volume 0!");
+
 		this.volume = size.getY() * size.getX() * size.getZ();
 		this.floor = size.getX() * size.getZ();
 		this.row = size.getX();
@@ -21,6 +24,9 @@ public class LitematicaBlockPosIndexer implements BlockPosIndexer {
 
 	public LitematicaBlockPosIndexer(Vec3i size)
 	{
+		if(size.getX() == 0 || size.getY() == 0 || size.getZ() == 0)
+			throw new IllegalArgumentException("Attempting to create indexer of volume 0!");
+
 		this.origin = BlockPos.ORIGIN;
 		this.volume = size.getY() * size.getX() * size.getZ();
 		this.floor = size.getX() * size.getZ();

@@ -26,7 +26,7 @@ public class ScanningBlueprintFactory implements BlueprintFactory {
 
 		for(BlockPos.MutableBlockPos pos : this.selection.volume())
 		{
-			StructureBlockSavedData data = StructureBlockSavedData.sample(this.world, pos);
+			SavedTileState data = SavedTileState.sample(this.world, pos);
 			builder.addBlock(pos, data);
 		}
 

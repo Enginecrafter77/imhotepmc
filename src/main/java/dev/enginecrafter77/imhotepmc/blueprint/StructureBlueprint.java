@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.blueprint;
 
 import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
@@ -12,10 +13,10 @@ import java.util.Objects;
 public class StructureBlueprint {
 	private static final StructureBlueprint EMPTY = new StructureBlueprint(ImmutableMap.of(), Vec3i.NULL_VECTOR);
 
-	private final Map<Vec3i, StructureBlockSavedData> blocks;
+	private final Map<Vec3i, ResolvedBlueprintBlock> blocks;
 	private final Vec3i size;
 
-	public StructureBlueprint(Map<Vec3i, StructureBlockSavedData> blocks, Vec3i size)
+	public StructureBlueprint(Map<Vec3i, ResolvedBlueprintBlock> blocks, Vec3i size)
 	{
 		this.blocks = blocks;
 		this.size = size;
@@ -45,6 +46,18 @@ public class StructureBlueprint {
 		return Objects.equals(this.blocks, other.blocks);
 	}
 
+	public StructureBlueprint translate(BlockRecordMapper mapper)
+	{
+		return this.edit().translate(mapper).build();
+	}
+
+	public StructureBlueprint.Builder edit()
+	{
+		StructureBlueprint.Builder builder = new StructureBlueprint.Builder();
+		builder.merge(this);
+		return builder;
+	}
+
 	public int getTotalBlocks()
 	{
 		return this.blocks.size();
@@ -55,7 +68,7 @@ public class StructureBlueprint {
 		return this.size.getX() * this.size.getY() * this.size.getZ();
 	}
 
-	public Map<Vec3i, StructureBlockSavedData> getStructureBlocks()
+	public Map<Vec3i, ResolvedBlueprintBlock> getStructureBlocks()
 	{
 		return this.blocks;
 	}
@@ -67,21 +80,57 @@ public class StructureBlueprint {
 
 	public static Builder builder()
 	{
-		return new Builder();
+		return EMPTY.edit();
 	}
 
 	public static class Builder
 	{
-		private final Map<Vec3i, StructureBlockSavedData> data;
+		private final Map<Vec3i, SavedTileState> data;
 
 		public Builder()
 		{
-			this.data = new HashMap<Vec3i, StructureBlockSavedData>();
+			this.data = new HashMap<Vec3i, SavedTileState>();
 		}
 
-		public void addBlock(BlockPos position, StructureBlockSavedData data)
+		public void merge(StructureBlueprint other)
+		{
+			for(Map.Entry<Vec3i, ResolvedBlueprintBlock> entry : other.getStructureBlocks().entrySet())
+				this.data.put(entry.getKey(), entry.getValue().save());
+		}
+
+		public StructureBlueprint.Builder addBlock(BlockPos position, SavedBlockState data)
+		{
+			return this.addBlock(position, new SavedTileState(data, null));
+		}
+
+		public StructureBlueprint.Builder addBlock(BlockPos position, SavedTileState data)
 		{
 			this.data.put(position, data);
+			return this;
+		}
+
+		public StructureBlueprint.Builder addTileEntity(BlockPos position, NBTTagCompound tileEntityData)
+		{
+			SavedTileState state = this.data.get(position);
+			if(state == null)
+				return this;
+			state = state.withTileEntity(tileEntityData);
+			this.data.put(position, state);
+			return this;
+		}
+
+		public StructureBlueprint.Builder translate(BlockRecordMapper mapper)
+		{
+			for(Vec3i key : this.data.keySet())
+			{
+				SavedTileState currentState = this.data.get(key);
+				SavedTileState translated = mapper.translate(currentState);
+				if(translated == null)
+					this.data.remove(key);
+				else
+					this.data.put(key, translated);
+			}
+			return this;
 		}
 
 		public StructureBlueprint build()
@@ -110,11 +159,12 @@ public class StructureBlueprint {
 			Vec3i size = new Vec3i(maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1);
 			Vec3i origin = new Vec3i(minX, minY, minZ);
 			
-			ImmutableMap.Builder<Vec3i, StructureBlockSavedData> mb = ImmutableMap.builder();
-			for(Map.Entry<Vec3i, StructureBlockSavedData> entry : this.data.entrySet())
+			ImmutableMap.Builder<Vec3i, ResolvedBlueprintBlock> mb = ImmutableMap.builder();
+			for(Map.Entry<Vec3i, SavedTileState> entry : this.data.entrySet())
 			{
 				Vec3i offset = VecUtil.difference(entry.getKey(), origin);
-				mb.put(offset, entry.getValue());
+				ResolvedBlueprintBlock blueprintBlock = ResolvedBlueprintBlock.from(entry.getValue());
+				mb.put(offset, blueprintBlock);
 			}
 
 			return new StructureBlueprint(mb.build(), size);

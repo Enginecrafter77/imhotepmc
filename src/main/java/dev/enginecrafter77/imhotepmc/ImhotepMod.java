@@ -55,7 +55,7 @@ public class ImhotepMod {
     {
         File schematicFile = new File(this.schematicsDir, "sample.litematic");
 
-        NBTBlueprintSerializer serializer = new LitematicaBlueprintSerializer(BlockCompatTranslationTable.getInstance());
+        NBTBlueprintSerializer serializer = new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance());
         try(InputStream inputStream = Files.newInputStream(schematicFile.toPath()))
         {
             NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
@@ -82,23 +82,17 @@ public class ImhotepMod {
 
         World world = event.getWorld();
         BlockPos start = event.getPos().up();
-        for(Map.Entry<Vec3i, StructureBlockSavedData> entry : sampleSchamatic.getStructureBlocks().entrySet())
+        for(Map.Entry<Vec3i, ResolvedBlueprintBlock> entry : sampleSchamatic.getStructureBlocks().entrySet())
         {
             BlockPos dest = start.add(entry.getKey());
-            StructureBlockSavedData data = entry.getValue();
+            ResolvedBlueprintBlock data = entry.getValue();
             IBlockState state = data.getBlockState();
 
             world.setBlockState(dest, state, 2);
 
-            NBTTagCompound tile = data.getTileEntity();
+            TileEntity tile = data.createTileEntity(world);
             if(tile != null)
-            {
-                TileEntity entity = state.getBlock().createTileEntity(world, state);
-                if(entity == null)
-                    continue;
-                entity.deserializeNBT(data.getTileEntity());
-                world.setTileEntity(dest, entity);
-            }
+                world.setTileEntity(dest, tile);
 
             world.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
         }

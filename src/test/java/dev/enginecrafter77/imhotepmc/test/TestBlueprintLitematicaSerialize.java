@@ -1,7 +1,7 @@
 package dev.enginecrafter77.imhotepmc.test;
 
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.StructureBlockSavedData;
+import dev.enginecrafter77.imhotepmc.blueprint.SavedTileState;
 import dev.enginecrafter77.imhotepmc.blueprint.StructureBlueprint;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
@@ -20,9 +20,9 @@ public class TestBlueprintLitematicaSerialize {
 		if(!Bootstrap.isRegistered())
 			Bootstrap.register();
 
-		StructureBlockSavedData block = new StructureBlockSavedData(Blocks.IRON_BLOCK.getDefaultState(), null);
+		SavedTileState block = SavedTileState.ofBlock(Blocks.IRON_BLOCK);
 
-		StructureBlueprint.Builder builder = new StructureBlueprint.Builder();
+		StructureBlueprint.Builder builder = StructureBlueprint.builder();
 		builder.addBlock(new BlockPos(14, 1, 14), block);
 		builder.addBlock(new BlockPos(13, 1, 14), block);
 		builder.addBlock(new BlockPos(14, 1, 13), block);

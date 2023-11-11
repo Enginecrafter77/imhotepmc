@@ -6,33 +6,33 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class BlockCompatTranslationTable implements BlockMapper {
+public class BlockRecordCompatTranslationTable implements BlockRecordMapper {
 	private final Map<ResourceLocation, ResourceLocation> mappingTable;
 
-	public BlockCompatTranslationTable(Map<ResourceLocation, ResourceLocation> map)
+	public BlockRecordCompatTranslationTable(Map<ResourceLocation, ResourceLocation> map)
 	{
 		this.mappingTable = map;
 	}
 
 	@Nullable
 	@Override
-	public ResourceLocation translate(ResourceLocation source)
+	public SavedTileState translate(SavedTileState state)
 	{
-		ResourceLocation tr = this.mappingTable.get(source);
-		if(tr == null)
-			tr = source;
-		return tr;
+		ResourceLocation tr = this.mappingTable.get(state.getSavedBlockState().getBlockName());
+		if(tr != null)
+			state = new SavedTileState(new SavedBlockState(tr, state.getSavedBlockState().getBlockProperties()), null);
+		return state;
 	}
 
-	private static BlockCompatTranslationTable INSTANCE = null;
-	public static BlockCompatTranslationTable getInstance()
+	private static BlockRecordCompatTranslationTable INSTANCE = null;
+	public static BlockRecordCompatTranslationTable getInstance()
 	{
 		if(INSTANCE == null)
 			INSTANCE = createDefaultCompatTranslationTable();
 		return INSTANCE;
 	}
 
-	private static BlockCompatTranslationTable createDefaultCompatTranslationTable()
+	private static BlockRecordCompatTranslationTable createDefaultCompatTranslationTable()
 	{
 		ImmutableMap.Builder<ResourceLocation, ResourceLocation> builder = ImmutableMap.builder();
 
@@ -40,6 +40,6 @@ public class BlockCompatTranslationTable implements BlockMapper {
 		builder.put(new ResourceLocation("minecraft:oak_fence"), new ResourceLocation("minecraft:fence"));
 		builder.put(new ResourceLocation("minecraft:oak_sign"), new ResourceLocation("minecraft:standing_sign"));
 
-		return new BlockCompatTranslationTable(builder.build());
+		return new BlockRecordCompatTranslationTable(builder.build());
 	}
 }
