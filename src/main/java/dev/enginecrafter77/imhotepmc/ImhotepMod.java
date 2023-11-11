@@ -89,6 +89,7 @@ public class ImhotepMod {
         {
             BlockPos dest = start.add(entry.getPosition());
             ResolvedBlueprintBlock data = entry.getBlock();
+
             IBlockState state = data.getBlockState();
 
             world.setBlockState(dest, state, 2);

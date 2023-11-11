@@ -1,16 +1,15 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
+import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.UnpackingIterator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 public class SchematicBlueprint implements Blueprint {
 	private static final Vec3i ONE = new Vec3i(1, 1, 1);
@@ -166,6 +165,13 @@ public class SchematicBlueprint implements Blueprint {
 		return e1 && e2 && e3 && e4 && e5 && e6;
 	}
 
+	@Nonnull
+	@Override
+	public Iterator<BlueprintVoxel> iterator()
+	{
+		return new UnpackingIterator<Blueprint, BlueprintVoxel>(this.regions.values());
+	}
+
 	public static class OffsetRegionBlueprint implements Blueprint
 	{
 		private final RegionBlueprint regionBlueprint;
@@ -211,6 +217,13 @@ public class SchematicBlueprint implements Blueprint {
 		public int hashCode()
 		{
 			return this.regionBlueprint.hashCode() + 1;
+		}
+
+		@Nonnull
+		@Override
+		public Iterator<BlueprintVoxel> iterator()
+		{
+			return this.regionBlueprint.iterator();
 		}
 
 		@Override

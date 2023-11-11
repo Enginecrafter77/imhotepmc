@@ -1,6 +1,8 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import com.google.common.collect.ImmutableMap;
+import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
+import dev.enginecrafter77.imhotepmc.blueprint.iter.MutableBlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationContext;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.CommonTranslationContext;
@@ -9,8 +11,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,6 +66,13 @@ public class RegionBlueprint implements Blueprint {
 			return false;
 
 		return Objects.equals(this.blocks, other.blocks);
+	}
+
+	@Nonnull
+	@Override
+	public Iterator<BlueprintVoxel> iterator()
+	{
+		return new RegionIterator();
 	}
 
 	public RegionBlueprint translate(BlueprintTranslation mapper)
@@ -188,6 +199,32 @@ public class RegionBlueprint implements Blueprint {
 			}
 
 			return new RegionBlueprint(mb.build(), size);
+		}
+	}
+
+	private class RegionIterator implements Iterator<BlueprintVoxel>
+	{
+		private final Iterator<Map.Entry<BlockPos, ResolvedBlueprintBlock>> iterator;
+		private final MutableBlueprintVoxel voxel;
+
+		public RegionIterator()
+		{
+			this.iterator = RegionBlueprint.this.blocks.entrySet().iterator();
+			this.voxel = new MutableBlueprintVoxel();
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return this.iterator.hasNext();
+		}
+
+		@Override
+		public BlueprintVoxel next()
+		{
+			Map.Entry<BlockPos, ResolvedBlueprintBlock> entry = this.iterator.next();
+			this.voxel.set(entry.getKey(), entry.getValue());
+			return this.voxel;
 		}
 	}
 }
