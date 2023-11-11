@@ -47,7 +47,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		tag.setInteger("RegionCount", blueprint.getRegionCount());
 		tag.setInteger("TotalBlocks", blueprint.getBlockCount());
 		tag.setInteger("TotalVolume", blueprint.getTotalVolume());
-		tag.setString("Name", "Unnamed");
+		tag.setString("Name", blueprint.getName());
 
 		return tag;
 	}
@@ -142,6 +142,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		blueprint.setModifyTime(Instant.ofEpochMilli(meta.getLong("TimeModified")));
 		blueprint.setAuthor(meta.getString("Author"));
 		blueprint.setDescription(meta.getString("Description"));
+		blueprint.setName(meta.getString("Name"));
 
 		NBTTagCompound regions = source.getCompoundTag("Regions");
 		for(String name : regions.getKeySet())

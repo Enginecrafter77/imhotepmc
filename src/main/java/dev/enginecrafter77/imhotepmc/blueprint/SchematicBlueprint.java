@@ -19,6 +19,7 @@ public class SchematicBlueprint implements Blueprint {
 	private Instant createTime;
 	private String description;
 	private String author;
+	private String name;
 	private Vec3i size;
 
 	public SchematicBlueprint()
@@ -26,6 +27,7 @@ public class SchematicBlueprint implements Blueprint {
 		this.regions = new HashMap<String, OffsetRegionBlueprint>();
 		this.size = Vec3i.NULL_VECTOR;
 		this.author = "Unknown";
+		this.name = "Unnamed";
 		this.description = "";
 		this.createTime = Instant.now();
 		this.modifyTime = Instant.now();
@@ -39,6 +41,16 @@ public class SchematicBlueprint implements Blueprint {
 	public void setAuthor(String author)
 	{
 		this.author = author;
+	}
+
+	public String getName()
+	{
+		return this.name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 
 	public Instant getCreateTime()
