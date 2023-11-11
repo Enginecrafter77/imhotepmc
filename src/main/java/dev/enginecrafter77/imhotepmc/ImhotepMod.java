@@ -6,23 +6,33 @@ import dev.enginecrafter77.imhotepmc.blueprint.ResolvedBlueprintBlock;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
+import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +45,15 @@ public class ImhotepMod {
 
     // Basic mod constants.
     public static final String MOD_ID = "imhotepmc";
+
+    public static CreativeTabs CREATIVE_TAB = new CreativeTabs(MOD_ID) {
+        @Nonnull
+        @Override
+        public ItemStack createIcon()
+        {
+            return new ItemStack(ItemSchematicBlueprint.INSTANCE);
+        }
+    };
 
     // Make an instance of the mod.
     @Mod.Instance(ImhotepMod.MOD_ID)
@@ -100,5 +119,19 @@ public class ImhotepMod {
 
             world.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
         }
+    }
+
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> event)
+    {
+        IForgeRegistry<Item> reg = event.getRegistry();
+        reg.register(ItemSchematicBlueprint.INSTANCE);
+    }
+
+    @SubscribeEvent
+    public void registerModels(ModelRegistryEvent event)
+    {
+        ModelLoader.setCustomModelResourceLocation(ItemSchematicBlueprint.INSTANCE, ItemSchematicBlueprint.META_EMPTY, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_empty"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ItemSchematicBlueprint.INSTANCE, ItemSchematicBlueprint.META_WRITTEN, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_written"), "inventory"));
     }
 }

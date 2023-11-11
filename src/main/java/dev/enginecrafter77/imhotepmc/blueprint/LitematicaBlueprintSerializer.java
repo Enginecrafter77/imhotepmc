@@ -135,14 +135,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	@Override
 	public SchematicBlueprint deserializeBlueprint(NBTTagCompound source)
 	{
-		SchematicBlueprint blueprint = new SchematicBlueprint();
-
-		NBTTagCompound meta = source.getCompoundTag("Metadata");
-		blueprint.setCreateTime(Instant.ofEpochMilli(meta.getLong("TimeCreated")));
-		blueprint.setModifyTime(Instant.ofEpochMilli(meta.getLong("TimeModified")));
-		blueprint.setAuthor(meta.getString("Author"));
-		blueprint.setDescription(meta.getString("Description"));
-		blueprint.setName(meta.getString("Name"));
+		SchematicBlueprint blueprint = this.deserializeBlueprintMetadata(source);
 
 		NBTTagCompound regions = source.getCompoundTag("Regions");
 		for(String name : regions.getKeySet())
@@ -153,6 +146,19 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 			blueprint.addRegion(name, region, offset);
 		}
 
+		return blueprint;
+	}
+
+	@Override
+	public SchematicBlueprint deserializeBlueprintMetadata(NBTTagCompound source)
+	{
+		SchematicBlueprint blueprint = new SchematicBlueprint();
+		NBTTagCompound meta = source.getCompoundTag("Metadata");
+		blueprint.setCreateTime(Instant.ofEpochMilli(meta.getLong("TimeCreated")));
+		blueprint.setModifyTime(Instant.ofEpochMilli(meta.getLong("TimeModified")));
+		blueprint.setAuthor(meta.getString("Author"));
+		blueprint.setDescription(meta.getString("Description"));
+		blueprint.setName(meta.getString("Name"));
 		return blueprint;
 	}
 
