@@ -4,13 +4,13 @@ import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
-public class LitematicaBlockPosIndexer implements BlockPosIndexer {
+public class LitematicaVoxelIndexer implements VoxelIndexer {
 	private final BlockPos origin;
 	private final int volume;
 	private final int floor;
 	private final int row;
 
-	public LitematicaBlockPosIndexer(BlockPos from, BlockPos to)
+	public LitematicaVoxelIndexer(BlockPos from, BlockPos to)
 	{
 		this.origin = BlockPos.ORIGIN;
 		Vec3i size = VecUtil.difference(from, to);
@@ -22,7 +22,7 @@ public class LitematicaBlockPosIndexer implements BlockPosIndexer {
 		this.row = size.getX();
 	}
 
-	public LitematicaBlockPosIndexer(Vec3i size)
+	public LitematicaVoxelIndexer(Vec3i size)
 	{
 		if(size.getX() == 0 || size.getY() == 0 || size.getZ() == 0)
 			throw new IllegalArgumentException("Attempting to create indexer of volume 0!");

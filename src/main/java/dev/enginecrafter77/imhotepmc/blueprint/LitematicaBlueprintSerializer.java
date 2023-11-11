@@ -81,7 +81,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		Vec3i size = blueprint.getSize();
 		int vecSize = size.getX() * size.getY() * size.getZ();
 		CompactPalettedBitVector<SavedBlockState> vector = new CompactPalettedBitVector<SavedBlockState>(unique, vecSize);
-		BlockPosIndexer indexer = new LitematicaBlockPosIndexer(size);
+		VoxelIndexer indexer = new LitematicaVoxelIndexer(size);
 
 		NBTTagList tileEntities = new NBTTagList();
 
@@ -174,7 +174,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 
 		NBTTagLongArray arrayTag = (NBTTagLongArray)regionTag.getTag("BlockStates");
 		CompactPalettedBitVector<SavedBlockState> vector = CompactPalettedBitVector.readFromNBT(paletteList, arrayTag);
-		BlockPosIndexer indexer = new LitematicaBlockPosIndexer(size);
+		VoxelIndexer indexer = new LitematicaVoxelIndexer(size);
 		SavedBlockState air = paletteList.get(0);
 
 		RegionBlueprint.Builder builder = RegionBlueprint.builder();
