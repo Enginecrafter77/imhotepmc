@@ -1,13 +1,9 @@
 {
   "forge_marker": 1,
-  "defaults": {
-    "textures": {
-      "all": "blocks/blueprint_library"
-    },
-    "model": "cube_all",
-    "uvlock": true
-  },
   "variants": {
-    "normal": [{}]
+    "facing=north": { "model": "imhotepmc:blueprint_library" },
+    "facing=south": { "model": "imhotepmc:blueprint_library", "y": 180 },
+    "facing=west":  { "model": "imhotepmc:blueprint_library", "y": 270 },
+    "facing=east":  { "model": "imhotepmc:blueprint_library", "y": 90 }
   }
 }

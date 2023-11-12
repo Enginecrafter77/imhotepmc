@@ -22,8 +22,6 @@ public class ItemSchematicBlueprint extends Item {
 	public static final int META_EMPTY = 0;
 	public static final int META_WRITTEN = 1;
 
-	public static ItemSchematicBlueprint INSTANCE = new ItemSchematicBlueprint();
-
 	public ItemSchematicBlueprint()
 	{
 		this.setRegistryName(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint"));
@@ -40,7 +38,7 @@ public class ItemSchematicBlueprint extends Item {
 
 	public void setSchematic(ItemStack stack, @Nullable SchematicBlueprint blueprint)
 	{
-		if(stack.getItem() != INSTANCE)
+		if(!(stack.getItem() instanceof ItemSchematicBlueprint))
 			throw new UnsupportedOperationException();
 
 		NBTTagCompound tag = stack.getTagCompound();
@@ -62,7 +60,7 @@ public class ItemSchematicBlueprint extends Item {
 	@Nullable
 	public SchematicBlueprint getSchematic(ItemStack stack)
 	{
-		if(stack.getItem() != INSTANCE)
+		if(!(stack.getItem() instanceof ItemSchematicBlueprint))
 			throw new UnsupportedOperationException();
 
 		NBTTagCompound tag = stack.getTagCompound();

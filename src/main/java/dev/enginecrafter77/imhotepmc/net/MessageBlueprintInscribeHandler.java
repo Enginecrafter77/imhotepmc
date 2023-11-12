@@ -1,6 +1,6 @@
 package dev.enginecrafter77.imhotepmc.net;
 
-import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -31,7 +31,7 @@ public class MessageBlueprintInscribeHandler implements IMessageHandler<MessageI
 			throw new IllegalStateException();
 
 		ItemStack stack = itemHandler.getStackInSlot(0);
-		ItemSchematicBlueprint.INSTANCE.setSchematic(stack, message.getBlueprint());
+		ImhotepMod.ITEM_SCHEMATIC_BLUEPRINT.setSchematic(stack, message.getBlueprint());
 		itemHandler.setStackInSlot(0, stack);
 		return null;
 	}

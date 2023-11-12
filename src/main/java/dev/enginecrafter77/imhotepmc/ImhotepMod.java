@@ -62,13 +62,16 @@ public class ImhotepMod {
         @Override
         public ItemStack createIcon()
         {
-            return new ItemStack(ItemSchematicBlueprint.INSTANCE);
+            return new ItemStack(ImhotepMod.ITEM_SCHEMATIC_BLUEPRINT);
         }
     };
 
     // Make an instance of the mod.
     @Mod.Instance(ImhotepMod.MOD_ID)
     public static ImhotepMod instance;
+
+    public static BlockBlueprintLibrary BLOCK_BLUEPRINT_LIBRARY;
+    public static ItemSchematicBlueprint ITEM_SCHEMATIC_BLUEPRINT;
 
     private File schematicsDir;
     private SchematicBlueprint sampleSchamatic;
@@ -84,6 +87,9 @@ public class ImhotepMod {
 
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID);
         this.netChannel.registerMessage(MessageBlueprintInscribeHandler.class, MessageInscribeBlueprint.class, 0, Side.SERVER);
+
+        BLOCK_BLUEPRINT_LIBRARY = new BlockBlueprintLibrary();
+        ITEM_SCHEMATIC_BLUEPRINT = new ItemSchematicBlueprint();
 
         File configDir = event.getModConfigurationDirectory();
         File gameDirectory = configDir.getParentFile();
@@ -153,20 +159,24 @@ public class ImhotepMod {
     public void registerItems(RegistryEvent.Register<Item> event)
     {
         IForgeRegistry<Item> reg = event.getRegistry();
-        reg.register(ItemSchematicBlueprint.INSTANCE);
+        reg.register(ITEM_SCHEMATIC_BLUEPRINT);
 
-        this.registerItemBlock(reg, BlockBlueprintLibrary.INSTANCE);
+        this.registerItemBlock(reg, BLOCK_BLUEPRINT_LIBRARY);
     }
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         IForgeRegistry<Block> reg = event.getRegistry();
-        reg.register(BlockBlueprintLibrary.INSTANCE);
+        reg.register(BLOCK_BLUEPRINT_LIBRARY);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
     {
+        ResourceLocation name = block.getRegistryName();
+        if(name == null)
+            throw new NullPointerException("Block has no registry name set!");
+
         Item item = new ItemBlock(block);
         item.setRegistryName(block.getRegistryName());
         reg.register(item);
@@ -175,7 +185,8 @@ public class ImhotepMod {
     @SubscribeEvent
     public void registerModels(ModelRegistryEvent event)
     {
-        ModelLoader.setCustomModelResourceLocation(ItemSchematicBlueprint.INSTANCE, ItemSchematicBlueprint.META_EMPTY, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_empty"), "inventory"));
-        ModelLoader.setCustomModelResourceLocation(ItemSchematicBlueprint.INSTANCE, ItemSchematicBlueprint.META_WRITTEN, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_written"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_SCHEMATIC_BLUEPRINT, ItemSchematicBlueprint.META_EMPTY, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_empty"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_SCHEMATIC_BLUEPRINT, ItemSchematicBlueprint.META_WRITTEN, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_written"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BLUEPRINT_LIBRARY), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "blueprint_library"), "inventory"));
     }
 }

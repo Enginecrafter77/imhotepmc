@@ -5,7 +5,6 @@ import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
 import dev.enginecrafter77.imhotepmc.container.ContainerBlueprintLibrary;
-import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.net.MessageInscribeBlueprint;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
 import net.minecraft.client.Minecraft;
@@ -200,7 +199,10 @@ public class GUIBlueprintLibrary extends GuiContainer {
 			return;
 		case BUTTON_ID_SAVE:
 			ItemStack stack = this.libraryItemHandler.getStackInSlot(0);
-			SchematicBlueprint blueprint = ItemSchematicBlueprint.INSTANCE.getSchematic(stack);
+			SchematicBlueprint blueprint = ImhotepMod.ITEM_SCHEMATIC_BLUEPRINT.getSchematic(stack);
+			if(blueprint == null)
+				return;
+
 			File output = new File(ImhotepMod.instance.getSchematicsDir(), blueprint.getName() + ".litematic");
 			try(FileOutputStream fos = new FileOutputStream(output))
 			{

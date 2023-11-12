@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.container;
 
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -24,8 +25,8 @@ public class SlotBlueprint extends SlotItemHandler {
 	@Override
 	public boolean isItemValid(@Nonnull ItemStack stack)
 	{
-		if(stack.getItem() != ItemSchematicBlueprint.INSTANCE)
+		if(!(stack.getItem() instanceof ItemSchematicBlueprint))
 			return false;
-		return !this.requireWritten || ItemSchematicBlueprint.INSTANCE.getMetadata(stack) == ItemSchematicBlueprint.META_WRITTEN;
+		return !this.requireWritten || ImhotepMod.ITEM_SCHEMATIC_BLUEPRINT.getMetadata(stack) == ItemSchematicBlueprint.META_WRITTEN;
 	}
 }
