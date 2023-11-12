@@ -24,7 +24,7 @@ public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializabl
 	protected CompactPalettedBitVector(ImmutableBiMap<T, Integer> palette)
 	{
 		this.palette = palette;
-		this.bitsPerEntry = (int)Math.ceil(Math.log(palette.size()) / Math.log(2));
+		this.bitsPerEntry = Math.max((int)Math.ceil(Math.log(palette.size()) / Math.log(2)), 1);
 		this.entriesPerSlot = (Long.BYTES * 8) / this.bitsPerEntry;
 		this.entryMask = ~(-1L << this.bitsPerEntry);
 	}

@@ -1,17 +1,24 @@
 package dev.enginecrafter77.imhotepmc;
 
+import dev.enginecrafter77.imhotepmc.block.BlockBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.ResolvedBlueprintBlock;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
+import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.net.MessageBlueprintInscribeHandler;
+import dev.enginecrafter77.imhotepmc.net.MessageInscribeBlueprint;
+import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,6 +35,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,11 +72,18 @@ public class ImhotepMod {
 
     private File schematicsDir;
     private SchematicBlueprint sampleSchamatic;
+    private SimpleNetworkWrapper netChannel;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
         MinecraftForge.EVENT_BUS.register(this);
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
+        GameRegistry.registerTileEntity(TileEntityBlueprintLibrary.class, TileEntityBlueprintLibrary.ID);
+
+        this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID);
+        this.netChannel.registerMessage(MessageBlueprintInscribeHandler.class, MessageInscribeBlueprint.class, 0, Side.SERVER);
 
         File configDir = event.getModConfigurationDirectory();
         File gameDirectory = configDir.getParentFile();
@@ -121,11 +139,37 @@ public class ImhotepMod {
         }
     }
 
+    public File getSchematicsDir()
+    {
+        return this.schematicsDir;
+    }
+
+    public SimpleNetworkWrapper getNetChannel()
+    {
+        return this.netChannel;
+    }
+
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event)
     {
         IForgeRegistry<Item> reg = event.getRegistry();
         reg.register(ItemSchematicBlueprint.INSTANCE);
+
+        this.registerItemBlock(reg, BlockBlueprintLibrary.INSTANCE);
+    }
+
+    @SubscribeEvent
+    public void registerBlocks(RegistryEvent.Register<Block> event)
+    {
+        IForgeRegistry<Block> reg = event.getRegistry();
+        reg.register(BlockBlueprintLibrary.INSTANCE);
+    }
+
+    private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
+    {
+        Item item = new ItemBlock(block);
+        item.setRegistryName(block.getRegistryName());
+        reg.register(item);
     }
 
     @SubscribeEvent

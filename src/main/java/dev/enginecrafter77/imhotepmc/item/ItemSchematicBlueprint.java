@@ -45,7 +45,7 @@ public class ItemSchematicBlueprint extends Item {
 
 		NBTTagCompound tag = stack.getTagCompound();
 		if(tag == null)
-			return;
+			tag = new NBTTagCompound();
 
 		if(blueprint == null)
 		{
@@ -55,6 +55,8 @@ public class ItemSchematicBlueprint extends Item {
 		{
 			tag.setTag(SCHEMATIC, ITEM_SERIALIZER.serializeBlueprint(blueprint));
 		}
+
+		stack.setTagCompound(tag);
 	}
 
 	@Nullable
