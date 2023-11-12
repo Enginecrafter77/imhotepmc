@@ -37,7 +37,8 @@ public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializabl
 	public CompactPalettedBitVector(List<T> palette, int size)
 	{
 		this(palette);
-		int arrayLength = (int)Math.ceil((double)size / (double)this.entriesPerSlot / (float)(Long.BYTES * 8));
+		int bits = size * this.bitsPerEntry;
+		int arrayLength = (int)Math.ceil((double)bits / 64D);
 		this.setArray(new long[arrayLength]);
 	}
 
