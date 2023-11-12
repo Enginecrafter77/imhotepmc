@@ -5,7 +5,7 @@ import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
 import dev.enginecrafter77.imhotepmc.container.ContainerBlueprintLibrary;
-import dev.enginecrafter77.imhotepmc.net.MessageInscribeBlueprint;
+import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamClientChannel;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -16,6 +16,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -185,17 +186,19 @@ public class GUIBlueprintLibrary extends GuiContainer {
 			this.setPageStart(this.pageStart - this.itemRectangles.length);
 			return;
 		case BUTTON_ID_LOAD:
-			try(InputStream inputStream = Files.newInputStream(this.schematics[this.selected].toPath()))
-			{
-				NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
-				SchematicBlueprint blueprint = serializer.deserializeBlueprint(tag);
-
-				ImhotepMod.instance.getNetChannel().sendToServer(MessageInscribeBlueprint.createMessage(this.tileEntityBlueprintLibrary.getPos(), blueprint));
-			}
-			catch(IOException exc)
-			{
-				LOGGER.error("Cannot open sample schematic", exc);
-			}
+			ImhotepMod.instance.getPacketStreamClient().connect("blueprint-encode", (PacketStreamClientChannel channel) -> {
+				try(InputStream inputStream = Files.newInputStream(this.schematics[this.selected].toPath()))
+				{
+					NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
+					tag.setTag("TileEntityPosition", NBTUtil.createPosTag(this.tileEntityBlueprintLibrary.getPos()));
+					CompressedStreamTools.writeCompressed(tag, channel.getOutputStream());
+					channel.close();
+				}
+				catch(IOException exc)
+				{
+					LOGGER.error("Cannot open sample schematic", exc);
+				}
+			});
 			return;
 		case BUTTON_ID_SAVE:
 			ItemStack stack = this.libraryItemHandler.getStackInSlot(0);
