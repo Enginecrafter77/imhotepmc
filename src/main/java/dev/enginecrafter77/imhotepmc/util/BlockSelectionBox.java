@@ -6,6 +6,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 	private static final String KEY_NBT_SOURCE_X = "x1";
@@ -15,18 +16,22 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 	private static final String KEY_NBT_DEST_Y = "y2";
 	private static final String KEY_NBT_DEST_Z = "z2";
 
-	private final BlockPos.MutableBlockPos start;
-	private final BlockPos.MutableBlockPos end;
+	private static final Vec3i ONE = new Vec3i(1, 1, 1);
+
+	private final BlockPos.MutableBlockPos start; // Inclusive
+	private final BlockPos.MutableBlockPos end; // Exclusive
 
 	public BlockSelectionBox()
 	{
-		this(BlockPos.ORIGIN, BlockPos.ORIGIN);
+		this.start = new BlockPos.MutableBlockPos(BlockPos.ORIGIN);
+		this.end = new BlockPos.MutableBlockPos(BlockPos.ORIGIN);
 	}
 
 	public BlockSelectionBox(@Nonnull BlockPos start, @Nonnull BlockPos end)
 	{
-		this.start = new BlockPos.MutableBlockPos(start);
-		this.end = new BlockPos.MutableBlockPos(end);
+		this();
+		this.setStart(start);
+		this.setEnd(end);
 	}
 
 	public void setStart(@Nonnull BlockPos start)
@@ -36,7 +41,7 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 
 	public void setEnd(@Nonnull BlockPos end)
 	{
-		this.end.setPos(end);
+		this.end.setPos(end.add(ONE));
 	}
 
 	public void set(BlockSelectionBox other)
@@ -61,9 +66,9 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 
 	public boolean contains(Vec3i vector)
 	{
-		return vector.getX() >= this.start.getX() && vector.getX() <= this.end.getX() &&
-				vector.getY() >= this.start.getY() && vector.getY() <= this.end.getY() &&
-				vector.getZ() >= this.start.getZ() && vector.getZ() <= this.end.getZ();
+		return vector.getX() >= this.start.getX() && vector.getX() < this.end.getX() &&
+				vector.getY() >= this.start.getY() && vector.getY() < this.end.getY() &&
+				vector.getZ() >= this.start.getZ() && vector.getZ() < this.end.getZ();
 	}
 
 	public void interect(BlockSelectionBox other)
@@ -102,6 +107,18 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Override
+	public boolean equals(Object obj)
+	{
+		if(!(obj instanceof BlockSelectionBox))
+			return false;
+		BlockSelectionBox other = (BlockSelectionBox)obj;
+		if(this == other)
+			return true;
+
+		return Objects.equals(this.start, other.start) && Objects.equals(this.end, other.end);
+	}
+
+	@Override
 	public NBTTagCompound serializeNBT()
 	{
 		NBTTagCompound compound = new NBTTagCompound();
@@ -126,5 +143,11 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 
 		this.start.setPos(sx, sy, sz);
 		this.end.setPos(dx, dy, dz);
+	}
+
+	@Override
+	public String toString()
+	{
+		return String.format("Box(%d:%d:%d/%d:%d:%d)", this.start.getX(), this.start.getY(), this.start.getZ(), this.end.getX(), this.end.getY(), this.end.getZ());
 	}
 }
