@@ -53,11 +53,6 @@ public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializabl
 		this.data = array;
 	}
 
-	protected int getBitPositionInSlot(int index)
-	{
-		return (this.entriesPerSlot - 1 - (index % this.entriesPerSlot)) * this.bitsPerEntry;
-	}
-
 	public int getLength()
 	{
 		return this.entryCount;
