@@ -137,7 +137,7 @@ public class TestBlueprintSemantics {
 		RegionBlueprint regionBlueprint = this.createRegion();
 
 		Assertions.assertDoesNotThrow(() -> {
-			schematicBlueprint.addRegion("New", regionBlueprint, new BlockPos(5, 5, 5));
+			schematicBlueprint.edit().addRegion("New", regionBlueprint, new BlockPos(5, 5, 5)).build();
 		});
 	}
 
@@ -148,7 +148,7 @@ public class TestBlueprintSemantics {
 		RegionBlueprint regionBlueprint = this.createRegion();
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
-			schematicBlueprint.addRegion("New", regionBlueprint, new BlockPos(1, 1, 1));
+			schematicBlueprint.edit().addRegion("New", regionBlueprint, new BlockPos(1, 1, 1)).build();
 		});
 	}
 
@@ -189,17 +189,17 @@ public class TestBlueprintSemantics {
 	private SchematicBlueprint createBlueprint()
 	{
 		RegionBlueprint region = this.createRegion();
-		SchematicBlueprint blueprint = new SchematicBlueprint();
-		blueprint.addRegion("Main", region, BlockPos.ORIGIN);
-		return blueprint;
+		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
+		builder.addRegion("Main", region, BlockPos.ORIGIN);
+		return builder.build();
 	}
 
 	private SchematicBlueprint createMultiRegionBlueprint()
 	{
 		RegionBlueprint region = this.createRegion();
-		SchematicBlueprint blueprint = new SchematicBlueprint();
-		blueprint.addRegion("Reg1", region, BlockPos.ORIGIN);
-		blueprint.addRegion("Reg2", region, new BlockPos(5, 5, 5));
-		return blueprint;
+		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
+		builder.addRegion("Reg1", region, BlockPos.ORIGIN);
+		builder.addRegion("Reg2", region, new BlockPos(5, 5, 5));
+		return builder.build();
 	}
 }

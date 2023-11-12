@@ -1,9 +1,6 @@
 package dev.enginecrafter77.imhotepmc.test;
 
-import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.RegionBlueprint;
-import dev.enginecrafter77.imhotepmc.blueprint.SavedTileState;
-import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -34,13 +31,16 @@ public class TestBlueprintLitematicaSerialize {
 		builder.addBlock(new BlockPos(14, 2, 14), block);
 		RegionBlueprint region = builder.build();
 
-		SchematicBlueprint blueprint = new SchematicBlueprint();
-		blueprint.addRegion("Main", region, new BlockPos(2, 2, 2));
-		blueprint.setName("TEST1");
-		blueprint.setAuthor("TESTER");
-		blueprint.setDescription("Testing schematic");
-		blueprint.setCreateTime(Instant.now().minusSeconds(10));
-		blueprint.setModifyTime(Instant.now());
+		SchematicBlueprint.Builder schematicBuilder = SchematicBlueprint.builder();
+		MutableSchematicMetadata metadata = new MutableSchematicMetadata();
+		metadata.setName("TEST1");
+		metadata.setAuthor("TESTER");
+		metadata.setDescription("Testing schematic");
+		metadata.setCreateTime(Instant.now().minusSeconds(10));
+		metadata.setModifyTime(Instant.now());
+		schematicBuilder.setMetadata(metadata);
+		schematicBuilder.addRegion("Main", region, new BlockPos(2, 2, 2));
+		SchematicBlueprint blueprint = schematicBuilder.build();
 
 		LitematicaBlueprintSerializer serializer = new LitematicaBlueprintSerializer();
 

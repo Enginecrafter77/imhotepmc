@@ -150,7 +150,8 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	@Override
 	public SchematicBlueprint deserializeBlueprint(NBTTagCompound source)
 	{
-		SchematicBlueprint blueprint = this.deserializeBlueprintMetadata(source);
+		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
+		builder.setMetadata(this.deserializeBlueprintMetadata(source));
 
 		NBTTagCompound regions = source.getCompoundTag("Regions");
 		for(String name : regions.getKeySet())
@@ -158,23 +159,26 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 			NBTTagCompound regionTag = regions.getCompoundTag(name);
 			RegionBlueprint region = deserializeRegionBlueprint(regionTag);
 			BlockPos offset = new BlockPos(readVector(regionTag.getCompoundTag("Position")));
-			blueprint.addRegion(name, region, offset);
+			builder.addRegion(name, region, offset);
 		}
 
-		return blueprint;
+		return builder.build();
 	}
 
 	@Override
-	public SchematicBlueprint deserializeBlueprintMetadata(NBTTagCompound source)
+	public SchematicMetadata deserializeBlueprintMetadata(NBTTagCompound source)
 	{
-		SchematicBlueprint blueprint = new SchematicBlueprint();
+		MutableSchematicMetadata metadata = new MutableSchematicMetadata();
 		NBTTagCompound meta = source.getCompoundTag("Metadata");
-		blueprint.setCreateTime(Instant.ofEpochMilli(meta.getLong("TimeCreated")));
-		blueprint.setModifyTime(Instant.ofEpochMilli(meta.getLong("TimeModified")));
-		blueprint.setAuthor(meta.getString("Author"));
-		blueprint.setDescription(meta.getString("Description"));
-		blueprint.setName(meta.getString("Name"));
-		return blueprint;
+		metadata.setCreateTime(Instant.ofEpochMilli(meta.getLong("TimeCreated")));
+		metadata.setModifyTime(Instant.ofEpochMilli(meta.getLong("TimeModified")));
+		metadata.setAuthor(meta.getString("Author"));
+		metadata.setDescription(meta.getString("Description"));
+		metadata.setName(meta.getString("Name"));
+		metadata.setBlockCount(meta.getInteger("TotalBlocks"));
+		metadata.setRegionCount(meta.getCompoundTag("Regions").getSize());
+		metadata.setSize(readVector(meta.getCompoundTag("EnclosingSize")));
+		return metadata;
 	}
 
 	public RegionBlueprint deserializeRegionBlueprint(NBTTagCompound regionTag)

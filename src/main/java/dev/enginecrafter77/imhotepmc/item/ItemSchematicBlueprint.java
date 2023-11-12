@@ -4,6 +4,7 @@ import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.SchematicMetadata;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -85,13 +86,13 @@ public class ItemSchematicBlueprint extends Item {
 		}
 
 		NBTTagCompound schem = tag.getCompoundTag(SCHEMATIC);
-		SchematicBlueprint blueprint = ITEM_SERIALIZER.deserializeBlueprintMetadata(schem);
+		SchematicMetadata meta = ITEM_SERIALIZER.deserializeBlueprintMetadata(schem);
 
-		tooltip.add("Name: " + blueprint.getName());
-		tooltip.add("Description: " + blueprint.getDescription());
-		tooltip.add("Author: " + blueprint.getAuthor());
-		tooltip.add("Size: " + sizeVectorToString(blueprint.getSize()));
-		tooltip.add("Region count: " + blueprint.getRegionCount());
+		tooltip.add("Name: " + meta.getName());
+		tooltip.add("Description: " + meta.getDescription());
+		tooltip.add("Author: " + meta.getAuthor());
+		tooltip.add("Size: " + sizeVectorToString(meta.getSize()));
+		tooltip.add("Region count: " + meta.getRegionCount());
 	}
 
 	private static String sizeVectorToString(Vec3i vector)
