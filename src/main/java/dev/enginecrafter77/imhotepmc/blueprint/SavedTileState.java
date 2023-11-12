@@ -4,15 +4,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class SavedTileState {
+public class SavedTileState implements BlueprintEntry {
 	private final SavedBlockState state;
 
 	@Nullable
@@ -39,6 +41,40 @@ public class SavedTileState {
 		return new SavedTileState(this.state, tileEntity);
 	}
 
+	@Override
+	public ResourceLocation getBlockName()
+	{
+		return this.state.getBlockName();
+	}
+
+	@Override
+	public Map<String, String> getBlockProperties()
+	{
+		return this.state.getBlockProperties();
+	}
+
+	@Nullable
+	@Override
+	public NBTTagCompound getTileEntitySavedData()
+	{
+		return this.tileEntity;
+	}
+
+	@Nullable
+	@Override
+	public Block getBlock()
+	{
+		return this.state.getBlock();
+	}
+
+	@Nullable
+	@Override
+	public IBlockState createBlockState()
+	{
+		return this.state.createBlockState();
+	}
+
+	@Override
 	public boolean hasTileEntity()
 	{
 		return this.tileEntity != null;
@@ -56,6 +92,7 @@ public class SavedTileState {
 	}
 
 	@Nullable
+	@Override
 	public TileEntity createTileEntity(World world)
 	{
 		if(this.tileEntity == null)
@@ -109,5 +146,12 @@ public class SavedTileState {
 		@Nullable TileEntity tile = world.getTileEntity(position);
 		@Nullable NBTTagCompound tileEntityData = Optional.ofNullable(tile).map(TileEntity::serializeNBT).orElse(null);
 		return new SavedTileState(block, tileEntityData);
+	}
+
+	public static SavedTileState copyOf(BlueprintEntry entry)
+	{
+		if(entry instanceof SavedTileState)
+			return (SavedTileState)entry;
+		return new SavedTileState(SavedBlockState.copyOf(entry), entry.getTileEntitySavedData());
 	}
 }

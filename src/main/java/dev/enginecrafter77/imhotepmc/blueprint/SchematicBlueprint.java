@@ -143,7 +143,7 @@ public class SchematicBlueprint implements Blueprint {
 
 	@Nullable
 	@Override
-	public ResolvedBlueprintBlock getBlockAt(BlockPos position)
+	public BlueprintEntry getBlockAt(BlockPos position)
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
 		for(OffsetRegionBlueprint blueprint : this.regions.values())
@@ -213,7 +213,7 @@ public class SchematicBlueprint implements Blueprint {
 
 		@Nullable
 		@Override
-		public ResolvedBlueprintBlock getBlockAt(BlockPos position)
+		public BlueprintEntry getBlockAt(BlockPos position)
 		{
 			return this.regionBlueprint.getBlockAt(position.subtract(this.offset));
 		}

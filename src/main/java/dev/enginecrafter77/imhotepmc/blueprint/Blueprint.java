@@ -11,7 +11,7 @@ import java.util.Iterator;
 
 public interface Blueprint extends Iterable<BlueprintVoxel> {
 	@Nullable
-	public ResolvedBlueprintBlock getBlockAt(BlockPos position);
+	public BlueprintEntry getBlockAt(BlockPos position);
 
 	public int getBlockCount();
 

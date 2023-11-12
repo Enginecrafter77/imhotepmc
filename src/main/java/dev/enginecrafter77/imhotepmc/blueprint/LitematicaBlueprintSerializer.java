@@ -9,7 +9,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
@@ -79,7 +82,6 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 				.getStructureBlocks()
 				.values()
 				.stream()
-				.map(ResolvedBlueprintBlock::save)
 				.map(SavedTileState::getSavedBlockState)
 				.distinct()
 				.collect(Collectors.toList());
@@ -102,10 +104,9 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		for(int index = 0; index < vector.getLength(); ++index)
 		{
 			BlockPos pos = indexer.fromIndex(index);
-			ResolvedBlueprintBlock block = blueprint.getRegionBlueprint().getStructureBlocks().get(pos);
-			if(block != null)
+			SavedTileState savedTileState = blueprint.getRegionBlueprint().getStructureBlocks().get(pos);
+			if(savedTileState != null)
 			{
-				SavedTileState savedTileState = block.save();
 				vector.set(index, savedTileState.getSavedBlockState());
 				NBTTagCompound tileEntity = savedTileState.getTileEntity();
 				if(tileEntity != null)

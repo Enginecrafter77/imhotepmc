@@ -1,7 +1,7 @@
 package dev.enginecrafter77.imhotepmc.blueprint.iter;
 
 import dev.enginecrafter77.imhotepmc.blueprint.Blueprint;
-import dev.enginecrafter77.imhotepmc.blueprint.ResolvedBlueprintBlock;
+import dev.enginecrafter77.imhotepmc.blueprint.BlueprintEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
@@ -33,7 +33,7 @@ public class BlueprintIterator implements Iterator<BlueprintVoxel> {
 	public BlueprintVoxel next()
 	{
 		BlockPos pos = this.itr.next();
-		ResolvedBlueprintBlock block = this.blueprint.getBlockAt(pos);
+		BlueprintEntry block = this.blueprint.getBlockAt(pos);
 		this.voxel.set(pos, block);
 		return this.voxel;
 	}

@@ -74,12 +74,12 @@ public class TestBlueprintSemantics {
 	{
 		Blueprint blueprint = this.createRegion();
 
-		ResolvedBlueprintBlock block000 = blueprint.getBlockAt(new BlockPos(0, 0, 0));
-		ResolvedBlueprintBlock block111 = blueprint.getBlockAt(new BlockPos(1, 1, 1));
+		BlueprintEntry block000 = blueprint.getBlockAt(new BlockPos(0, 0, 0));
+		BlueprintEntry block111 = blueprint.getBlockAt(new BlockPos(1, 1, 1));
 
 		Assertions.assertNull(block000);
 		Assertions.assertNotNull(block111);
-		Assertions.assertEquals(Blocks.IRON_BLOCK, block111.getBlockState().getBlock());
+		Assertions.assertEquals(Blocks.IRON_BLOCK, block111.getBlock());
 	}
 
 	@Test
@@ -122,12 +122,12 @@ public class TestBlueprintSemantics {
 	{
 		Blueprint blueprint = this.createBlueprint();
 
-		ResolvedBlueprintBlock block000 = blueprint.getBlockAt(new BlockPos(0, 0, 0));
-		ResolvedBlueprintBlock block111 = blueprint.getBlockAt(new BlockPos(1, 1, 1));
+		BlueprintEntry block000 = blueprint.getBlockAt(new BlockPos(0, 0, 0));
+		BlueprintEntry block111 = blueprint.getBlockAt(new BlockPos(1, 1, 1));
 
 		Assertions.assertNull(block000);
 		Assertions.assertNotNull(block111);
-		Assertions.assertEquals(Blocks.IRON_BLOCK, block111.getBlockState().getBlock());
+		Assertions.assertEquals(Blocks.IRON_BLOCK, block111.getBlock());
 	}
 
 	@Test
@@ -157,9 +157,9 @@ public class TestBlueprintSemantics {
 	{
 		SchematicBlueprint blueprint = this.createMultiRegionBlueprint();
 
-		ResolvedBlueprintBlock block111 = blueprint.getBlockAt(new BlockPos(1, 1, 1));
-		ResolvedBlueprintBlock block333 = blueprint.getBlockAt(new BlockPos(3, 3, 3));
-		ResolvedBlueprintBlock block666 = blueprint.getBlockAt(new BlockPos(6, 6, 6));
+		BlueprintEntry block111 = blueprint.getBlockAt(new BlockPos(1, 1, 1));
+		BlueprintEntry block333 = blueprint.getBlockAt(new BlockPos(3, 3, 3));
+		BlueprintEntry block666 = blueprint.getBlockAt(new BlockPos(6, 6, 6));
 
 		Assertions.assertNotNull(block111);
 		Assertions.assertNull(block333);

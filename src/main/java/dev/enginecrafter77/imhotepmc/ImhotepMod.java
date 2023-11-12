@@ -3,7 +3,6 @@ package dev.enginecrafter77.imhotepmc;
 import dev.enginecrafter77.imhotepmc.block.BlockBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.ResolvedBlueprintBlock;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
@@ -131,13 +130,13 @@ public class ImhotepMod {
         for(BlueprintVoxel entry : this.sampleSchamatic)
         {
             BlockPos dest = start.add(entry.getPosition());
-            ResolvedBlueprintBlock data = entry.getBlock();
-
-            IBlockState state = data.getBlockState();
+            IBlockState state = entry.createBlockState();
+            if(state == null)
+                return;
 
             world.setBlockState(dest, state, 2);
 
-            TileEntity tile = data.createTileEntity(world);
+            TileEntity tile = entry.createTileEntity(world);
             if(tile != null)
                 world.setTileEntity(dest, tile);
 

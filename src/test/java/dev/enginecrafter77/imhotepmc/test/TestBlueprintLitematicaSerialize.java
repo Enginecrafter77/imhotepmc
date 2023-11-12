@@ -1,8 +1,8 @@
 package dev.enginecrafter77.imhotepmc.test;
 
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.SavedTileState;
 import dev.enginecrafter77.imhotepmc.blueprint.RegionBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.SavedTileState;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
@@ -66,7 +66,11 @@ public class TestBlueprintLitematicaSerialize {
 			NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
 			LitematicaBlueprintSerializer serializer = new LitematicaBlueprintSerializer();
 			SchematicBlueprint blueprint = serializer.deserializeBlueprint(tag);
-			Assertions.assertEquals(1, blueprint.getRegionCount());
+
+			NBTTagCompound res = serializer.serializeBlueprint(blueprint);
+			SchematicBlueprint rec = serializer.deserializeBlueprint(res);
+
+			Assertions.assertEquals(blueprint, rec);
 		}
 		catch(Exception exc)
 		{

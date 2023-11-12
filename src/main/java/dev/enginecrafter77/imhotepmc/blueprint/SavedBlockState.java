@@ -6,17 +6,20 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class SavedBlockState {
+public class SavedBlockState implements BlueprintEntry {
 	private final ResourceLocation name;
 
 	private final Map<String, String> blockProps;
@@ -61,16 +64,6 @@ public class SavedBlockState {
 		return this.withProperties(builder.build());
 	}
 
-	public ResourceLocation getBlockName()
-	{
-		return this.name;
-	}
-
-	public Map<String, String> getBlockProperties()
-	{
-		return this.blockProps;
-	}
-
 	public String getProperty(String key)
 	{
 		return this.blockProps.get(key);
@@ -81,15 +74,39 @@ public class SavedBlockState {
 		return this.getProperty(prop.getName());
 	}
 
-	@Nonnull
-	public Block resolveBlock()
+	@Override
+	public ResourceLocation getBlockName()
+	{
+		return this.name;
+	}
+
+	@Override
+	public Map<String, String> getBlockProperties()
+	{
+		return this.blockProps;
+	}
+
+	@Nullable
+	@Override
+	public NBTTagCompound getTileEntitySavedData()
+	{
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public Block getBlock()
 	{
 		return Block.REGISTRY.getObject(this.name);
 	}
 
+	@Nullable
 	public IBlockState createBlockState()
 	{
-		Block blk = this.resolveBlock();
+		Block blk = this.getBlock();
+		if(blk == null)
+			return null;
+
 		IBlockState state = blk.getDefaultState();
 		BlockStateContainer container = blk.getBlockState();
 
@@ -102,6 +119,19 @@ public class SavedBlockState {
 		}
 
 		return state;
+	}
+
+	@Override
+	public boolean hasTileEntity()
+	{
+		return false;
+	}
+
+	@Nullable
+	@Override
+	public TileEntity createTileEntity(World world)
+	{
+		return null;
 	}
 
 	@Override
@@ -158,6 +188,8 @@ public class SavedBlockState {
 		Block block = state.getBlock();
 		BlockStateContainer container = block.getBlockState();
 		ResourceLocation blockName = block.getRegistryName();
+		if(blockName == null)
+			throw new IllegalArgumentException("Cannot serialize block with no registry name!");
 		ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
 		for(IProperty<?> prop : container.getProperties())
 			builder.put(SavedBlockState.serializeProperty(prop, state));
@@ -167,6 +199,13 @@ public class SavedBlockState {
 	public static SavedBlockState sample(IBlockAccess world, BlockPos position)
 	{
 		return SavedBlockState.fromBlockState(world.getBlockState(position));
+	}
+
+	public static SavedBlockState copyOf(BlueprintEntry entry)
+	{
+		if(entry instanceof SavedBlockState)
+			return (SavedBlockState)entry;
+		return new SavedBlockState(entry.getBlockName(), entry.getBlockProperties());
 	}
 
 	private static <T extends Comparable<T>> Map.Entry<String, String> serializeProperty(IProperty<T> prop, IBlockState state)

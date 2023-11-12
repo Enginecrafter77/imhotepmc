@@ -21,10 +21,10 @@ import java.util.Objects;
 public class RegionBlueprint implements Blueprint {
 	private static final RegionBlueprint EMPTY = new RegionBlueprint(ImmutableMap.of(), Vec3i.NULL_VECTOR);
 
-	private final Map<BlockPos, ResolvedBlueprintBlock> blocks;
+	private final Map<BlockPos, SavedTileState> blocks;
 	private final Vec3i size;
 
-	public RegionBlueprint(Map<BlockPos, ResolvedBlueprintBlock> blocks, Vec3i size)
+	public RegionBlueprint(Map<BlockPos, SavedTileState> blocks, Vec3i size)
 	{
 		this.blocks = blocks;
 		this.size = size;
@@ -38,7 +38,7 @@ public class RegionBlueprint implements Blueprint {
 
 	@Nullable
 	@Override
-	public ResolvedBlueprintBlock getBlockAt(BlockPos position)
+	public SavedTileState getBlockAt(BlockPos position)
 	{
 		return this.blocks.get(position);
 	}
@@ -92,7 +92,7 @@ public class RegionBlueprint implements Blueprint {
 		return this.blocks.size();
 	}
 
-	public Map<BlockPos, ResolvedBlueprintBlock> getStructureBlocks()
+	public Map<BlockPos, SavedTileState> getStructureBlocks()
 	{
 		return this.blocks;
 	}
@@ -118,8 +118,7 @@ public class RegionBlueprint implements Blueprint {
 
 		public void merge(RegionBlueprint other)
 		{
-			for(Map.Entry<BlockPos, ResolvedBlueprintBlock> entry : other.getStructureBlocks().entrySet())
-				this.data.put(entry.getKey(), entry.getValue().save());
+			this.data.putAll(other.blocks);
 		}
 
 		public RegionBlueprint.Builder addBlock(BlockPos position, SavedBlockState data)
@@ -185,21 +184,19 @@ public class RegionBlueprint implements Blueprint {
 			Vec3i size = new Vec3i(maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1);
 			Vec3i origin = new Vec3i(minX, minY, minZ);
 			
-			ImmutableMap.Builder<BlockPos, ResolvedBlueprintBlock> mb = ImmutableMap.builder();
+			ImmutableMap.Builder<BlockPos, SavedTileState> mb = ImmutableMap.builder();
 			for(Map.Entry<BlockPos, SavedTileState> entry : this.data.entrySet())
 			{
 				BlockPos offset = new BlockPos(VecUtil.difference(entry.getKey(), origin));
-				ResolvedBlueprintBlock blueprintBlock = ResolvedBlueprintBlock.from(entry.getValue());
-				mb.put(offset, blueprintBlock);
+				mb.put(offset, entry.getValue());
 			}
-
 			return new RegionBlueprint(mb.build(), size);
 		}
 	}
 
 	private class RegionIterator implements Iterator<BlueprintVoxel>
 	{
-		private final Iterator<Map.Entry<BlockPos, ResolvedBlueprintBlock>> iterator;
+		private final Iterator<Map.Entry<BlockPos, SavedTileState>> iterator;
 		private final MutableBlueprintVoxel voxel;
 
 		public RegionIterator()
@@ -217,7 +214,7 @@ public class RegionBlueprint implements Blueprint {
 		@Override
 		public BlueprintVoxel next()
 		{
-			Map.Entry<BlockPos, ResolvedBlueprintBlock> entry = this.iterator.next();
+			Map.Entry<BlockPos, SavedTileState> entry = this.iterator.next();
 			this.voxel.set(entry.getKey(), entry.getValue());
 			return this.voxel;
 		}
