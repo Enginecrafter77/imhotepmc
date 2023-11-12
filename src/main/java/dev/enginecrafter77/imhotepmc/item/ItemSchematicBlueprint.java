@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -89,7 +90,12 @@ public class ItemSchematicBlueprint extends Item {
 		tooltip.add("Name: " + blueprint.getName());
 		tooltip.add("Description: " + blueprint.getDescription());
 		tooltip.add("Author: " + blueprint.getAuthor());
-		tooltip.add("Size: " + blueprint.getSize());
+		tooltip.add("Size: " + sizeVectorToString(blueprint.getSize()));
 		tooltip.add("Region count: " + blueprint.getRegionCount());
+	}
+
+	private static String sizeVectorToString(Vec3i vector)
+	{
+		return String.format("%dx%dx%d", vector.getX(), vector.getY(), vector.getZ());
 	}
 }

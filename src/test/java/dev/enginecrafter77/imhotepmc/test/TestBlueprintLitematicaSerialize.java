@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
+import java.time.Instant;
 
 public class TestBlueprintLitematicaSerialize {
 	@Test
@@ -34,7 +35,12 @@ public class TestBlueprintLitematicaSerialize {
 		RegionBlueprint region = builder.build();
 
 		SchematicBlueprint blueprint = new SchematicBlueprint();
-		blueprint.addRegion("Main", region, BlockPos.ORIGIN);
+		blueprint.addRegion("Main", region, new BlockPos(2, 2, 2));
+		blueprint.setName("TEST1");
+		blueprint.setAuthor("TESTER");
+		blueprint.setDescription("Testing schematic");
+		blueprint.setCreateTime(Instant.now().minusSeconds(10));
+		blueprint.setModifyTime(Instant.now());
 
 		LitematicaBlueprintSerializer serializer = new LitematicaBlueprintSerializer();
 

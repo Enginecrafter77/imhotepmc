@@ -34,6 +34,19 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		return compound;
 	}
 
+	private static Vec3i readVector(NBTTagCompound tag)
+	{
+		int x = tag.getInteger("x");
+		int y = tag.getInteger("y");
+		int z = tag.getInteger("z");
+		return new Vec3i(x, y, z);
+	}
+
+	private static Vec3i absolutizeVector(Vec3i other)
+	{
+		return new Vec3i(Math.abs(other.getX()), Math.abs(other.getY()), Math.abs(other.getZ()));
+	}
+
 	protected NBTTagCompound createMetadataTag(SchematicBlueprint blueprint)
 	{
 		NBTTagCompound tag = new NBTTagCompound();
@@ -52,17 +65,18 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		return tag;
 	}
 
-	protected NBTTagCompound createRegionTag(RegionBlueprint blueprint)
+	protected NBTTagCompound createRegionTag(SchematicBlueprint.OffsetRegionBlueprint blueprint)
 	{
 		NBTTagCompound region = new NBTTagCompound();
 
-		region.setTag("Position", this.serializeVector(Vec3i.NULL_VECTOR));
+		region.setTag("Position", this.serializeVector(blueprint.getOrigin()));
 		region.setTag("Size", this.serializeVector(blueprint.getSize()));
 		region.setTag("PendingFluidTicks", new NBTTagList());
 		region.setTag("Entities", new NBTTagList());
 		region.setTag("PendingBlockTicks", new NBTTagList());
 
-		List<SavedBlockState> unique = blueprint.getStructureBlocks()
+		List<SavedBlockState> unique = blueprint.getRegionBlueprint()
+				.getStructureBlocks()
 				.values()
 				.stream()
 				.map(ResolvedBlueprintBlock::save)
@@ -88,7 +102,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		for(int index = 0; index < vector.getLength(); ++index)
 		{
 			BlockPos pos = indexer.fromIndex(index);
-			ResolvedBlueprintBlock block = blueprint.getStructureBlocks().get(pos);
+			ResolvedBlueprintBlock block = blueprint.getRegionBlueprint().getStructureBlocks().get(pos);
 			if(block != null)
 			{
 				SavedTileState savedTileState = block.save();
@@ -124,7 +138,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		NBTTagCompound regions = new NBTTagCompound();
 		for(String regionName : blueprint.getRegions())
 		{
-			RegionBlueprint region = blueprint.getRegion(regionName).getRegionBlueprint();
+			SchematicBlueprint.OffsetRegionBlueprint region = blueprint.getRegion(regionName);
 			regions.setTag(regionName, this.createRegionTag(region));
 		}
 		root.setTag("Regions", regions);
@@ -205,18 +219,5 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		builder.translate(this.blueprintTranslation);
 
 		return builder.build();
-	}
-
-	private static Vec3i readVector(NBTTagCompound tag)
-	{
-		int x = tag.getInteger("x");
-		int y = tag.getInteger("y");
-		int z = tag.getInteger("z");
-		return new Vec3i(x, y, z);
-	}
-
-	private static Vec3i absolutizeVector(Vec3i other)
-	{
-		return new Vec3i(Math.abs(other.getX()), Math.abs(other.getY()), Math.abs(other.getZ()));
 	}
 }
