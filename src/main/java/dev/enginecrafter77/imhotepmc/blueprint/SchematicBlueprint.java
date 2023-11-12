@@ -20,12 +20,15 @@ public class SchematicBlueprint implements Blueprint {
 	private String description;
 	private String author;
 	private String name;
+
+	private int totalBlocks;
 	private Vec3i size;
 
 	public SchematicBlueprint()
 	{
 		this.regions = new HashMap<String, OffsetRegionBlueprint>();
 		this.size = Vec3i.NULL_VECTOR;
+		this.totalBlocks = 0;
 		this.author = "Unknown";
 		this.name = "Unnamed";
 		this.description = "";
@@ -95,14 +98,16 @@ public class SchematicBlueprint implements Blueprint {
 		for(OffsetRegionBlueprint region : this.regions.values())
 		{
 			this.computeBlueprintBoundingBox(region, regionBox);
-			regionBox.interect(newRegionBox);
+			regionBox.intersect(newRegionBox);
 			if(regionBox.getVolume() > 0)
 				throw new IllegalArgumentException("Regions cannot overlap!");
 			totalBox.union(regionBox);
 		}
+		totalBox.union(newRegionBox);
 
 		this.regions.put(name, offsetBlueprint);
 		this.size = totalBox.getSize();
+		this.totalBlocks += offsetBlueprint.getBlockCount();
 	}
 
 	public Iterable<String> getRegions()
@@ -118,13 +123,13 @@ public class SchematicBlueprint implements Blueprint {
 	@Override
 	public int getBlockCount()
 	{
-		return this.regions.values().stream().mapToInt(Blueprint::getBlockCount).sum();
+		return this.totalBlocks;
 	}
 
 	private void computeBlueprintBoundingBox(Blueprint blueprint, BlockSelectionBox box)
 	{
 		box.setStart(blueprint.getOrigin());
-		box.setStart(blueprint.getOrigin().add(blueprint.getSize()).subtract(ONE));
+		box.setEnd(blueprint.getOrigin().add(blueprint.getSize()).subtract(ONE));
 	}
 
 	@Nonnull
