@@ -92,11 +92,6 @@ public class RegionBlueprint implements Blueprint {
 		return this.blocks.size();
 	}
 
-	public int getTotalVolume()
-	{
-		return this.size.getX() * this.size.getY() * this.size.getZ();
-	}
-
 	public Map<BlockPos, ResolvedBlueprintBlock> getStructureBlocks()
 	{
 		return this.blocks;
