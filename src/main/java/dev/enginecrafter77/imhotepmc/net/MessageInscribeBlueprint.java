@@ -18,10 +18,12 @@ public class MessageInscribeBlueprint implements IMessage {
 
 	private final BlockPos.MutableBlockPos blockPos;
 	private SchematicBlueprint blueprint;
+	private int blueprintChecksum;
 
 	public MessageInscribeBlueprint()
 	{
 		this.blockPos = new BlockPos.MutableBlockPos();
+		this.blueprintChecksum = 0;
 		this.blueprint = null;
 		this.serializer = new LitematicaBlueprintSerializer();
 	}
@@ -36,6 +38,11 @@ public class MessageInscribeBlueprint implements IMessage {
 		return this.blueprint;
 	}
 
+	public boolean isValid()
+	{
+		return this.blueprintChecksum == this.blueprint.hashCode();
+	}
+
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
@@ -46,6 +53,7 @@ public class MessageInscribeBlueprint implements IMessage {
 		NBTTagCompound schem = tag.getCompoundTag(NBT_KEY_SCHEM);
 		this.blueprint = this.serializer.deserializeBlueprint(schem);
 		this.blockPos.setPos(NBTUtil.getPosFromTag(pos));
+		this.blueprintChecksum = buf.readInt();
 	}
 
 	@Override
@@ -58,6 +66,7 @@ public class MessageInscribeBlueprint implements IMessage {
 		tag.setTag(NBT_KEY_POS, pos);
 		tag.setTag(NBT_KEY_SCHEM, schem);
 		ByteBufUtils.writeTag(buf, tag);
+		buf.writeInt(this.blueprintChecksum);
 	}
 
 	public static MessageInscribeBlueprint createMessage(BlockPos pos, SchematicBlueprint blueprint)
@@ -65,6 +74,7 @@ public class MessageInscribeBlueprint implements IMessage {
 		MessageInscribeBlueprint msg = new MessageInscribeBlueprint();
 		msg.blockPos.setPos(pos);
 		msg.blueprint = blueprint;
+		msg.blueprintChecksum = blueprint.hashCode();
 		return msg;
 	}
 }

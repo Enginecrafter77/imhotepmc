@@ -18,6 +18,12 @@ public class MessageBlueprintInscribeHandler implements IMessageHandler<MessageI
 	@Override
 	public IMessage onMessage(MessageInscribeBlueprint message, MessageContext ctx)
 	{
+		if(!message.isValid())
+		{
+			LOGGER.error("Invalid blueprint checksum!");
+			return null;
+		}
+
 		World world = ctx.getServerHandler().player.world;
 		TileEntityBlueprintLibrary tile = (TileEntityBlueprintLibrary)world.getTileEntity(message.getPosition());
 		if(tile == null)
