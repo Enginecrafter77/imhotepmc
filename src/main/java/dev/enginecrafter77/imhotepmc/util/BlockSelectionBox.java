@@ -71,7 +71,7 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 				vector.getZ() >= this.start.getZ() && vector.getZ() < this.end.getZ();
 	}
 
-	public void interect(BlockSelectionBox other)
+	public void intersect(BlockSelectionBox other)
 	{
 		int dmx = Math.max(this.start.getX(), other.start.getX());
 		int dmy = Math.max(this.start.getY(), other.start.getY());
@@ -79,6 +79,13 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 		int dMx = Math.min(this.end.getX(), other.end.getX());
 		int dMy = Math.min(this.end.getY(), other.end.getY());
 		int dMz = Math.min(this.end.getZ(), other.end.getZ());
+
+		if(dMx < dmx || dMy < dmy || dMz < dmz) // Non-overlapping
+		{
+			this.reset();
+			return;
+		}
+
 		this.start.setPos(dmx, dmy, dmz);
 		this.end.setPos(dMx, dMy, dMz);
 	}

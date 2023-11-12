@@ -130,10 +130,27 @@ public class BlockSelectionBoxTest {
 		box2.setStart(new BlockPos(0, 0, 0));
 		box2.setEnd(new BlockPos(2, 2, 2));
 
-		box.interect(box2);
+		box.intersect(box2);
 
 		Assertions.assertEquals(new Vec3i(2, 2, 2), box.getSize());
 		Assertions.assertEquals(8, box.getVolume());
+	}
+
+	@Test
+	public void testIntersectNonOverlapping()
+	{
+		BlockSelectionBox box = new BlockSelectionBox();
+		box.setStart(new BlockPos(-1, -1, -1));
+		box.setEnd(new BlockPos(1, 1, 1));
+
+		BlockSelectionBox box2 = new BlockSelectionBox();
+		box2.setStart(new BlockPos(5, 5, 5));
+		box2.setEnd(new BlockPos(8, 8, 8));
+
+		box.intersect(box2);
+
+		Assertions.assertEquals(new Vec3i(0, 0, 0), box.getSize());
+		Assertions.assertEquals(0, box.getVolume());
 	}
 
 	@Test
@@ -141,7 +158,7 @@ public class BlockSelectionBoxTest {
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
 		BlockSelectionBox box2 = new BlockSelectionBox();
-		box.interect(box2);
+		box.intersect(box2);
 
 		Assertions.assertEquals(Vec3i.NULL_VECTOR, box.getSize());
 		Assertions.assertEquals(0, box.getVolume());
@@ -155,7 +172,7 @@ public class BlockSelectionBoxTest {
 		box.setEnd(new BlockPos(1, 1, 1));
 
 		BlockSelectionBox box2 = new BlockSelectionBox();
-		box.interect(box2);
+		box.intersect(box2);
 
 		Assertions.assertEquals(Vec3i.NULL_VECTOR, box.getSize());
 		Assertions.assertEquals(0, box.getVolume());
@@ -169,7 +186,7 @@ public class BlockSelectionBoxTest {
 		box2.setStart(new BlockPos(-1, -1, -1));
 		box2.setEnd(new BlockPos(1, 1, 1));
 
-		box.interect(box2);
+		box.intersect(box2);
 
 		Assertions.assertEquals(Vec3i.NULL_VECTOR, box.getSize());
 		Assertions.assertEquals(0, box.getVolume());
