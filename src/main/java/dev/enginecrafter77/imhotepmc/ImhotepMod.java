@@ -132,33 +132,7 @@ public class ImhotepMod {
     @SubscribeEvent
     public void onItemUsedEvent(PlayerInteractEvent.RightClickBlock event)
     {
-        if(this.sampleSchamatic == null)
-        {
-            LOGGER.error("Sample schematic not loaded!");
-            return;
-        }
 
-        ItemStack stack = event.getItemStack();
-        if(stack.getItem() != Items.STICK)
-            return;
-
-        World world = event.getWorld();
-        BlockPos start = event.getPos().up();
-        for(BlueprintVoxel entry : this.sampleSchamatic)
-        {
-            BlockPos dest = start.add(entry.getPosition());
-            IBlockState state = entry.createBlockState();
-            if(state == null)
-                return;
-
-            world.setBlockState(dest, state, 2);
-
-            TileEntity tile = entry.createTileEntity(world);
-            if(tile != null)
-                world.setTileEntity(dest, tile);
-
-            world.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
-        }
     }
 
     public File getSchematicsDir()
