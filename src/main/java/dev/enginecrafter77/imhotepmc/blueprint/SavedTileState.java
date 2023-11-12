@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -29,6 +30,16 @@ public class SavedTileState implements BlueprintEntry {
 	public SavedTileState withProperty(String key, String name)
 	{
 		return new SavedTileState(this.state.withProperty(key, name), this.tileEntity);
+	}
+
+	public <T extends Comparable<T>> SavedTileState withProperty(IProperty<T> prop, T val)
+	{
+		return new SavedTileState(this.state.withProperty(prop, val), this.tileEntity);
+	}
+
+	public <T extends Comparable<T>> Optional<T> getProperty(IProperty<T> prop)
+	{
+		return this.state.getProperty(prop);
 	}
 
 	public SavedTileState withoutProperty(String key)

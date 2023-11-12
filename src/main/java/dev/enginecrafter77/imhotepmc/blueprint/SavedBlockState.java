@@ -48,9 +48,9 @@ public class SavedBlockState implements BlueprintEntry {
 		return this.withProperties(builder.build());
 	}
 
-	public SavedBlockState withProperty(IProperty<?> prop, String val)
+	public <T extends Comparable<T>> SavedBlockState withProperty(IProperty<T> prop, T val)
 	{
-		return this.withProperty(prop.getName(), val);
+		return this.withProperty(prop.getName(), prop.getName(val));
 	}
 
 	public SavedBlockState withoutProperty(String key)
@@ -69,9 +69,9 @@ public class SavedBlockState implements BlueprintEntry {
 		return this.blockProps.get(key);
 	}
 
-	public String getProperty(@Nonnull IProperty<?> prop)
+	public <T extends Comparable<T>> Optional<T> getProperty(@Nonnull IProperty<T> prop)
 	{
-		return this.getProperty(prop.getName());
+		return prop.parseValue(this.getProperty(prop.getName())).toJavaUtil();
 	}
 
 	@Override
