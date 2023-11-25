@@ -1,0 +1,11 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "facing=up": { "model": "imhotepmc:area_marker", "x": 0, "y": 0},
+    "facing=down": { "model": "imhotepmc:area_marker", "x": 180, "y": 0},
+    "facing=north": { "model": "imhotepmc:area_marker", "x": 90, "y": 0},
+    "facing=south": { "model": "imhotepmc:area_marker", "x": 90, "y": 180 },
+    "facing=west":  { "model": "imhotepmc:area_marker", "x": 90, "y": 270 },
+    "facing=east":  { "model": "imhotepmc:area_marker", "x": 90, "y": 90 }
+  }
+}

@@ -44,6 +44,16 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 		this.end.setPos(end.add(ONE));
 	}
 
+	public BlockPos getStart()
+	{
+		return this.start;
+	}
+
+	public BlockPos getEnd()
+	{
+		return this.end.subtract(ONE);
+	}
+
 	public void set(BlockSelectionBox other)
 	{
 		this.start.setPos(other.start);
