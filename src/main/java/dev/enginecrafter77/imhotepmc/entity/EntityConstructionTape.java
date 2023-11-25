@@ -63,14 +63,9 @@ public class EntityConstructionTape extends Entity {
 	{
 		this.getDataManager().set(PAR_ANCHOR_1, a1);
 		this.getDataManager().set(PAR_ANCHOR_2, a2);
-
 		this.a1c.set(a1.x, a1.y, a1.z);
 		this.a2c.set(a2.x, a2.y, a2.z);
-		Box3d box = new Box3d(this.a1c, this.a2c);
-		box.getCenter(this.posVector);
-		this.posX = this.posVector.x;
-		this.posY = this.posVector.y;
-		this.posZ = this.posVector.z;
+		this.updateEntityBounds();
 	}
 
 	public Vec3d getFirstAnchor()
@@ -98,17 +93,8 @@ public class EntityConstructionTape extends Entity {
 		return this.axis;
 	}
 
-	@Override
-	public void onUpdate()
+	protected void updateEntityBounds()
 	{
-		super.onUpdate();
-
-		Vec3d a1 = this.getFirstAnchor();
-		this.a1c.set(a1.x, a1.y, a1.z);
-
-		Vec3d a2 = this.getSecondAnchor();
-		this.a2c.set(a2.x, a2.y, a2.z);
-
 		this.boundingBox.set(this.a1c, this.a2c);
 		this.boundingBox.getSize(this.bbSizeVector);
 		this.boundingBox.getCenter(this.posVector);
@@ -141,6 +127,20 @@ public class EntityConstructionTape extends Entity {
 			this.rotationPitch = 0;
 			break;
 		}
+	}
+
+	@Override
+	public void onUpdate()
+	{
+		super.onUpdate();
+
+		Vec3d a1 = this.getFirstAnchor();
+		this.a1c.set(a1.x, a1.y, a1.z);
+
+		Vec3d a2 = this.getSecondAnchor();
+		this.a2c.set(a2.x, a2.y, a2.z);
+
+		this.updateEntityBounds();
 	}
 
 	public void getEntityBoundingBox(Box3d outBox)
