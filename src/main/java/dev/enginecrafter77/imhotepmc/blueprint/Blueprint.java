@@ -23,6 +23,8 @@ public interface Blueprint extends Iterable<BlueprintVoxel> {
 		return size.getX() * size.getY() * size.getZ();
 	}
 
+	public BlueprintBuilder schematicBuilder();
+
 	public default BlockPos getOrigin()
 	{
 		return BlockPos.ORIGIN;

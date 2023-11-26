@@ -1,18 +1,12 @@
 package dev.enginecrafter77.imhotepmc.item;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
-import dev.enginecrafter77.imhotepmc.blueprint.SchematicMetadata;
-import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
-import net.minecraft.block.state.IBlockState;
+import dev.enginecrafter77.imhotepmc.blueprint.*;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -111,22 +105,11 @@ public class ItemSchematicBlueprint extends Item {
 		if(blueprint == null)
 			return EnumActionResult.PASS;
 
-		BlockPos start = pos.up();
-		for(BlueprintVoxel entry : blueprint)
-		{
-			BlockPos dest = start.add(entry.getPosition());
-			IBlockState state = entry.createBlockState();
-			if(state == null)
-				continue;
+		BlockPos origin = pos.up();
+		BlueprintBuilder builder = blueprint.schematicBuilder();
+		while(builder.hasNextBlock())
+			builder.placeNextBlock(worldIn, origin);
 
-			worldIn.setBlockState(dest, state, 2);
-
-			TileEntity tile = entry.createTileEntity(worldIn);
-			if(tile != null)
-				worldIn.setTileEntity(dest, tile);
-
-			worldIn.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
-		}
 		return EnumActionResult.SUCCESS;
 	}
 

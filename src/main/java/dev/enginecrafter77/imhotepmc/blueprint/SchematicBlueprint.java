@@ -4,8 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import dev.enginecrafter77.imhotepmc.util.UnpackingIterator;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,6 +25,12 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 	{
 		this.metadata = metadata;
 		this.regions = regions;
+	}
+
+	@Override
+	public BlueprintBuilder schematicBuilder()
+	{
+		return new SchematicBlueprintBuilder();
 	}
 
 	@Override
@@ -212,6 +222,12 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		}
 
 		@Override
+		public BlueprintBuilder schematicBuilder()
+		{
+			return this.regionBlueprint.schematicBuilder();
+		}
+
+		@Override
 		public int hashCode()
 		{
 			return this.regionBlueprint.hashCode() + 1;
@@ -231,6 +247,86 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 				return false;
 			OffsetRegionBlueprint other = (OffsetRegionBlueprint)obj;
 			return Objects.equals(this.offset, other.offset) && Objects.equals(this.regionBlueprint, other.regionBlueprint);
+		}
+	}
+
+	private class SchematicBlueprintBuilder implements BlueprintBuilder
+	{
+		private final Map<String, BlueprintBuilder> regionBuilders;
+		private final List<String> regionOrder;
+		private int regionIndex;
+
+		public SchematicBlueprintBuilder()
+		{
+			this.regionOrder = new ArrayList<String>(SchematicBlueprint.this.regions.keySet());
+			this.regionBuilders = new HashMap<String, BlueprintBuilder>();
+			this.regionIndex = -1;
+
+			for(String region : this.regionOrder)
+				this.regionBuilders.put(region, SchematicBlueprint.this.getRegion(region).schematicBuilder());
+		}
+
+		private BlueprintBuilder getBuilderAt(int region)
+		{
+			return this.regionBuilders.get(this.regionOrder.get(region));
+		}
+
+		private int findAvailableBuilder()
+		{
+			if(this.regionIndex >= 0 && this.getBuilderAt(this.regionIndex).hasNextBlock())
+				return this.regionIndex;
+
+			int next = this.regionIndex + 1;
+			while(next < this.regionOrder.size() && !this.getBuilderAt(next).hasNextBlock())
+				++next;
+			return next;
+		}
+
+		@Override
+		public boolean hasNextBlock()
+		{
+			return this.findAvailableBuilder() < this.regionOrder.size();
+		}
+
+		@Override
+		public void placeNextBlock(World world, BlockPos origin)
+		{
+			this.regionIndex = this.findAvailableBuilder();
+			this.getBuilderAt(this.regionIndex).placeNextBlock(world, origin);
+		}
+
+		@Override
+		public NBTTagCompound saveState()
+		{
+			NBTTagCompound tag = new NBTTagCompound();
+			NBTTagList regionOrder = new NBTTagList();
+			NBTTagCompound builders = new NBTTagCompound();
+			for(String reg : this.regionOrder)
+			{
+				regionOrder.appendTag(new NBTTagString(reg));
+				builders.setTag(reg, this.regionBuilders.get(reg).saveState());
+			}
+			tag.setTag("region_order", regionOrder);
+			tag.setTag("builders", builders);
+			tag.setInteger("region", this.regionIndex);
+			return tag;
+		}
+
+		@Override
+		public void restoreState(NBTTagCompound tag)
+		{
+			NBTTagList regionOrder = tag.getTagList("region_order", 8); // 8 => NBTTagString
+			this.regionOrder.clear();
+			for(int index = 0; index < regionOrder.tagCount(); ++index)
+				this.regionOrder.add(regionOrder.getStringTagAt(index));
+			this.regionIndex = tag.getInteger("region");
+
+			NBTTagCompound builders = tag.getCompoundTag("builders");
+			for(String reg : this.regionOrder)
+			{
+				NBTTagCompound builderState = builders.getCompoundTag(reg);
+				this.regionBuilders.get(reg).restoreState(builderState);
+			}
 		}
 	}
 }

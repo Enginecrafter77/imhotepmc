@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc;
 
 import dev.enginecrafter77.imhotepmc.block.BlockAreaMarker;
 import dev.enginecrafter77.imhotepmc.block.BlockBlueprintLibrary;
+import dev.enginecrafter77.imhotepmc.block.BlockBuilder;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
 import dev.enginecrafter77.imhotepmc.entity.EntityConstructionTape;
@@ -71,6 +72,7 @@ public class ImhotepMod {
 
     public static BlockAreaMarker BLOCK_AREA_MARKER;
     public static BlockBlueprintLibrary BLOCK_BLUEPRINT_LIBRARY;
+    public static BlockBuilder BLOCK_BUILDER;
     public static ItemSchematicBlueprint ITEM_SCHEMATIC_BLUEPRINT;
     public static ItemConstructionTape ITEM_CONSTRUCTION_TAPE;
 
@@ -106,6 +108,7 @@ public class ImhotepMod {
         ITEM_SCHEMATIC_BLUEPRINT = new ItemSchematicBlueprint();
         BLOCK_AREA_MARKER = new BlockAreaMarker();
         ITEM_CONSTRUCTION_TAPE = new ItemConstructionTape();
+        BLOCK_BUILDER = new BlockBuilder();
 
         File configDir = event.getModConfigurationDirectory();
         File gameDirectory = configDir.getParentFile();
@@ -167,6 +170,7 @@ public class ImhotepMod {
         reg.register(ITEM_CONSTRUCTION_TAPE);
         this.registerItemBlock(reg, BLOCK_BLUEPRINT_LIBRARY);
         this.registerItemBlock(reg, BLOCK_AREA_MARKER);
+        this.registerItemBlock(reg, BLOCK_BUILDER);
     }
 
     @SubscribeEvent
@@ -175,6 +179,7 @@ public class ImhotepMod {
         IForgeRegistry<Block> reg = event.getRegistry();
         reg.register(BLOCK_BLUEPRINT_LIBRARY);
         reg.register(BLOCK_AREA_MARKER);
+        reg.register(BLOCK_BUILDER);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
