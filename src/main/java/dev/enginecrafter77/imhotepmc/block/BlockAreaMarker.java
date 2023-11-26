@@ -108,7 +108,7 @@ public class BlockAreaMarker extends Block {
 	{
 		TileEntityAreaMarker marker = (TileEntityAreaMarker)worldIn.getTileEntity(pos);
 		if(marker != null)
-			marker.getMarkGroup().dismantle(worldIn);
+			marker.getCurrentMarkGroup().dismantle(worldIn, TileEntityAreaMarker::getMarkerFromTile);
 		super.breakBlock(worldIn, pos, state);
 	}
 
