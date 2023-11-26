@@ -19,12 +19,14 @@ public class RenderConstructionTape extends Render<EntityConstructionTape> {
 	public static final ResourceLocation TEXTURE = new ResourceLocation(ImhotepMod.MOD_ID, "textures/entity/construction_tape.png");
 	private static final double BLOCKS_PER_TEX = 1D;
 
+	private final Tessellator tessellator;
 	private final Matrix4d transformMatrix;
 	private final Point3d tpoint;
 
 	public RenderConstructionTape(RenderManager renderManager)
 	{
 		super(renderManager);
+		this.tessellator = new Tessellator(1024);
 		this.transformMatrix = new Matrix4d();
 		this.tpoint = new Point3d();
 	}
@@ -56,12 +58,11 @@ public class RenderConstructionTape extends Render<EntityConstructionTape> {
 		double length = entity.getLength();
 		int segments = (int)Math.round(length / BLOCKS_PER_TEX);
 		double segmentLength = length / (segments * BLOCKS_PER_TEX);
-		int vertices = 8 * segments; // 2 quads (8 vertices) per segment
+		//int vertices = 8 * segments; // 2 quads (8 vertices) per segment
 
 		Minecraft.getMinecraft().getTextureManager().bindTexture(this.getEntityTexture(entity));
 
-		Tessellator tessellator = new Tessellator(vertices);
-		BufferBuilder builder = tessellator.getBuffer();
+		BufferBuilder builder = this.tessellator.getBuffer();
 		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		builder.setTranslation(x, y, z);
 
@@ -84,7 +85,7 @@ public class RenderConstructionTape extends Render<EntityConstructionTape> {
 			start = end;
 		}
 
-		tessellator.draw();
+		this.tessellator.draw();
 	}
 
 	private BufferBuilder putTransformedVertex(BufferBuilder builder, double x, double y, double z)
