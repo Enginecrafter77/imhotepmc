@@ -43,6 +43,7 @@ dependencies {
     runtime "cofh:ThermalFoundation:1.12.2-2.6.0.+:universal"
     runtime "cofh:ThermalExpansion:1.12.2-5.5.4.43:universal"
     runtime "cofh:RedstoneFlux:1.12-2.1.0.7:universal"
+    runtime "curse.maven:Hwyla-253449:2568751"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
