@@ -1,0 +1,9 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "facing=north": { "model": "imhotepmc:builder" },
+    "facing=south": { "model": "imhotepmc:builder", "y": 180 },
+    "facing=west":  { "model": "imhotepmc:builder", "y": 270 },
+    "facing=east":  { "model": "imhotepmc:builder", "y": 90 }
+  }
+}
