@@ -1,5 +1,8 @@
 itemGroup.imhotepmc=Imhotep
 
 tile.blueprint_library.name=Blueprint Library
+tile.area_marker.name=Area Marker
+tile.builder.name=Builder
 
 item.schematic_blueprint.name=Schematic Blueprint
+item.construction_tape.name=Construction Tape
