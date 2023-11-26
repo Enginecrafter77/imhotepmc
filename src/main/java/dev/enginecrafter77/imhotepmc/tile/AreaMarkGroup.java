@@ -16,15 +16,30 @@ import java.util.stream.Collectors;
 
 public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 	private final BlockPos[] definingCorners;
-	private int defined;
-
 	private final List<UUID> tapeEntities;
+	private int defined;
 
 	private AreaMarkGroup()
 	{
-		this.tapeEntities = new ArrayList<UUID>(12);
 		this.definingCorners = new BlockPos[4];
 		this.defined = 0;
+		this.tapeEntities = new ArrayList<UUID>(12);
+	}
+
+	public Set<Axis3d> getDefinedAxes()
+	{
+		if(this.defined <= 1)
+			return EnumSet.noneOf(Axis3d.class);
+
+		Set<Axis3d> set = EnumSet.noneOf(Axis3d.class);
+		for(CombiningIterator.Pair<BlockPos, BlockPos> edge : CombiningIterator.selfCombinations(this.getDefinedCorners()))
+		{
+			Axis3d sharedAxis = BlockPosUtil.getSharedAxis(edge.getFirst(), edge.getSecond());
+			if(sharedAxis == null)
+				continue;
+			set.add(sharedAxis);
+		}
+		return set;
 	}
 
 	@Nullable
@@ -46,66 +61,29 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 
 	private AreaMarkGroup deriveNext(BlockPos next)
 	{
-		AreaMarkGroup ng = new AreaMarkGroup();
-		System.arraycopy(this.definingCorners, 0, ng.definingCorners, 0, this.defined);
-		ng.definingCorners[this.defined] = next;
-		ng.defined = this.defined + 1;
-		return ng;
+		if(this.defined == 4)
+			throw new UnsupportedOperationException("Group already fully defined");
+
+		AreaMarkGroup group = new AreaMarkGroup();
+		System.arraycopy(this.definingCorners, 0, group.definingCorners, 0, this.defined);
+		group.definingCorners[this.defined] = next;
+		group.defined = this.defined + 1;
+		return group;
 	}
 
 	@Nullable
 	public AreaMarkGroup expand(BlockPos other)
 	{
-		if(this.defined == 1) // singleton -> line
+		Set<Axis3d> definedAxes = this.getDefinedAxes();
+
+		for(CombiningIterator.Pair<BlockPos, BlockPos> edge : CombiningIterator.combinations(this.getDefinedCorners(), Collections.singletonList(other)))
 		{
-			BlockPos bl = this.definingCorners[0];
-			if(Objects.equals(bl, other) || BlockPosUtil.getSharedAxis(bl, other) == null)
-				return null;
+			Axis3d shared = BlockPosUtil.getSharedAxis(edge.getFirst(), edge.getSecond());
+			if(shared == null || definedAxes.contains(shared))
+				continue;
 			return this.deriveNext(other);
 		}
-		else if(this.defined == 2) // line -> area
-		{
-			BlockPos b1 = this.definingCorners[0];
-			BlockPos b2 = this.definingCorners[1];
-
-			Axis3d def = BlockPosUtil.getSharedAxis(b1, b2);
-
-			Axis3d a1 = BlockPosUtil.getSharedAxis(b1, other);
-			Axis3d a2 = BlockPosUtil.getSharedAxis(b2, other);
-
-			if((a1 == null && a2 == null) || a1 == def || a2 == def)
-				return null;
-			return this.deriveNext(other);
-		}
-		else if(this.defined == 3) // area -> volume
-		{
-			BlockPos b1 = this.definingCorners[0];
-			BlockPos b2 = this.definingCorners[1];
-			BlockPos b3 = this.definingCorners[2];
-
-			Set<Axis3d> covered = EnumSet.noneOf(Axis3d.class);
-			Axis3d a12 = BlockPosUtil.getSharedAxis(b1, b2);
-			Axis3d a23 = BlockPosUtil.getSharedAxis(b2, b3);
-			Axis3d a13 = BlockPosUtil.getSharedAxis(b1, b3);
-			if(a12 != null)
-				covered.add(a12);
-			if(a23 != null)
-				covered.add(a23);
-			if(a13 != null)
-				covered.add(a13);
-
-			Axis3d c1 = BlockPosUtil.getSharedAxis(b1, other);
-			Axis3d c2 = BlockPosUtil.getSharedAxis(b2, other);
-			Axis3d c3 = BlockPosUtil.getSharedAxis(b3, other);
-
-			if((c1 == null && c2 == null && c3 == null) || covered.contains(c1) || covered.contains(c2) || covered.contains(c3))
-				return null;
-			return this.deriveNext(other);
-		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	public boolean isComplete()
@@ -113,9 +91,9 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 		return this.defined == 4;
 	}
 
-	public Iterable<BlockPos> getDefinedCorners()
+	public List<BlockPos> getDefinedCorners()
 	{
-		return ArrayIterable.wrap(this.definingCorners, 0, this.defined);
+		return ArrayWrapperList.of(this.definingCorners, 0, this.defined);
 	}
 
 	public void select(BlockSelectionBox box)
