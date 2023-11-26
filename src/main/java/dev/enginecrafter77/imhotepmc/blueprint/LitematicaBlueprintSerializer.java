@@ -229,14 +229,11 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		NBTTagLongArray arrayTag = (NBTTagLongArray)regionTag.getTag(NBT_KEY_REGION_BLOCKMAP);
 		CompactPalettedBitVector<SavedBlockState> vector = CompactPalettedBitVector.readFromNBT(paletteList, arrayTag);
 		VoxelIndexer indexer = new LitematicaVoxelIndexer(size);
-		SavedBlockState air = paletteList.get(0);
 
 		RegionBlueprint.Builder builder = RegionBlueprint.builder();
 		for(int index = 0; index < vector.getLength(); ++index)
 		{
 			SavedBlockState block = vector.get(index);
-			if(block == air)
-				continue;
 			BlockPos pos = indexer.fromIndex(index);
 			builder.addBlock(pos, block);
 		}
