@@ -4,29 +4,30 @@ import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
-public class LitematicaVoxelIndexer implements VoxelIndexer {
+public class NaturalVoxelIndexer implements VoxelIndexer {
 	private final BlockPos origin;
+	private final Vec3i size;
 	private final int volume;
 	private final int floor;
 	private final int row;
 
-	public LitematicaVoxelIndexer(BlockPos from, BlockPos to)
+	public NaturalVoxelIndexer(BlockPos from, BlockPos to)
 	{
 		this.origin = BlockPos.ORIGIN;
-		Vec3i size = VecUtil.difference(from, to);
-		if(size.getX() == 0 || size.getY() == 0 || size.getZ() == 0)
+		this.size = VecUtil.difference(from, to);
+		if(this.size.getX() == 0 || this.size.getY() == 0 || this.size.getZ() == 0)
 			throw new IllegalArgumentException("Attempting to create indexer of volume 0!");
 
-		this.volume = size.getY() * size.getX() * size.getZ();
-		this.floor = size.getX() * size.getZ();
-		this.row = size.getX();
+		this.volume = this.size.getY() * this.size.getX() * this.size.getZ();
+		this.floor = this.size.getX() * this.size.getZ();
+		this.row = this.size.getX();
 	}
 
-	public LitematicaVoxelIndexer(Vec3i size)
+	public NaturalVoxelIndexer(Vec3i size)
 	{
 		if(size.getX() == 0 || size.getY() == 0 || size.getZ() == 0)
 			throw new IllegalArgumentException("Attempting to create indexer of volume 0!");
-
+		this.size = size;
 		this.origin = BlockPos.ORIGIN;
 		this.volume = size.getY() * size.getX() * size.getZ();
 		this.floor = size.getX() * size.getZ();
@@ -36,6 +37,9 @@ public class LitematicaVoxelIndexer implements VoxelIndexer {
 	@Override
 	public BlockPos fromIndex(int index)
 	{
+		if(index < 0 || index >= this.volume)
+			throw new IndexOutOfBoundsException();
+
 		int y = index / this.floor;
 		int f = index % this.floor;
 
@@ -51,6 +55,10 @@ public class LitematicaVoxelIndexer implements VoxelIndexer {
 		int dx = pos.getX() - this.origin.getX();
 		int dy = pos.getY() - this.origin.getY();
 		int dz = pos.getZ() - this.origin.getZ();
+
+		if(dx >= this.size.getX() || dy >= this.size.getY() || dz >= this.size.getZ())
+			throw new IndexOutOfBoundsException();
+
 		return dx + dz * this.row + dy * this.floor;
 	}
 
