@@ -1,8 +1,13 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
@@ -19,11 +24,29 @@ public class TileEntityAreaMarker extends TileEntity implements IAreaMarker {
 		this.group = AreaMarkGroup.voxel(BlockPos.ORIGIN);
 	}
 
-	public boolean tryConnect(TileEntityAreaMarker other)
+	public boolean tryConnect(TileEntityAreaMarker other, EntityPlayer actor)
 	{
 		AreaMarkGroup ng = this.group.merge(other.getCurrentMarkGroup());
 		if(ng == null)
 			return false;
+
+		int stored = this.group.getUsedTapeCount() + other.group.getUsedTapeCount();
+		int required = ng.getUsedTapeCount();
+		int consume = required - stored;
+		ItemStack stack = new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, Math.abs(consume));
+
+		if(consume < 0)
+		{
+			EntityItem item = new EntityItem(this.world);
+			item.setItem(stack);
+			Vec3d center = new Vec3d(this.getPos()).add(0.5D, 0.5D, 0.5D);
+			item.setPosition(center.x, center.y, center.z);
+			this.world.spawnEntity(item);
+		}
+		else if(!actor.isCreative())
+		{
+			actor.inventory.clearMatchingItems(ImhotepMod.ITEM_CONSTRUCTION_TAPE, -1, consume, null);
+		}
 
 		this.group.dismantle(this.world, TileEntityAreaMarker::getMarkerFromTile);
 		other.group.dismantle(this.world, TileEntityAreaMarker::getMarkerFromTile);

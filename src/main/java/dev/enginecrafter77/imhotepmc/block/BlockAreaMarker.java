@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.block;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
+import dev.enginecrafter77.imhotepmc.tile.AreaMarkGroup;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -8,6 +9,8 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -108,7 +111,15 @@ public class BlockAreaMarker extends Block {
 	{
 		TileEntityAreaMarker marker = (TileEntityAreaMarker)worldIn.getTileEntity(pos);
 		if(marker != null)
-			marker.getCurrentMarkGroup().dismantle(worldIn, TileEntityAreaMarker::getMarkerFromTile);
+		{
+			AreaMarkGroup group = marker.getCurrentMarkGroup();
+			ItemStack tape = new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, group.getUsedTapeCount());
+			EntityItem item = new EntityItem(worldIn);
+			item.setItem(tape);
+			item.setPosition(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+			worldIn.spawnEntity(item);
+			group.dismantle(worldIn, TileEntityAreaMarker::getMarkerFromTile);
+		}
 		super.breakBlock(worldIn, pos, state);
 	}
 

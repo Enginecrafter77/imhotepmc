@@ -10,11 +10,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.EntityEntry;
 
 import javax.vecmath.Vector3d;
 
@@ -166,11 +164,20 @@ public class EntityConstructionTape extends Entity {
 		return false;
 	}
 
+	public void destroy()
+	{
+		this.setDead();
+	}
+
 	public void dismantle()
 	{
-		ItemStack drops = getRequiredTapeItemStackForLength(this.getLength());
-		this.entityDropItem(drops, 0F);
+		this.entityDropItem(this.getStoredTapeStack(), 0F);
 		this.setDead();
+	}
+
+	public ItemStack getStoredTapeStack()
+	{
+		return getRequiredTapeItemStackForLength(this.getLength());
 	}
 
 	@Override
@@ -206,12 +213,12 @@ public class EntityConstructionTape extends Entity {
 		compound.setTag("end", a2.serializeNBT());
 	}
 
-	private static int getTapeItemsForLength(double length)
+	public static int getTapeItemsForLength(double length)
 	{
 		return (int)Math.ceil(length / DISTANCE_PER_TAPE_ITEM);
 	}
 
-	private static ItemStack getRequiredTapeItemStackForLength(double length)
+	public static ItemStack getRequiredTapeItemStackForLength(double length)
 	{
 		int items = getTapeItemsForLength(length);
 		return new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, items);
@@ -220,12 +227,5 @@ public class EntityConstructionTape extends Entity {
 	public static ItemStack getRequiredTapeItemStack(Vec3d start, Vec3d end)
 	{
 		return getRequiredTapeItemStackForLength(Math.abs(end.length() - start.length()));
-	}
-
-	public static EntityEntry createRegistryEntry()
-	{
-		EntityEntry entry = new EntityEntry(EntityConstructionTape.class, "construction_tape");
-		entry.setRegistryName(new ResourceLocation(ImhotepMod.MOD_ID, "construction_tape"));
-		return entry;
 	}
 }

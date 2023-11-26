@@ -51,17 +51,24 @@ public class ItemConstructionTape extends Item {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
+		ItemStack stack = player.getHeldItem(hand);
+		NBTTagCompound tag = stack.getTagCompound();
+		if(tag == null)
+			tag = new NBTTagCompound();
+
+		if(player.isSneaking())
+		{
+			tag.removeTag(NBT_KEY_LINK);
+			stack.setTagCompound(tag);
+			return EnumActionResult.PASS;
+		}
+
 		if(!worldIn.isRemote)
 		{
 			TileEntity tile = worldIn.getTileEntity(pos);
 			if(!(tile instanceof TileEntityAreaMarker))
 				return EnumActionResult.FAIL;
 			TileEntityAreaMarker marker = (TileEntityAreaMarker)tile;
-
-			ItemStack stack = player.getHeldItem(hand);
-			NBTTagCompound tag = stack.getTagCompound();
-			if(tag == null)
-				tag = new NBTTagCompound();
 
 			NBTTagCompound link = stack.getSubCompound(NBT_KEY_LINK);
 			if(link == null)
@@ -78,7 +85,7 @@ public class ItemConstructionTape extends Item {
 				TileEntityAreaMarker other = (TileEntityAreaMarker)worldIn.getTileEntity(linkPos);
 				if(other == null)
 					return EnumActionResult.FAIL;
-				other.tryConnect(marker);
+				other.tryConnect(marker, player);
 
 				/*EntityConstructionTape ect = new EntityConstructionTape(worldIn);
 				ect.setAnchor(blockCenter(linkPos), blockCenter(pos));

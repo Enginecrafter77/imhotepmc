@@ -163,7 +163,20 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 
 		List<EntityConstructionTape> tapeEdges = world.getEntities(EntityConstructionTape.class, (EntityConstructionTape e) -> this.tapeEntities.contains(e.getUniqueID()));
 		for(EntityConstructionTape tape : tapeEdges)
-			tape.dismantle();
+			tape.destroy();
+	}
+
+	public int getUsedTapeCount()
+	{
+		int count = 0;
+		for(BlockPosEdge edge : this.edges())
+		{
+			Vec3d anchor1 = this.tapeAnchorFor(edge.getFirst());
+			Vec3d anchor2 = this.tapeAnchorFor(edge.getSecond());
+			double dist = anchor1.distanceTo(anchor2);
+			count += EntityConstructionTape.getTapeItemsForLength(dist);
+		}
+		return count;
 	}
 
 	public void construct(World world, IMarkerAccessor accessor)
@@ -182,13 +195,18 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 	{
 		for(BlockPosEdge edge : this.edges())
 		{
-			Vec3d anchor1 = new Vec3d(edge.getFirst()).add(0.5, 0.5, 0.5);
-			Vec3d anchor2 = new Vec3d(edge.getSecond()).add(0.5, 0.5, 0.5);
+			Vec3d anchor1 = this.tapeAnchorFor(edge.getFirst());
+			Vec3d anchor2 = this.tapeAnchorFor(edge.getSecond());
 			EntityConstructionTape tape = new EntityConstructionTape(world);
 			tape.setAnchor(anchor1, anchor2);
 			world.spawnEntity(tape);
 			this.tapeEntities.add(tape.getUniqueID());
 		}
+	}
+
+	protected Vec3d tapeAnchorFor(BlockPos pos)
+	{
+		return new Vec3d(pos).add(0.5, 0.5, 0.5);
 	}
 
 	@Override
