@@ -38,7 +38,6 @@ public class BlockAreaMarker extends Block {
 		this.setRegistryName(new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"));
 		this.setTranslationKey("area_marker");
 		this.setCreativeTab(ImhotepMod.CREATIVE_TAB);
-		//Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState().getQuads();
 	}
 
 	@Override
@@ -102,6 +101,15 @@ public class BlockAreaMarker extends Block {
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
 	{
 		return this.getDefaultState().withProperty(FACING, facing);
+	}
+
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+	{
+		TileEntityAreaMarker marker = (TileEntityAreaMarker)worldIn.getTileEntity(pos);
+		if(marker != null)
+			marker.getMarkGroup().dismantle(worldIn);
+		super.breakBlock(worldIn, pos, state);
 	}
 
 	@Override

@@ -1,13 +1,14 @@
 package dev.enginecrafter77.imhotepmc.item;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.entity.EntityConstructionTape;
+import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -52,6 +53,11 @@ public class ItemConstructionTape extends Item {
 	{
 		if(!worldIn.isRemote)
 		{
+			TileEntity tile = worldIn.getTileEntity(pos);
+			if(!(tile instanceof TileEntityAreaMarker))
+				return EnumActionResult.FAIL;
+			TileEntityAreaMarker marker = (TileEntityAreaMarker)tile;
+
 			ItemStack stack = player.getHeldItem(hand);
 			NBTTagCompound tag = stack.getTagCompound();
 			if(tag == null)
@@ -69,9 +75,14 @@ public class ItemConstructionTape extends Item {
 				if(Objects.equals(linkPos, pos))
 					return EnumActionResult.PASS;
 
-				EntityConstructionTape ect = new EntityConstructionTape(worldIn);
+				TileEntityAreaMarker other = (TileEntityAreaMarker)worldIn.getTileEntity(linkPos);
+				if(other == null)
+					return EnumActionResult.FAIL;
+				other.tryConnect(marker);
+
+				/*EntityConstructionTape ect = new EntityConstructionTape(worldIn);
 				ect.setAnchor(blockCenter(linkPos), blockCenter(pos));
-				worldIn.spawnEntity(ect);
+				worldIn.spawnEntity(ect);*/
 
 				tag.removeTag(NBT_KEY_LINK);
 			}

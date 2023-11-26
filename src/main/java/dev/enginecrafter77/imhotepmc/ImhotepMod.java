@@ -15,6 +15,7 @@ import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.msg.*;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
 import dev.enginecrafter77.imhotepmc.render.RenderConstructionTape;
+import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
 import net.minecraft.block.Block;
@@ -86,6 +87,7 @@ public class ImhotepMod {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
         GameRegistry.registerTileEntity(TileEntityBlueprintLibrary.class, TileEntityBlueprintLibrary.ID);
+        GameRegistry.registerTileEntity(TileEntityAreaMarker.class, new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"));
 
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID);
         this.netChannel.registerMessage(MessageBlueprintInscribeHandler.class, MessageInscribeBlueprint.class, 0, Side.SERVER);
