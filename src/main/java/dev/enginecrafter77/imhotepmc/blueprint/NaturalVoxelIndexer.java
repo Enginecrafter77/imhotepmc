@@ -38,7 +38,7 @@ public class NaturalVoxelIndexer implements VoxelIndexer {
 	public BlockPos fromIndex(int index)
 	{
 		if(index < 0 || index >= this.volume)
-			throw new IndexOutOfBoundsException();
+			throw new VoxelIndexOutOfBoundsException(index, this.volume);
 
 		int y = index / this.floor;
 		int f = index % this.floor;
@@ -57,7 +57,7 @@ public class NaturalVoxelIndexer implements VoxelIndexer {
 		int dz = pos.getZ() - this.origin.getZ();
 
 		if(dx >= this.size.getX() || dy >= this.size.getY() || dz >= this.size.getZ())
-			throw new IndexOutOfBoundsException();
+			throw new VoxelIndexOutOfBoundsException(pos, this.size);
 
 		return dx + dz * this.row + dy * this.floor;
 	}
