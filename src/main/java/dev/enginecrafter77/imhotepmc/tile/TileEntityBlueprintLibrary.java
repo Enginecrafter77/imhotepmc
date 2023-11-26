@@ -42,6 +42,18 @@ public class TileEntityBlueprintLibrary extends TileEntity {
 	}
 
 	@Override
+	public NBTTagCompound getUpdateTag()
+	{
+		return this.serializeNBT();
+	}
+
+	@Override
+	public void handleUpdateTag(NBTTagCompound tag)
+	{
+		this.deserializeNBT(tag);
+	}
+
+	@Override
 	public void readFromNBT(@Nonnull NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
