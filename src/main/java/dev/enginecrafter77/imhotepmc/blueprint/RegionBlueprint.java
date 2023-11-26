@@ -6,6 +6,7 @@ import dev.enginecrafter77.imhotepmc.blueprint.iter.MutableBlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationContext;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.CommonTranslationContext;
+import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -120,14 +121,24 @@ public class RegionBlueprint implements Blueprint {
 	{
 		private final Map<BlockPos, SavedTileState> data;
 
+		@Nullable
+		private Vec3i size;
+
 		public Builder()
 		{
 			this.data = new HashMap<BlockPos, SavedTileState>();
+			this.size = null;
 		}
 
 		public void merge(RegionBlueprint other)
 		{
 			this.data.putAll(other.blocks);
+		}
+
+		public RegionBlueprint.Builder setSize(Vec3i size)
+		{
+			this.size = size;
+			return this;
 		}
 
 		public RegionBlueprint.Builder addBlock(BlockPos position, SavedBlockState data)
@@ -172,26 +183,17 @@ public class RegionBlueprint implements Blueprint {
 			if(this.data.isEmpty())
 				return RegionBlueprint.empty();
 
-			int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE, minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-			for(Vec3i pos : this.data.keySet())
+			Vec3i size = this.size;
+			Vec3i origin = Vec3i.NULL_VECTOR;
+
+			if(size == null)
 			{
-				if(pos.getX() < minX)
-					minX = pos.getX();
-				if(pos.getX() > maxX)
-					maxX = pos.getX();
-
-				if(pos.getY() < minY)
-					minY = pos.getY();
-				if(pos.getY() > maxY)
-					maxY = pos.getY();
-
-				if(pos.getZ() < minZ)
-					minZ = pos.getZ();
-				if(pos.getZ() > maxZ)
-					maxZ = pos.getZ();
+				BlockPos.MutableBlockPos min = new BlockPos.MutableBlockPos();
+				BlockPos.MutableBlockPos max = new BlockPos.MutableBlockPos();
+				BlockPosUtil.findBoxMinMax(this.data.keySet(), min, max);
+				size = max.subtract(min).add(1, 1, 1);
+				origin = min.toImmutable();
 			}
-			Vec3i size = new Vec3i(maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1);
-			Vec3i origin = new Vec3i(minX, minY, minZ);
 			
 			ImmutableMap.Builder<BlockPos, SavedTileState> mb = ImmutableMap.builder();
 			for(Map.Entry<BlockPos, SavedTileState> entry : this.data.entrySet())

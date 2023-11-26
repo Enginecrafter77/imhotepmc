@@ -125,11 +125,12 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		Vec3i size = blueprint.getSize();
 		int vecSize = size.getX() * size.getY() * size.getZ();
 		CompactPalettedBitVector<SavedBlockState> vector = new CompactPalettedBitVector<SavedBlockState>(unique, vecSize);
-		VoxelIndexer indexer = new LitematicaVoxelIndexer(size);
+		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
 
 		NBTTagList tileEntities = new NBTTagList();
 
-		for(int index = 0; index < vector.getLength(); ++index)
+		int entries = size.getX() * size.getY() * size.getZ();
+		for(int index = 0; index < entries; ++index)
 		{
 			BlockPos pos = indexer.fromIndex(index);
 			SavedTileState savedTileState = blueprint.getRegionBlueprint().getStructureBlocks().get(pos);
@@ -228,12 +229,16 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 
 		NBTTagLongArray arrayTag = (NBTTagLongArray)regionTag.getTag(NBT_KEY_REGION_BLOCKMAP);
 		CompactPalettedBitVector<SavedBlockState> vector = CompactPalettedBitVector.readFromNBT(paletteList, arrayTag);
-		VoxelIndexer indexer = new LitematicaVoxelIndexer(size);
+		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
+		SavedBlockState air = paletteList.get(0);
 
 		RegionBlueprint.Builder builder = RegionBlueprint.builder();
+		builder.setSize(size);
 		for(int index = 0; index < vector.getLength(); ++index)
 		{
 			SavedBlockState block = vector.get(index);
+			if(block == air)
+				continue;
 			BlockPos pos = indexer.fromIndex(index);
 			builder.addBlock(pos, block);
 		}

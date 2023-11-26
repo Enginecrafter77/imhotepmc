@@ -1,7 +1,7 @@
 package dev.enginecrafter77.imhotepmc.test;
 
 import dev.enginecrafter77.imhotepmc.blueprint.VoxelIndexer;
-import dev.enginecrafter77.imhotepmc.blueprint.LitematicaVoxelIndexer;
+import dev.enginecrafter77.imhotepmc.blueprint.NaturalVoxelIndexer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import org.junit.jupiter.api.Assertions;
@@ -12,7 +12,7 @@ public class TestBlockPosIndexer {
 	public void testSimple2x2()
 	{
 		Vec3i size = new Vec3i(2, 2, 2);
-		VoxelIndexer indexer = new LitematicaVoxelIndexer(size);
+		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
 
 		assertBlockPos(indexer, 0, "0:0:0");
 		assertBlockPos(indexer, 1, "1:0:0");
@@ -28,7 +28,7 @@ public class TestBlockPosIndexer {
 	public void testMatchingPairs()
 	{
 		Vec3i size = new Vec3i(16, 16, 16);
-		VoxelIndexer indexer = new LitematicaVoxelIndexer(size);
+		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
 
 		for(int index = 0; index < indexer.getVolume(); ++index)
 		{
@@ -42,7 +42,7 @@ public class TestBlockPosIndexer {
 	public void testPositionNotOutsideBounds()
 	{
 		Vec3i size = new Vec3i(16, 16, 16);
-		VoxelIndexer indexer = new LitematicaVoxelIndexer(size);
+		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
 
 		for(int index = 0; index < indexer.getVolume(); ++index)
 		{
