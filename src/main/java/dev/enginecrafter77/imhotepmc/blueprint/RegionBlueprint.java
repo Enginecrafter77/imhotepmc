@@ -233,30 +233,44 @@ public class RegionBlueprint implements Blueprint {
 
 	private class RegionBuilder implements BlueprintBuilder
 	{
-		private Iterator<BlueprintVoxel> voxelIterator;
-		private int step;
+		private final VoxelIndexer indexer;
+		private int index;
 
 		public RegionBuilder()
 		{
-			this.voxelIterator = RegionBlueprint.this.iterator();
-			this.step = 0;
+			this.indexer = new NaturalVoxelIndexer(RegionBlueprint.this.getSize());
+			this.index = -1;
+		}
+
+		private int findNextNonEmpty()
+		{
+			int next = this.index + 1;
+			while(next < this.indexer.getVolume())
+			{
+				BlockPos pos = this.indexer.fromIndex(next);
+				if(RegionBlueprint.this.blocks.containsKey(pos))
+					break;
+				++next;
+			}
+			return next;
 		}
 
 		@Override
 		public boolean hasNextBlock()
 		{
-			return this.voxelIterator.hasNext();
+			return this.findNextNonEmpty() < this.indexer.getVolume();
 		}
 
 		@Override
 		public void placeNextBlock(World world, BlockPos origin)
 		{
-			++this.step;
-			BlueprintVoxel voxel = this.voxelIterator.next();
+			this.index = this.findNextNonEmpty();
+			BlockPos pos = this.indexer.fromIndex(this.index);
+			BlockPos dest = pos.add(RegionBlueprint.this.getOrigin()).add(origin);
+			BlueprintEntry voxel = RegionBlueprint.this.getBlockAt(pos);
+			if(voxel == null)
+				throw new IllegalStateException();
 
-			origin = origin.add(RegionBlueprint.this.getOrigin());
-
-			BlockPos dest = origin.add(voxel.getPosition());
 			IBlockState state = voxel.createBlockState();
 			if(state == null)
 				return;
@@ -272,21 +286,14 @@ public class RegionBlueprint implements Blueprint {
 		public NBTTagCompound saveState()
 		{
 			NBTTagCompound tag = new NBTTagCompound();
-			tag.setInteger("step", this.step);
+			tag.setInteger("index", this.index);
 			return tag;
 		}
 
 		@Override
 		public void restoreState(NBTTagCompound tag)
 		{
-			this.voxelIterator = RegionBlueprint.this.iterator();
-			int skipTo = tag.getInteger("step");
-			for(this.step = 0; this.step < skipTo; ++this.step)
-			{
-				if(!this.voxelIterator.hasNext())
-					return;
-				this.voxelIterator.next();
-			}
+			this.index = tag.getInteger("index");
 		}
 	}
 }
