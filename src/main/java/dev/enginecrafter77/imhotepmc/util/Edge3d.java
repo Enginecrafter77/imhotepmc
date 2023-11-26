@@ -28,8 +28,8 @@ public class Edge3d {
 
 	public void set(double x1, double y1, double z1, double x2, double y2, double z2)
 	{
-		this.p1.set(x1, y1, y1);
-		this.p2.set(x2, y2, y2);
+		this.p1.set(x1, y1, z1);
+		this.p2.set(x2, y2, z2);
 	}
 
 	public void getFirstPoint(Tuple3d dest)
