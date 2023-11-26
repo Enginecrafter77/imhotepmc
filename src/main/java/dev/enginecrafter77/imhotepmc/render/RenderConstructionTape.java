@@ -42,7 +42,7 @@ public class RenderConstructionTape extends Render<EntityConstructionTape> {
 		switch(entity.getAxis())
 		{
 		case Y:
-			this.transformMatrix.rotX(Math.PI / 2D);
+			this.transformMatrix.rotZ(Math.PI / 2D);
 			break;
 		case Z:
 			this.transformMatrix.rotY(Math.PI / 2D);
