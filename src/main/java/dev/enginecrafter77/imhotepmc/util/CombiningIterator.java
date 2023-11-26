@@ -25,10 +25,11 @@ public class CombiningIterator<T1, T2> implements Iterator<CombiningIterator.Pai
 	@Override
 	public boolean hasNext()
 	{
-		if(this.src1 == this.src2)
-			return (this.i1 + 2) < this.src1.size();
+		if(this.src1.isEmpty() || this.src2.isEmpty())
+			return false;
 
-		return (this.i1 + 1) < this.src1.size() || (this.i2 + 1) < this.src2.size();
+		int i1inc = this.src1 == this.src2 ? 2 : 1; // The space required after i1; 2 for self combinations, 1 for cross combination
+		return (this.i1 + i1inc) < this.src1.size() || (this.i2 + 1) < this.src2.size();
 	}
 
 	@Override
