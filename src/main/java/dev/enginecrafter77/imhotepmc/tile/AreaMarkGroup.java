@@ -12,7 +12,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 	private final BlockPos[] definingCorners;
@@ -108,25 +108,20 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 		box.setEnd(max);
 	}
 
-	public List<BlockPosEdge> edges()
+	public Stream<BlockPosEdge> blockEdges()
 	{
-		List<BlockPos> corners = BlockPosUtil.findCorners(this.getDefinedCorners()).distinct().collect(Collectors.toList());
-		List<BlockPosEdge> edges = new ArrayList<BlockPosEdge>(12);
-		for(int ti = 0; ti < corners.size(); ++ti)
-		{
-			BlockPos tbp = corners.get(ti);
-			for(int ii = ti + 1; ii < corners.size(); ++ii)
-			{
-				BlockPos ibp = corners.get(ii);
-				BlockPosEdge edge = BlockPosEdge.tryConnect(tbp, ibp);
-				if(edge == null)
-					continue;
-				if(edge.getLength() == 0)
-					continue;
-				edges.add(edge);
-			}
-		}
-		return edges;
+		return BlockPosUtil.findEdges(this.getDefinedCorners());
+	}
+
+	public Stream<Edge3d> tapeEdges()
+	{
+		return this.blockEdges().map((BlockPosEdge edge) -> {
+			Vec3d anchor1 = this.tapeAnchorFor(edge.getFirst());
+			Vec3d anchor2 = this.tapeAnchorFor(edge.getSecond());
+			Edge3d ne = new Edge3d();
+			ne.set(anchor1, anchor2);
+			return ne;
+		});
 	}
 
 	public void dismantle(World world, IMarkerAccessor accessor)
@@ -146,15 +141,7 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 
 	public int getUsedTapeCount()
 	{
-		int count = 0;
-		for(BlockPosEdge edge : this.edges())
-		{
-			Vec3d anchor1 = this.tapeAnchorFor(edge.getFirst());
-			Vec3d anchor2 = this.tapeAnchorFor(edge.getSecond());
-			double dist = anchor1.distanceTo(anchor2);
-			count += EntityConstructionTape.getTapeItemsForLength(dist);
-		}
-		return count;
+		return this.tapeEdges().mapToDouble(Edge3d::getLength).mapToInt(EntityConstructionTape::getTapeItemsForLength).sum();
 	}
 
 	public void construct(World world, IMarkerAccessor accessor)
@@ -171,15 +158,12 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 
 	protected void createTapeEntities(World world)
 	{
-		for(BlockPosEdge edge : this.edges())
-		{
-			Vec3d anchor1 = this.tapeAnchorFor(edge.getFirst());
-			Vec3d anchor2 = this.tapeAnchorFor(edge.getSecond());
+		this.tapeEdges().forEach((Edge3d edge) -> {
 			EntityConstructionTape tape = new EntityConstructionTape(world);
-			tape.setAnchor(anchor1, anchor2);
+			tape.setAnchor(edge.getFirstPointAsVec3d(), edge.getSecondPointAsVec3d());
 			world.spawnEntity(tape);
 			this.tapeEntities.add(tape.getUniqueID());
-		}
+		});
 	}
 
 	protected Vec3d tapeAnchorFor(BlockPos pos)

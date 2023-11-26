@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "up": "imhotepmc:blocks/architect_table_top",
+    "down": "imhotepmc:blocks/machine_blank",
+    "north": "imhotepmc:blocks/machine_blank",
+    "south": "imhotepmc:blocks/machine_blank",
+    "east": "imhotepmc:blocks/machine_blank",
+    "west": "imhotepmc:blocks/machine_blank"
+  }
+}

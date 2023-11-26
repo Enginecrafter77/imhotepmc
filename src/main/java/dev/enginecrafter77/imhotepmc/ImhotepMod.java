@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc;
 
+import dev.enginecrafter77.imhotepmc.block.BlockArchitectTable;
 import dev.enginecrafter77.imhotepmc.block.BlockAreaMarker;
 import dev.enginecrafter77.imhotepmc.block.BlockBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.block.BlockBuilder;
@@ -16,6 +17,7 @@ import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.msg.*;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
 import dev.enginecrafter77.imhotepmc.render.RenderConstructionTape;
+import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
@@ -71,6 +73,7 @@ public class ImhotepMod {
     @Mod.Instance(ImhotepMod.MOD_ID)
     public static ImhotepMod instance;
 
+    public static BlockArchitectTable BLOCK_ARCHITECT_TABLE;
     public static BlockAreaMarker BLOCK_AREA_MARKER;
     public static BlockBlueprintLibrary BLOCK_BLUEPRINT_LIBRARY;
     public static BlockBuilder BLOCK_BUILDER;
@@ -92,6 +95,7 @@ public class ImhotepMod {
         GameRegistry.registerTileEntity(TileEntityBlueprintLibrary.class, TileEntityBlueprintLibrary.ID);
         GameRegistry.registerTileEntity(TileEntityAreaMarker.class, new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"));
         GameRegistry.registerTileEntity(TileEntityBuilder.class, new ResourceLocation(ImhotepMod.MOD_ID, "builder"));
+        GameRegistry.registerTileEntity(TileEntityArchitectTable.class, new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"));
 
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID);
         this.netChannel.registerMessage(MessageBlueprintInscribeHandler.class, MessageInscribeBlueprint.class, 0, Side.SERVER);
@@ -106,6 +110,7 @@ public class ImhotepMod {
 
         this.packetStreamServer.subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance()), MessageBlueprintInscribeHandler::onBlueprintReceived));
 
+        BLOCK_ARCHITECT_TABLE = new BlockArchitectTable();
         BLOCK_BLUEPRINT_LIBRARY = new BlockBlueprintLibrary();
         ITEM_SCHEMATIC_BLUEPRINT = new ItemSchematicBlueprint();
         BLOCK_AREA_MARKER = new BlockAreaMarker();
@@ -173,6 +178,7 @@ public class ImhotepMod {
         this.registerItemBlock(reg, BLOCK_BLUEPRINT_LIBRARY);
         this.registerItemBlock(reg, BLOCK_AREA_MARKER);
         this.registerItemBlock(reg, BLOCK_BUILDER);
+        this.registerItemBlock(reg, BLOCK_ARCHITECT_TABLE);
     }
 
     @SubscribeEvent
@@ -182,6 +188,7 @@ public class ImhotepMod {
         reg.register(BLOCK_BLUEPRINT_LIBRARY);
         reg.register(BLOCK_AREA_MARKER);
         reg.register(BLOCK_BUILDER);
+        reg.register(BLOCK_ARCHITECT_TABLE);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
@@ -204,5 +211,6 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BLUEPRINT_LIBRARY), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "blueprint_library"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_AREA_MARKER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BUILDER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "builder"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_ARCHITECT_TABLE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"), "inventory"));
     }
 }
