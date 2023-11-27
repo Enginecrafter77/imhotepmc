@@ -21,7 +21,7 @@ public class TestBlueprintLitematicaSerialize {
 
 		SavedTileState block = SavedTileState.ofBlock(Blocks.IRON_BLOCK);
 
-		BlueprintEditor blueprintEditor = RegionBlueprint.begin();
+		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
 		blueprintEditor.addBlock(new BlockPos(14, 1, 14), block);
 		blueprintEditor.addBlock(new BlockPos(13, 1, 14), block);
 		blueprintEditor.addBlock(new BlockPos(14, 1, 13), block);
@@ -29,7 +29,7 @@ public class TestBlueprintLitematicaSerialize {
 		blueprintEditor.addBlock(new BlockPos(14, 1, 15), block);
 		blueprintEditor.addBlock(new BlockPos(14, 0, 14), block);
 		blueprintEditor.addBlock(new BlockPos(14, 2, 14), block);
-		RegionBlueprint region = blueprintEditor.build();
+		StructureBlueprint region = blueprintEditor.build();
 
 		SchematicBlueprint.Builder schematicBuilder = SchematicBlueprint.builder();
 		MutableSchematicMetadata metadata = new MutableSchematicMetadata();

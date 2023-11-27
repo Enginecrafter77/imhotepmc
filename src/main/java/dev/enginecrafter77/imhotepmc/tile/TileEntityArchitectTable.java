@@ -33,7 +33,7 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 
 	public SchematicBlueprint sample()
 	{
-		BlueprintEditor blueprintEditor = RegionBlueprint.begin();
+		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
 		for(BlockPos pos : this.selection.internalBlocks())
 		{
 			SavedTileState sts = SavedTileState.sample(this.world, pos);

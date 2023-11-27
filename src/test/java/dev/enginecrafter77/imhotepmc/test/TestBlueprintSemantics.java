@@ -33,32 +33,32 @@ public class TestBlueprintSemantics {
 	@Test
 	public void testRegionInequityAfterEdit()
 	{
-		RegionBlueprint region = this.createRegion();
-		RegionBlueprint mod = region.edit().addBlock(BlockPos.ORIGIN, SavedBlockState.ofBlock(Blocks.PLANKS)).build();
+		StructureBlueprint region = this.createRegion();
+		StructureBlueprint mod = region.edit().addBlock(BlockPos.ORIGIN, SavedBlockState.ofBlock(Blocks.PLANKS)).build();
 		Assertions.assertNotEquals(region, mod);
 	}
 
 	@Test
 	public void testRegionEquityAfterNoopEdit()
 	{
-		RegionBlueprint region = this.createRegion();
-		RegionBlueprint mod = region.edit().build();
+		StructureBlueprint region = this.createRegion();
+		StructureBlueprint mod = region.edit().build();
 		Assertions.assertEquals(region, mod);
 	}
 
 	@Test
 	public void testRegionHashInequityAfterEdit()
 	{
-		RegionBlueprint region = this.createRegion();
-		RegionBlueprint mod = region.edit().addBlock(BlockPos.ORIGIN, SavedBlockState.ofBlock(Blocks.PLANKS)).build();
+		StructureBlueprint region = this.createRegion();
+		StructureBlueprint mod = region.edit().addBlock(BlockPos.ORIGIN, SavedBlockState.ofBlock(Blocks.PLANKS)).build();
 		Assertions.assertNotEquals(region.hashCode(), mod.hashCode());
 	}
 
 	@Test
 	public void testRegionHashEquityAfterNoopEdit()
 	{
-		RegionBlueprint region = this.createRegion();
-		RegionBlueprint mod = region.edit().build();
+		StructureBlueprint region = this.createRegion();
+		StructureBlueprint mod = region.edit().build();
 		Assertions.assertEquals(region.hashCode(), mod.hashCode());
 	}
 
@@ -120,10 +120,10 @@ public class TestBlueprintSemantics {
 	public void testSchematicAddNonOverlappingRegion()
 	{
 		SchematicBlueprint schematicBlueprint = this.createBlueprint();
-		RegionBlueprint regionBlueprint = this.createRegion();
+		StructureBlueprint structureBlueprint = this.createRegion();
 
 		Assertions.assertDoesNotThrow(() -> {
-			schematicBlueprint.edit().addRegion("New", regionBlueprint, new BlockPos(5, 5, 5)).build();
+			schematicBlueprint.edit().addRegion("New", structureBlueprint, new BlockPos(5, 5, 5)).build();
 		});
 	}
 
@@ -131,10 +131,10 @@ public class TestBlueprintSemantics {
 	public void testSchematicAddOverlappingRegion()
 	{
 		SchematicBlueprint schematicBlueprint = this.createBlueprint();
-		RegionBlueprint regionBlueprint = this.createRegion();
+		StructureBlueprint structureBlueprint = this.createRegion();
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
-			schematicBlueprint.edit().addRegion("New", regionBlueprint, new BlockPos(1, 1, 1)).build();
+			schematicBlueprint.edit().addRegion("New", structureBlueprint, new BlockPos(1, 1, 1)).build();
 		});
 	}
 
@@ -154,14 +154,14 @@ public class TestBlueprintSemantics {
 		Assertions.assertEquals(block111, block666);
 	}
 
-	private RegionBlueprint createRegion()
+	private StructureBlueprint createRegion()
 	{
 		if(!Bootstrap.isRegistered())
 			Bootstrap.register();
 
 		SavedTileState block = SavedTileState.ofBlock(Blocks.IRON_BLOCK);
 
-		BlueprintEditor blueprintEditor = RegionBlueprint.begin();
+		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
 		blueprintEditor.addBlock(new BlockPos(14, 1, 14), block);
 		blueprintEditor.addBlock(new BlockPos(13, 1, 14), block);
 		blueprintEditor.addBlock(new BlockPos(14, 1, 13), block);
@@ -174,7 +174,7 @@ public class TestBlueprintSemantics {
 
 	private SchematicBlueprint createBlueprint()
 	{
-		RegionBlueprint region = this.createRegion();
+		StructureBlueprint region = this.createRegion();
 		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
 		builder.addRegion("Main", region, BlockPos.ORIGIN);
 		return builder.build();
@@ -182,7 +182,7 @@ public class TestBlueprintSemantics {
 
 	private SchematicBlueprint createMultiRegionBlueprint()
 	{
-		RegionBlueprint region = this.createRegion();
+		StructureBlueprint region = this.createRegion();
 		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
 		builder.addRegion("Reg1", region, BlockPos.ORIGIN);
 		builder.addRegion("Reg2", region, new BlockPos(5, 5, 5));

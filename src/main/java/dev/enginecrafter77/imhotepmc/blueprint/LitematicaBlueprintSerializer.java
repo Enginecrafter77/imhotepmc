@@ -181,7 +181,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		for(String name : regions.getKeySet())
 		{
 			NBTTagCompound regionTag = regions.getCompoundTag(name);
-			RegionBlueprint region = deserializeRegionBlueprint(regionTag);
+			StructureBlueprint region = deserializeRegionBlueprint(regionTag);
 			BlockPos offset = new BlockPos(readVector(regionTag.getCompoundTag(NBT_KEY_REGION_OFFSET)));
 			builder.addRegion(name, region, offset);
 		}
@@ -207,7 +207,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		return metadata;
 	}
 
-	public RegionBlueprint deserializeRegionBlueprint(NBTTagCompound regionTag)
+	public StructureBlueprint deserializeRegionBlueprint(NBTTagCompound regionTag)
 	{
 		Vec3i size = absolutizeVector(readVector(regionTag.getCompoundTag(NBT_KEY_REGION_SIZE)));
 
@@ -229,7 +229,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
 		SavedBlockState air = paletteList.get(0);
 
-		BlueprintEditor blueprintEditor = RegionBlueprint.begin();
+		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
 		blueprintEditor.setSize(size);
 		for(int index = 0; index < vector.getLength(); ++index)
 		{

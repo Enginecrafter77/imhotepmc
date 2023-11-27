@@ -81,7 +81,7 @@ public class BlueprintEditor {
 		return this;
 	}
 
-	public RegionBlueprint build()
+	public StructureBlueprint build()
 	{
 		if(this.data.isEmpty())
 			throw new UnsupportedOperationException("Cannot create empty region blueprint!");
@@ -112,6 +112,6 @@ public class BlueprintEditor {
 			int index = indexer.toIndex(offset);
 			vector.set(index, entry.getValue());
 		}
-		return new RegionBlueprint(indexer, ImmutableSet.copyOf(palette), vector, size, this.data.size());
+		return new StructureBlueprint(indexer, ImmutableSet.copyOf(palette), vector, size, this.data.size());
 	}
 }

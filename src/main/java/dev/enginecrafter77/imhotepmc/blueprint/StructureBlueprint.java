@@ -12,14 +12,14 @@ import java.util.Objects;
 import java.util.Set;
 
 @Immutable
-public class RegionBlueprint implements Blueprint {
+public class StructureBlueprint implements Blueprint {
 	private final Set<SavedTileState> palette;
 	private final CompactPalettedBitVector<SavedTileState> vector;
 	private final VoxelIndexer indexer;
 	private final int definedBlocks;
 	private final Vec3i size;
 
-	protected RegionBlueprint(VoxelIndexer indexer, Set<SavedTileState> palette, CompactPalettedBitVector<SavedTileState> vector, Vec3i size, int definedBlocks)
+	protected StructureBlueprint(VoxelIndexer indexer, Set<SavedTileState> palette, CompactPalettedBitVector<SavedTileState> vector, Vec3i size, int definedBlocks)
 	{
 		this.definedBlocks = definedBlocks;
 		this.indexer = indexer;
@@ -67,9 +67,9 @@ public class RegionBlueprint implements Blueprint {
 	@Override
 	public boolean equals(Object obj)
 	{
-		if(!(obj instanceof RegionBlueprint))
+		if(!(obj instanceof StructureBlueprint))
 			return false;
-		RegionBlueprint other = (RegionBlueprint)obj;
+		StructureBlueprint other = (StructureBlueprint)obj;
 
 		if(!Objects.equals(this.size, other.size))
 			return false;
@@ -119,9 +119,9 @@ public class RegionBlueprint implements Blueprint {
 		private int findNextNonEmpty()
 		{
 			int next = this.index + 1;
-			while(next < RegionBlueprint.this.indexer.getVolume())
+			while(next < StructureBlueprint.this.indexer.getVolume())
 			{
-				SavedTileState entry = RegionBlueprint.this.vector.get(next);
+				SavedTileState entry = StructureBlueprint.this.vector.get(next);
 				if(!entry.getBlockName().equals(Blocks.AIR.getRegistryName()))
 					break;
 				++next;
@@ -132,15 +132,15 @@ public class RegionBlueprint implements Blueprint {
 		@Override
 		public boolean hasNext()
 		{
-			return this.findNextNonEmpty() < RegionBlueprint.this.indexer.getVolume();
+			return this.findNextNonEmpty() < StructureBlueprint.this.indexer.getVolume();
 		}
 
 		@Override
 		public BlueprintVoxel next()
 		{
 			this.index = this.findNextNonEmpty();
-			BlockPos pos = RegionBlueprint.this.indexer.fromIndex(this.index).add(RegionBlueprint.this.getOriginOffset());
-			this.voxel.set(pos, RegionBlueprint.this.vector.get(this.index));
+			BlockPos pos = StructureBlueprint.this.indexer.fromIndex(this.index).add(StructureBlueprint.this.getOriginOffset());
+			this.voxel.set(pos, StructureBlueprint.this.vector.get(this.index));
 			return this.voxel;
 		}
 

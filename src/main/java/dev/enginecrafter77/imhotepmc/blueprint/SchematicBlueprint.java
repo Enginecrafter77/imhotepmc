@@ -148,7 +148,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			return this;
 		}
 
-		public Builder addRegion(String name, RegionBlueprint blueprint, BlockPos offset)
+		public Builder addRegion(String name, StructureBlueprint blueprint, BlockPos offset)
 		{
 			SchematicRegionBlueprint offsetBlueprint = new SchematicRegionBlueprint(blueprint, offset);
 			BlockSelectionBox newRegionBox = new BlockSelectionBox();
@@ -196,18 +196,18 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 
 	public static class SchematicRegionBlueprint implements Blueprint
 	{
-		private final RegionBlueprint regionBlueprint;
+		private final StructureBlueprint structureBlueprint;
 		private final BlockPos offset;
 
-		public SchematicRegionBlueprint(RegionBlueprint blueprint, BlockPos offset)
+		public SchematicRegionBlueprint(StructureBlueprint blueprint, BlockPos offset)
 		{
-			this.regionBlueprint = blueprint;
+			this.structureBlueprint = blueprint;
 			this.offset = offset;
 		}
 
-		public RegionBlueprint getRegionBlueprint()
+		public StructureBlueprint getRegionBlueprint()
 		{
-			return this.regionBlueprint;
+			return this.structureBlueprint;
 		}
 
 		public void computeBoundingBox(BlockSelectionBox box)
@@ -226,38 +226,38 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		@Override
 		public BlueprintEntry getBlockAt(BlockPos position)
 		{
-			return this.regionBlueprint.getBlockAt(position.subtract(this.offset));
+			return this.structureBlueprint.getBlockAt(position.subtract(this.offset));
 		}
 
 		@Override
 		public int getDefinedBlockCount()
 		{
-			return this.regionBlueprint.getDefinedBlockCount();
+			return this.structureBlueprint.getDefinedBlockCount();
 		}
 
 		@Override
 		public Vec3i getSize()
 		{
-			return this.regionBlueprint.getSize();
+			return this.structureBlueprint.getSize();
 		}
 
 		@Nonnull
 		@Override
 		public BlueprintReader reader()
 		{
-			return this.regionBlueprint.reader();
+			return this.structureBlueprint.reader();
 		}
 
 		@Override
 		public Set<? extends BlueprintEntry> palette()
 		{
-			return this.regionBlueprint.palette();
+			return this.structureBlueprint.palette();
 		}
 
 		@Override
 		public int hashCode()
 		{
-			return this.regionBlueprint.hashCode() + 1;
+			return this.structureBlueprint.hashCode() + 1;
 		}
 
 		@Override
@@ -266,7 +266,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			if(!(obj instanceof SchematicRegionBlueprint))
 				return false;
 			SchematicRegionBlueprint other = (SchematicRegionBlueprint)obj;
-			return Objects.equals(this.offset, other.offset) && Objects.equals(this.regionBlueprint, other.regionBlueprint);
+			return Objects.equals(this.offset, other.offset) && Objects.equals(this.structureBlueprint, other.structureBlueprint);
 		}
 	}
 
