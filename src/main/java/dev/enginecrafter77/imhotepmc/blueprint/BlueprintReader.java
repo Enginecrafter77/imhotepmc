@@ -1,6 +1,5 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Iterator;

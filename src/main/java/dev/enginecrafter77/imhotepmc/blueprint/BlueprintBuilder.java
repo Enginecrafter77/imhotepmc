@@ -1,7 +1,5 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
-import dev.enginecrafter77.imhotepmc.blueprint.iter.ImmutableBlueprintVoxel;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;

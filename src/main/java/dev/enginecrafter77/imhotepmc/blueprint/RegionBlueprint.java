@@ -1,7 +1,5 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
-import dev.enginecrafter77.imhotepmc.blueprint.iter.MutableBlueprintVoxel;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;

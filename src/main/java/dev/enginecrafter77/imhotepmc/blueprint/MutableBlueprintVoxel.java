@@ -1,8 +1,5 @@
-package dev.enginecrafter77.imhotepmc.blueprint.iter;
+package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.BlueprintEntry;
-import dev.enginecrafter77.imhotepmc.blueprint.SavedTileState;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,20 +12,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-@Immutable
-public class ImmutableBlueprintVoxel implements BlueprintVoxel {
-	private final BlockPos pos;
-	private final BlueprintEntry block;
+public class MutableBlueprintVoxel implements BlueprintVoxel {
+	private final BlockPos.MutableBlockPos pos;
+	private BlueprintEntry block;
 
-	public ImmutableBlueprintVoxel(BlockPos pos, BlueprintEntry entry)
+	public MutableBlueprintVoxel()
 	{
-		this.pos = pos.toImmutable();
-		this.block = SavedTileState.copyOf(entry);
+		this.pos = new BlockPos.MutableBlockPos();
+		this.block = null;
 	}
 
-	public ImmutableBlueprintVoxel(BlueprintVoxel copyFrom)
+	public void set(BlockPos pos, BlueprintEntry block)
 	{
-		this(copyFrom.getPosition(), copyFrom);
+		this.pos.setPos(pos);
+		this.block = block;
 	}
 
 	@Override
@@ -83,12 +80,5 @@ public class ImmutableBlueprintVoxel implements BlueprintVoxel {
 	public TileEntity createTileEntity(@Nonnull World world)
 	{
 		return this.block.createTileEntity(world);
-	}
-
-	public static ImmutableBlueprintVoxel copyOf(BlueprintVoxel voxel)
-	{
-		if(voxel instanceof ImmutableBlueprintVoxel)
-			return (ImmutableBlueprintVoxel)voxel;
-		return new ImmutableBlueprintVoxel(voxel);
 	}
 }
