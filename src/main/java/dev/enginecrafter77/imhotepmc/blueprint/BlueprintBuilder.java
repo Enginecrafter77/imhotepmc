@@ -68,7 +68,8 @@ public class BlueprintBuilder {
 		return this.reader.hasNext() || !this.deferred.isEmpty();
 	}
 
-	public void placeNextBlock()
+	@Nullable
+	protected BlueprintVoxel getNextVoxel()
 	{
 		if(this.world == null || this.origin == null)
 			throw new IllegalStateException("World or origin not defined!");
@@ -79,28 +80,27 @@ public class BlueprintBuilder {
 			BlockPos pos = voxel.getPosition().add(this.origin);
 			Block blk = voxel.getBlock();
 			if(blk == null)
-				return;
+				return null;
 			if(!blk.canPlaceBlockAt(this.world, pos))
 			{
 				this.deferred.add(ImmutableBlueprintVoxel.copyOf(voxel));
-				return;
+				return null;
 			}
-			this.placeTile(voxel);
-			return;
+			return voxel;
 		}
 
 		if(!this.deferred.isEmpty())
-		{
-			BlueprintVoxel deferredVoxel = this.deferred.removeLast();
-			this.placeTile(deferredVoxel);
-			return;
-		}
+			return this.deferred.removeLast();
 
 		throw new NoSuchElementException();
 	}
 
-	private void placeTile(BlueprintVoxel voxel)
+	public void placeNextBlock()
 	{
+		BlueprintVoxel voxel = this.getNextVoxel();
+		if(voxel == null)
+			return;
+
 		if(this.world == null || this.origin == null)
 			throw new IllegalStateException("World or origin not defined!");
 
