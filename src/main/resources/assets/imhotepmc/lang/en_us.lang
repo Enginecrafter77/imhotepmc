@@ -1,5 +1,6 @@
 itemGroup.imhotepmc=Imhotep
 
+tile.architect_table.name=Architect Table
 tile.blueprint_library.name=Blueprint Library
 tile.area_marker.name=Area Marker
 tile.builder.name=Builder
