@@ -16,6 +16,7 @@ public class BlueprintBuilder {
 	private static final String NBT_KEY_DEFERRED = "deferred";
 
 	private final LinkedList<BlueprintVoxel> deferred;
+	private final VoxelIndexer indexer;
 
 	private final SchematicBlueprint blueprint;
 
@@ -29,6 +30,7 @@ public class BlueprintBuilder {
 
 	public BlueprintBuilder(SchematicBlueprint blueprint)
 	{
+		this.indexer = new NaturalVoxelIndexer(blueprint.getSize());
 		this.deferred = new LinkedList<BlueprintVoxel>();
 		this.blueprint = blueprint;
 		this.reader = this.blueprint.reader();
@@ -118,11 +120,10 @@ public class BlueprintBuilder {
 	{
 		NBTTagCompound tag = this.reader.saveReaderState();
 
-		VoxelIndexer indexer = new NaturalVoxelIndexer(this.blueprint.getSize());
 		int[] deferredIndices = new int[this.deferred.size()];
 		int ii = 0;
 		for(BlueprintVoxel voxel : this.deferred)
-			deferredIndices[ii++] = indexer.toIndex(voxel.getPosition());
+			deferredIndices[ii++] = this.indexer.toIndex(voxel.getPosition());
 		tag.setIntArray(NBT_KEY_DEFERRED, deferredIndices);
 
 		return tag;
@@ -132,14 +133,14 @@ public class BlueprintBuilder {
 	{
 		this.reader.restoreReaderState(tag);
 
-		VoxelIndexer indexer = new NaturalVoxelIndexer(this.blueprint.getSize());
-
 		this.deferred.clear();
 		int[] deferredIndices = tag.getIntArray(NBT_KEY_DEFERRED);
 		for(int deferredIndex : deferredIndices)
 		{
-			BlockPos pos = indexer.fromIndex(deferredIndex);
+			BlockPos pos = this.indexer.fromIndex(deferredIndex);
 			BlueprintEntry entry = this.blueprint.getBlockAt(pos);
+			if(entry == null)
+				continue;
 			this.deferred.add(new ImmutableBlueprintVoxel(pos, entry));
 		}
 	}
