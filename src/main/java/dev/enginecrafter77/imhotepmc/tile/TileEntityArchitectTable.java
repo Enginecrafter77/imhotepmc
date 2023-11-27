@@ -1,9 +1,6 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
-import dev.enginecrafter77.imhotepmc.blueprint.MutableSchematicMetadata;
-import dev.enginecrafter77.imhotepmc.blueprint.RegionBlueprint;
-import dev.enginecrafter77.imhotepmc.blueprint.SavedTileState;
-import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.*;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,18 +33,18 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 
 	public SchematicBlueprint sample()
 	{
-		RegionBlueprint.Builder builder = RegionBlueprint.builder();
+		BlueprintEditor blueprintEditor = RegionBlueprint.begin();
 		for(BlockPos pos : this.selection.internalBlocks())
 		{
 			SavedTileState sts = SavedTileState.sample(this.world, pos);
-			builder.addBlock(pos.toImmutable(), sts);
+			blueprintEditor.addBlock(pos.toImmutable(), sts);
 		}
 
 		MutableSchematicMetadata msm = new MutableSchematicMetadata();
 		msm.setDescription("Created by ImhotepMC");
 
 		SchematicBlueprint.Builder schematicBuilder = SchematicBlueprint.builder();
-		schematicBuilder.addRegion("Unnamed", builder.build(), BlockPos.ORIGIN);
+		schematicBuilder.addRegion("Unnamed", blueprintEditor.build(), BlockPos.ORIGIN);
 		schematicBuilder.setMetadata(msm);
 		return schematicBuilder.build();
 	}

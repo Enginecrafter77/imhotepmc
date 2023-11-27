@@ -14,7 +14,7 @@ public class MutableSchematicMetadata implements SchematicMetadata {
 	private String name;
 	private Vec3i size;
 	private int regionCount;
-	private int blockCount;
+	private int definedBlockCount;
 
 	public MutableSchematicMetadata()
 	{
@@ -25,7 +25,7 @@ public class MutableSchematicMetadata implements SchematicMetadata {
 		this.modifyTime = Instant.EPOCH;
 		this.size = Vec3i.NULL_VECTOR;
 		this.regionCount = 0;
-		this.blockCount = 0;
+		this.definedBlockCount = 0;
 	}
 
 	public void set(SchematicMetadata other)
@@ -35,7 +35,7 @@ public class MutableSchematicMetadata implements SchematicMetadata {
 		this.description = other.getDescription();
 		this.createTime = other.getCreateTime();
 		this.modifyTime = other.getModifyTime();
-		this.blockCount = other.getBlockCount();
+		this.definedBlockCount = other.getDefinedBlockCount();
 		this.size = other.getSize();
 		this.regionCount = other.getRegionCount();
 	}
@@ -114,14 +114,14 @@ public class MutableSchematicMetadata implements SchematicMetadata {
 	}
 
 	@Override
-	public int getBlockCount()
+	public int getDefinedBlockCount()
 	{
-		return this.blockCount;
+		return this.definedBlockCount;
 	}
 
-	public void setBlockCount(int blockCount)
+	public void setDefinedBlockCount(int definedBlockCount)
 	{
-		this.blockCount = blockCount;
+		this.definedBlockCount = definedBlockCount;
 	}
 
 	@Override
@@ -156,6 +156,6 @@ public class MutableSchematicMetadata implements SchematicMetadata {
 
 	private Object[] createCompareArray()
 	{
-		return new Object[] {this.name, this.author, this.description, this.size, this.createTime, this.modifyTime, this.regionCount, this.blockCount};
+		return new Object[] {this.name, this.author, this.description, this.size, this.createTime, this.modifyTime, this.regionCount, this.definedBlockCount};
 	}
 }

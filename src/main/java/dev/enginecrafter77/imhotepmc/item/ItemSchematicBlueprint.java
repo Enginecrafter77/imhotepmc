@@ -105,10 +105,11 @@ public class ItemSchematicBlueprint extends Item {
 		if(blueprint == null)
 			return EnumActionResult.PASS;
 
-		BlockPos origin = pos.up();
-		BlueprintBuilder builder = blueprint.schematicBuilder();
+		BlueprintBuilder builder = new BlueprintBuilder(blueprint);
+		builder.setWorld(worldIn);
+		builder.setOrigin(pos.up());
 		while(builder.hasNextBlock())
-			builder.placeNextBlock(worldIn, origin);
+			builder.placeNextBlock();
 
 		return EnumActionResult.SUCCESS;
 	}

@@ -1,30 +1,19 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.blueprint.iter.MutableBlueprintVoxel;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationContext;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.CommonTranslationContext;
-import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
-import dev.enginecrafter77.imhotepmc.util.VecUtil;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Iterator;
+import javax.annotation.concurrent.Immutable;
 import java.util.Map;
 import java.util.Objects;
 
+@Immutable
 public class RegionBlueprint implements Blueprint {
-	private static final RegionBlueprint EMPTY = new RegionBlueprint(ImmutableMap.of(), Vec3i.NULL_VECTOR);
-
 	private final Map<BlockPos, SavedTileState> blocks;
 	private final Vec3i size;
 
@@ -40,6 +29,12 @@ public class RegionBlueprint implements Blueprint {
 		return this.size;
 	}
 
+	@Override
+	public BlockPos getOriginOffset()
+	{
+		return BlockPos.ORIGIN;
+	}
+
 	@Nullable
 	@Override
 	public SavedTileState getBlockAt(BlockPos position)
@@ -48,7 +43,7 @@ public class RegionBlueprint implements Blueprint {
 	}
 
 	@Override
-	public int getBlockCount()
+	public int getDefinedBlockCount()
 	{
 		return this.blocks.size();
 	}
@@ -74,27 +69,16 @@ public class RegionBlueprint implements Blueprint {
 
 	@Nonnull
 	@Override
-	public Iterator<BlueprintVoxel> iterator()
+	public BlueprintReader reader()
 	{
-		return new RegionIterator();
+		return new RegionReader();
 	}
 
-	@Override
-	public BlueprintBuilder schematicBuilder()
+	public BlueprintEditor edit()
 	{
-		return new RegionBuilder();
-	}
-
-	public RegionBlueprint translate(BlueprintTranslation mapper)
-	{
-		return this.edit().translate(mapper).build();
-	}
-
-	public RegionBlueprint.Builder edit()
-	{
-		RegionBlueprint.Builder builder = new RegionBlueprint.Builder();
-		builder.merge(this);
-		return builder;
+		BlueprintEditor blueprintEditor = new BlueprintEditor();
+		blueprintEditor.importBlueprint(this);
+		return blueprintEditor;
 	}
 
 	public int getTotalBlocks()
@@ -107,138 +91,23 @@ public class RegionBlueprint implements Blueprint {
 		return this.blocks;
 	}
 
-	public static RegionBlueprint empty()
+	public static BlueprintEditor begin()
 	{
-		return EMPTY;
+		return new BlueprintEditor();
 	}
 
-	public static Builder builder()
+	private class RegionReader implements BlueprintReader
 	{
-		return EMPTY.edit();
-	}
-
-	public static class Builder
-	{
-		private final Map<BlockPos, SavedTileState> data;
-
-		@Nullable
-		private Vec3i size;
-
-		public Builder()
-		{
-			this.data = new HashMap<BlockPos, SavedTileState>();
-			this.size = null;
-		}
-
-		public void merge(RegionBlueprint other)
-		{
-			this.data.putAll(other.blocks);
-		}
-
-		public RegionBlueprint.Builder setSize(Vec3i size)
-		{
-			this.size = size;
-			return this;
-		}
-
-		public RegionBlueprint.Builder addBlock(BlockPos position, SavedBlockState data)
-		{
-			return this.addBlock(position, new SavedTileState(data, null));
-		}
-
-		public RegionBlueprint.Builder addBlock(BlockPos position, SavedTileState data)
-		{
-			this.data.put(position, data);
-			return this;
-		}
-
-		public RegionBlueprint.Builder addTileEntity(BlockPos position, NBTTagCompound tileEntityData)
-		{
-			SavedTileState state = this.data.get(position);
-			if(state == null)
-				return this;
-			state = state.withTileEntity(tileEntityData);
-			this.data.put(position, state);
-			return this;
-		}
-
-		public RegionBlueprint.Builder translate(BlueprintTranslation mapper)
-		{
-			BlueprintTranslationContext ctx = new CommonTranslationContext(mapper, this.data::get);
-
-			for(BlockPos key : this.data.keySet())
-			{
-				SavedTileState currentState = this.data.get(key);
-				SavedTileState translated = mapper.translate(ctx, key, currentState);
-				if(translated == null)
-					this.data.remove(key);
-				else
-					this.data.put(key, translated);
-			}
-			return this;
-		}
-
-		public RegionBlueprint build()
-		{
-			if(this.data.isEmpty())
-				return RegionBlueprint.empty();
-
-			Vec3i size = this.size;
-			Vec3i origin = Vec3i.NULL_VECTOR;
-
-			if(size == null)
-			{
-				BlockPos.MutableBlockPos min = new BlockPos.MutableBlockPos();
-				BlockPos.MutableBlockPos max = new BlockPos.MutableBlockPos();
-				BlockPosUtil.findBoxMinMax(this.data.keySet(), min, max);
-				size = max.subtract(min).add(1, 1, 1);
-				origin = min.toImmutable();
-			}
-			
-			ImmutableMap.Builder<BlockPos, SavedTileState> mb = ImmutableMap.builder();
-			for(Map.Entry<BlockPos, SavedTileState> entry : this.data.entrySet())
-			{
-				BlockPos offset = new BlockPos(VecUtil.difference(entry.getKey(), origin));
-				mb.put(offset, entry.getValue());
-			}
-			return new RegionBlueprint(mb.build(), size);
-		}
-	}
-
-	private class RegionIterator implements Iterator<BlueprintVoxel>
-	{
-		private final Iterator<Map.Entry<BlockPos, SavedTileState>> iterator;
+		private final BlockPos.MutableBlockPos blockPos;
 		private final MutableBlueprintVoxel voxel;
-
-		public RegionIterator()
-		{
-			this.iterator = RegionBlueprint.this.blocks.entrySet().iterator();
-			this.voxel = new MutableBlueprintVoxel();
-		}
-
-		@Override
-		public boolean hasNext()
-		{
-			return this.iterator.hasNext();
-		}
-
-		@Override
-		public BlueprintVoxel next()
-		{
-			Map.Entry<BlockPos, SavedTileState> entry = this.iterator.next();
-			this.voxel.set(entry.getKey(), entry.getValue());
-			return this.voxel;
-		}
-	}
-
-	private class RegionBuilder implements BlueprintBuilder
-	{
 		private final VoxelIndexer indexer;
 		private int index;
 
-		public RegionBuilder()
+		public RegionReader()
 		{
+			this.blockPos = new BlockPos.MutableBlockPos();
 			this.indexer = new NaturalVoxelIndexer(RegionBlueprint.this.getSize());
+			this.voxel = new MutableBlueprintVoxel();
 			this.index = -1;
 		}
 
@@ -256,34 +125,22 @@ public class RegionBlueprint implements Blueprint {
 		}
 
 		@Override
-		public boolean hasNextBlock()
+		public boolean hasNext()
 		{
 			return this.findNextNonEmpty() < this.indexer.getVolume();
 		}
 
 		@Override
-		public void placeNextBlock(World world, BlockPos origin)
+		public BlueprintVoxel next()
 		{
 			this.index = this.findNextNonEmpty();
-			BlockPos pos = this.indexer.fromIndex(this.index);
-			BlockPos dest = pos.add(RegionBlueprint.this.getOrigin()).add(origin);
-			BlueprintEntry voxel = RegionBlueprint.this.getBlockAt(pos);
-			if(voxel == null)
-				throw new IllegalStateException();
-
-			IBlockState state = voxel.createBlockState();
-			if(state == null)
-				return;
-
-			world.setBlockState(dest, state, 2);
-			TileEntity tile = voxel.createTileEntity(world);
-			if(tile != null)
-				world.setTileEntity(dest, tile);
-			world.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
+			this.blockPos.setPos(this.indexer.fromIndex(this.index)).add(RegionBlueprint.this.getOriginOffset());
+			this.voxel.set(this.blockPos, RegionBlueprint.this.getBlockAt(this.blockPos));
+			return this.voxel;
 		}
 
 		@Override
-		public NBTTagCompound saveState()
+		public NBTTagCompound saveReaderState()
 		{
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger("index", this.index);
@@ -291,7 +148,7 @@ public class RegionBlueprint implements Blueprint {
 		}
 
 		@Override
-		public void restoreState(NBTTagCompound tag)
+		public void restoreReaderState(NBTTagCompound tag)
 		{
 			this.index = tag.getInteger("index");
 		}

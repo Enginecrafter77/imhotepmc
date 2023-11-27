@@ -10,13 +10,6 @@ import org.junit.jupiter.api.Test;
 
 public class TestBlueprintSemantics {
 	@Test
-	public void testRegionTotalVolume()
-	{
-		Blueprint blueprint = this.createRegion();
-		Assertions.assertEquals(27, blueprint.getTotalVolume());
-	}
-
-	@Test
 	public void testRegionSize()
 	{
 		Blueprint blueprint = this.createRegion();
@@ -27,14 +20,14 @@ public class TestBlueprintSemantics {
 	public void testRegionBlockCount()
 	{
 		Blueprint blueprint = this.createRegion();
-		Assertions.assertEquals(7, blueprint.getBlockCount());
+		Assertions.assertEquals(7, blueprint.getDefinedBlockCount());
 	}
 
 	@Test
 	public void testRegionOrigin()
 	{
 		Blueprint blueprint = this.createRegion();
-		Assertions.assertEquals(BlockPos.ORIGIN, blueprint.getOrigin());
+		Assertions.assertEquals(BlockPos.ORIGIN, blueprint.getOriginOffset());
 	}
 
 	@Test
@@ -90,17 +83,10 @@ public class TestBlueprintSemantics {
 	}
 
 	@Test
-	public void testSchematicTotalVolume()
-	{
-		SchematicBlueprint blueprint = this.createBlueprint();
-		Assertions.assertEquals(27, blueprint.getTotalVolume());
-	}
-
-	@Test
 	public void testSchematicBlockCount()
 	{
 		SchematicBlueprint blueprint = this.createBlueprint();
-		Assertions.assertEquals(7, blueprint.getBlockCount());
+		Assertions.assertEquals(7, blueprint.getDefinedBlockCount());
 	}
 
 	@Test
@@ -114,7 +100,7 @@ public class TestBlueprintSemantics {
 	public void testSchematicOrigin()
 	{
 		SchematicBlueprint blueprint = this.createBlueprint();
-		Assertions.assertEquals(BlockPos.ORIGIN, blueprint.getOrigin());
+		Assertions.assertEquals(BlockPos.ORIGIN, blueprint.getOriginOffset());
 	}
 
 	@Test
@@ -175,15 +161,15 @@ public class TestBlueprintSemantics {
 
 		SavedTileState block = SavedTileState.ofBlock(Blocks.IRON_BLOCK);
 
-		RegionBlueprint.Builder builder = RegionBlueprint.builder();
-		builder.addBlock(new BlockPos(14, 1, 14), block);
-		builder.addBlock(new BlockPos(13, 1, 14), block);
-		builder.addBlock(new BlockPos(14, 1, 13), block);
-		builder.addBlock(new BlockPos(15, 1, 14), block);
-		builder.addBlock(new BlockPos(14, 1, 15), block);
-		builder.addBlock(new BlockPos(14, 0, 14), block);
-		builder.addBlock(new BlockPos(14, 2, 14), block);
-		return builder.build();
+		BlueprintEditor blueprintEditor = RegionBlueprint.begin();
+		blueprintEditor.addBlock(new BlockPos(14, 1, 14), block);
+		blueprintEditor.addBlock(new BlockPos(13, 1, 14), block);
+		blueprintEditor.addBlock(new BlockPos(14, 1, 13), block);
+		blueprintEditor.addBlock(new BlockPos(15, 1, 14), block);
+		blueprintEditor.addBlock(new BlockPos(14, 1, 15), block);
+		blueprintEditor.addBlock(new BlockPos(14, 0, 14), block);
+		blueprintEditor.addBlock(new BlockPos(14, 2, 14), block);
+		return blueprintEditor.build();
 	}
 
 	private SchematicBlueprint createBlueprint()

@@ -50,8 +50,8 @@ public abstract class SchematicMetadataWrapper implements SchematicMetadata {
 	}
 
 	@Override
-	public int getBlockCount()
+	public int getDefinedBlockCount()
 	{
-		return this.getWrappedMetadata().getBlockCount();
+		return this.getWrappedMetadata().getDefinedBlockCount();
 	}
 }

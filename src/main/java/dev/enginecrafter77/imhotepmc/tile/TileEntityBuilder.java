@@ -43,10 +43,17 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		this.lastBuildTick = 0L;
 	}
 
+	public BlockPos getBuildOrigin()
+	{
+		IBlockState state = this.world.getBlockState(this.getPos());
+		EnumFacing facing = state.getValue(BlockBuilder.FACING);
+		return this.getPos().add(facing.getOpposite().getDirectionVec()); // block behind
+	}
+
 	public void setBlueprint(SchematicBlueprint blueprint)
 	{
 		this.blueprint = blueprint;
-		this.builder = blueprint.schematicBuilder();
+		this.builder = new BlueprintBuilder(blueprint);
 	}
 
 	@Override
@@ -86,13 +93,12 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		if(this.builder == null)
 			return false;
 
+		this.builder.setOrigin(this.getBuildOrigin());
+		this.builder.setWorld(this.world);
 		if(!this.builder.hasNextBlock())
 			return false;
 
-		IBlockState state = this.world.getBlockState(this.getPos());
-		EnumFacing facing = state.getValue(BlockBuilder.FACING);
-		BlockPos origin = this.getPos().add(facing.getOpposite().getDirectionVec()); // block behind
-		this.builder.placeNextBlock(this.world, origin);
+		this.builder.placeNextBlock();
 		return true;
 	}
 
@@ -109,14 +115,14 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		}
 
 		this.blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag("blueprint"));
-		this.builder = this.blueprint.schematicBuilder();
+		this.builder = new BlueprintBuilder(this.blueprint);
 		this.builder.restoreState(compound.getCompoundTag("builder_state"));
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
-		super.writeToNBT(compound);
+		compound = super.writeToNBT(compound);
 		compound.setBoolean("set", this.blueprint != null);
 
 		if(this.blueprint == null || this.builder == null)

@@ -3,13 +3,11 @@ package dev.enginecrafter77.imhotepmc.blueprint;
 import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.blueprint.iter.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
-import dev.enginecrafter77.imhotepmc.util.UnpackingIterator;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,19 +16,13 @@ import java.util.*;
 public class SchematicBlueprint extends SchematicMetadataWrapper implements Blueprint {
 	private static final Vec3i ONE = new Vec3i(1, 1, 1);
 
-	private final Map<String, OffsetRegionBlueprint> regions;
+	private final Map<String, SchematicRegionBlueprint> regions;
 	private final SchematicMetadata metadata;
 
-	protected SchematicBlueprint(SchematicMetadata metadata, Map<String, OffsetRegionBlueprint> regions)
+	protected SchematicBlueprint(SchematicMetadata metadata, Map<String, SchematicRegionBlueprint> regions)
 	{
 		this.metadata = metadata;
 		this.regions = regions;
-	}
-
-	@Override
-	public BlueprintBuilder schematicBuilder()
-	{
-		return new SchematicBlueprintBuilder();
 	}
 
 	@Override
@@ -45,12 +37,18 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 	}
 
 	@Nonnull
-	public OffsetRegionBlueprint getRegion(String name)
+	public SchematicRegionBlueprint getRegion(String name)
 	{
-		OffsetRegionBlueprint blueprint = this.regions.get(name);
+		SchematicRegionBlueprint blueprint = this.regions.get(name);
 		if(blueprint == null)
 			throw new NoSuchElementException();
 		return blueprint;
+	}
+
+	@Override
+	public BlockPos getOriginOffset()
+	{
+		return BlockPos.ORIGIN;
 	}
 
 	@Nullable
@@ -58,7 +56,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 	public BlueprintEntry getBlockAt(BlockPos position)
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		for(OffsetRegionBlueprint blueprint : this.regions.values())
+		for(SchematicRegionBlueprint blueprint : this.regions.values())
 		{
 			blueprint.computeBoundingBox(box);
 			if(box.contains(position))
@@ -74,6 +72,12 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 	}
 
 	@Override
+	public int getDefinedBlockCount()
+	{
+		return this.regions.values().parallelStream().mapToInt(Blueprint::getDefinedBlockCount).sum();
+	}
+
+	@Override
 	public boolean equals(Object obj)
 	{
 		if(!(obj instanceof SchematicBlueprint))
@@ -84,9 +88,9 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 
 	@Nonnull
 	@Override
-	public Iterator<BlueprintVoxel> iterator()
+	public BlueprintReader reader()
 	{
-		return new UnpackingIterator<Blueprint, BlueprintVoxel>(this.regions.values());
+		return new SchematicBlueprintReader();
 	}
 
 	public SchematicBlueprint.Builder edit()
@@ -101,7 +105,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 
 	public static class Builder
 	{
-		private final Map<String, OffsetRegionBlueprint> regions;
+		private final Map<String, SchematicRegionBlueprint> regions;
 		private final MutableSchematicMetadata metadata;
 
 		private int blockCount;
@@ -109,7 +113,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 
 		public Builder()
 		{
-			this.regions = new HashMap<String, OffsetRegionBlueprint>();
+			this.regions = new HashMap<String, SchematicRegionBlueprint>();
 			this.metadata = new MutableSchematicMetadata();
 			this.size = Vec3i.NULL_VECTOR;
 			this.blockCount = 0;
@@ -130,14 +134,14 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 
 		public Builder addRegion(String name, RegionBlueprint blueprint, BlockPos offset)
 		{
-			OffsetRegionBlueprint offsetBlueprint = new OffsetRegionBlueprint(blueprint, offset);
+			SchematicRegionBlueprint offsetBlueprint = new SchematicRegionBlueprint(blueprint, offset);
 			BlockSelectionBox newRegionBox = new BlockSelectionBox();
 			offsetBlueprint.computeBoundingBox(newRegionBox);
 
 			BlockSelectionBox totalBox = new BlockSelectionBox();
 
 			BlockSelectionBox regionBox = new BlockSelectionBox();
-			for(OffsetRegionBlueprint region : this.regions.values())
+			for(SchematicRegionBlueprint region : this.regions.values())
 			{
 				region.computeBoundingBox(regionBox);
 				regionBox.intersect(newRegionBox);
@@ -149,7 +153,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 
 			this.regions.put(name, offsetBlueprint);
 			this.size = totalBox.getSize();
-			this.blockCount += offsetBlueprint.getBlockCount();
+			this.blockCount += offsetBlueprint.getDefinedBlockCount();
 
 			return this;
 		}
@@ -158,8 +162,8 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		{
 			for(String regionName : other.getRegions())
 			{
-				OffsetRegionBlueprint blueprint = other.getRegion(regionName);
-				this.addRegion(regionName, blueprint.getRegionBlueprint(), blueprint.getOrigin());
+				SchematicRegionBlueprint blueprint = other.getRegion(regionName);
+				this.addRegion(regionName, blueprint.getRegionBlueprint(), blueprint.getOriginOffset());
 			}
 			return this;
 		}
@@ -168,18 +172,18 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		{
 			MutableSchematicMetadata meta = this.metadata.copy();
 			meta.setSize(this.size);
-			meta.setBlockCount(this.blockCount);
+			meta.setDefinedBlockCount(this.blockCount);
 			meta.setRegionCount(this.regions.size());
 			return new SchematicBlueprint(meta, ImmutableMap.copyOf(this.regions));
 		}
 	}
 
-	public static class OffsetRegionBlueprint implements Blueprint
+	public static class SchematicRegionBlueprint implements Blueprint
 	{
 		private final RegionBlueprint regionBlueprint;
 		private final BlockPos offset;
 
-		public OffsetRegionBlueprint(RegionBlueprint blueprint, BlockPos offset)
+		public SchematicRegionBlueprint(RegionBlueprint blueprint, BlockPos offset)
 		{
 			this.regionBlueprint = blueprint;
 			this.offset = offset;
@@ -192,12 +196,12 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 
 		public void computeBoundingBox(BlockSelectionBox box)
 		{
-			box.setStart(this.getOrigin());
-			box.setEnd(this.getOrigin().add(this.getSize()).subtract(ONE));
+			box.setStart(this.getOriginOffset());
+			box.setEnd(this.getOriginOffset().add(this.getSize()).subtract(ONE));
 		}
 
 		@Override
-		public BlockPos getOrigin()
+		public BlockPos getOriginOffset()
 		{
 			return this.offset;
 		}
@@ -210,9 +214,9 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		}
 
 		@Override
-		public int getBlockCount()
+		public int getDefinedBlockCount()
 		{
-			return this.regionBlueprint.getBlockCount();
+			return this.regionBlueprint.getDefinedBlockCount();
 		}
 
 		@Override
@@ -221,10 +225,11 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			return this.regionBlueprint.getSize();
 		}
 
+		@Nonnull
 		@Override
-		public BlueprintBuilder schematicBuilder()
+		public BlueprintReader reader()
 		{
-			return this.regionBlueprint.schematicBuilder();
+			return this.regionBlueprint.reader();
 		}
 
 		@Override
@@ -233,70 +238,63 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			return this.regionBlueprint.hashCode() + 1;
 		}
 
-		@Nonnull
-		@Override
-		public Iterator<BlueprintVoxel> iterator()
-		{
-			return this.regionBlueprint.iterator();
-		}
-
 		@Override
 		public boolean equals(Object obj)
 		{
-			if(!(obj instanceof OffsetRegionBlueprint))
+			if(!(obj instanceof SchematicRegionBlueprint))
 				return false;
-			OffsetRegionBlueprint other = (OffsetRegionBlueprint)obj;
+			SchematicRegionBlueprint other = (SchematicRegionBlueprint)obj;
 			return Objects.equals(this.offset, other.offset) && Objects.equals(this.regionBlueprint, other.regionBlueprint);
 		}
 	}
 
-	private class SchematicBlueprintBuilder implements BlueprintBuilder
+	private class SchematicBlueprintReader implements BlueprintReader
 	{
-		private final Map<String, BlueprintBuilder> regionBuilders;
+		private final Map<String, BlueprintReader> regionReaders;
 		private final List<String> regionOrder;
 		private int regionIndex;
 
-		public SchematicBlueprintBuilder()
+		public SchematicBlueprintReader()
 		{
 			this.regionOrder = new ArrayList<String>(SchematicBlueprint.this.regions.keySet());
-			this.regionBuilders = new HashMap<String, BlueprintBuilder>();
+			this.regionReaders = new HashMap<String, BlueprintReader>();
 			this.regionIndex = -1;
 
 			for(String region : this.regionOrder)
-				this.regionBuilders.put(region, SchematicBlueprint.this.getRegion(region).schematicBuilder());
+				this.regionReaders.put(region, SchematicBlueprint.this.getRegion(region).reader());
 		}
 
-		private BlueprintBuilder getBuilderAt(int region)
+		private BlueprintReader getReaderAt(int region)
 		{
-			return this.regionBuilders.get(this.regionOrder.get(region));
+			return this.regionReaders.get(this.regionOrder.get(region));
 		}
 
 		private int findAvailableBuilder()
 		{
-			if(this.regionIndex >= 0 && this.getBuilderAt(this.regionIndex).hasNextBlock())
+			if(this.regionIndex >= 0 && this.getReaderAt(this.regionIndex).hasNext())
 				return this.regionIndex;
 
 			int next = this.regionIndex + 1;
-			while(next < this.regionOrder.size() && !this.getBuilderAt(next).hasNextBlock())
+			while(next < this.regionOrder.size() && !this.getReaderAt(next).hasNext())
 				++next;
 			return next;
 		}
 
 		@Override
-		public boolean hasNextBlock()
+		public boolean hasNext()
 		{
 			return this.findAvailableBuilder() < this.regionOrder.size();
 		}
 
 		@Override
-		public void placeNextBlock(World world, BlockPos origin)
+		public BlueprintVoxel next()
 		{
 			this.regionIndex = this.findAvailableBuilder();
-			this.getBuilderAt(this.regionIndex).placeNextBlock(world, origin);
+			return this.getReaderAt(this.regionIndex).next();
 		}
 
 		@Override
-		public NBTTagCompound saveState()
+		public NBTTagCompound saveReaderState()
 		{
 			NBTTagCompound tag = new NBTTagCompound();
 			NBTTagList regionOrder = new NBTTagList();
@@ -304,7 +302,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			for(String reg : this.regionOrder)
 			{
 				regionOrder.appendTag(new NBTTagString(reg));
-				builders.setTag(reg, this.regionBuilders.get(reg).saveState());
+				builders.setTag(reg, this.regionReaders.get(reg).saveReaderState());
 			}
 			tag.setTag("region_order", regionOrder);
 			tag.setTag("builders", builders);
@@ -313,7 +311,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		}
 
 		@Override
-		public void restoreState(NBTTagCompound tag)
+		public void restoreReaderState(NBTTagCompound tag)
 		{
 			NBTTagList regionOrder = tag.getTagList("region_order", 8); // 8 => NBTTagString
 			this.regionOrder.clear();
@@ -325,7 +323,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			for(String reg : this.regionOrder)
 			{
 				NBTTagCompound builderState = builders.getCompoundTag(reg);
-				this.regionBuilders.get(reg).restoreState(builderState);
+				this.regionReaders.get(reg).restoreReaderState(builderState);
 			}
 		}
 	}

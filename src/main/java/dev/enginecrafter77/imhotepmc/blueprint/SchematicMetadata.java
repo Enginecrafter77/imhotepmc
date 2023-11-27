@@ -12,7 +12,7 @@ public interface SchematicMetadata {
 	public Instant getModifyTime();
 	public Vec3i getSize();
 	public int getRegionCount();
-	public int getBlockCount();
+	public int getDefinedBlockCount();
 
 	public boolean equals(Object other);
 

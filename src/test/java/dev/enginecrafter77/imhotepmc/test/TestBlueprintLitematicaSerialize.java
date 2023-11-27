@@ -21,15 +21,15 @@ public class TestBlueprintLitematicaSerialize {
 
 		SavedTileState block = SavedTileState.ofBlock(Blocks.IRON_BLOCK);
 
-		RegionBlueprint.Builder builder = RegionBlueprint.builder();
-		builder.addBlock(new BlockPos(14, 1, 14), block);
-		builder.addBlock(new BlockPos(13, 1, 14), block);
-		builder.addBlock(new BlockPos(14, 1, 13), block);
-		builder.addBlock(new BlockPos(15, 1, 14), block);
-		builder.addBlock(new BlockPos(14, 1, 15), block);
-		builder.addBlock(new BlockPos(14, 0, 14), block);
-		builder.addBlock(new BlockPos(14, 2, 14), block);
-		RegionBlueprint region = builder.build();
+		BlueprintEditor blueprintEditor = RegionBlueprint.begin();
+		blueprintEditor.addBlock(new BlockPos(14, 1, 14), block);
+		blueprintEditor.addBlock(new BlockPos(13, 1, 14), block);
+		blueprintEditor.addBlock(new BlockPos(14, 1, 13), block);
+		blueprintEditor.addBlock(new BlockPos(15, 1, 14), block);
+		blueprintEditor.addBlock(new BlockPos(14, 1, 15), block);
+		blueprintEditor.addBlock(new BlockPos(14, 0, 14), block);
+		blueprintEditor.addBlock(new BlockPos(14, 2, 14), block);
+		RegionBlueprint region = blueprintEditor.build();
 
 		SchematicBlueprint.Builder schematicBuilder = SchematicBlueprint.builder();
 		MutableSchematicMetadata metadata = new MutableSchematicMetadata();
