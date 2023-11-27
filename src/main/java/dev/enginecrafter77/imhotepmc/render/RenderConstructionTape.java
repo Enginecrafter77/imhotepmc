@@ -5,6 +5,7 @@ import dev.enginecrafter77.imhotepmc.entity.EntityConstructionTape;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -36,6 +37,12 @@ public class RenderConstructionTape extends Render<EntityConstructionTape> {
 	protected ResourceLocation getEntityTexture(@Nonnull EntityConstructionTape entity)
 	{
 		return TEXTURE;
+	}
+
+	@Override
+	public boolean shouldRender(EntityConstructionTape livingEntity, @Nonnull ICamera camera, double camX, double camY, double camZ)
+	{
+		return livingEntity.isInRangeToRender3d(camX, camY, camZ);
 	}
 
 	@Override
