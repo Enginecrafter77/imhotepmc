@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -15,11 +16,13 @@ import java.util.*;
 public class SchematicBlueprint extends SchematicMetadataWrapper implements Blueprint {
 	private static final Vec3i ONE = new Vec3i(1, 1, 1);
 
+	private final Set<? extends BlueprintEntry> palette;
 	private final Map<String, SchematicRegionBlueprint> regions;
 	private final SchematicMetadata metadata;
 
 	protected SchematicBlueprint(SchematicMetadata metadata, Map<String, SchematicRegionBlueprint> regions)
 	{
+		this.palette = compilePalette(regions.values());
 		this.metadata = metadata;
 		this.regions = regions;
 	}
@@ -92,6 +95,12 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		return new SchematicBlueprintReader();
 	}
 
+	@Override
+	public Set<? extends BlueprintEntry> palette()
+	{
+		return this.palette;
+	}
+
 	public SchematicBlueprint.Builder edit()
 	{
 		return new Builder(this);
@@ -100,6 +109,14 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 	public static SchematicBlueprint.Builder builder()
 	{
 		return new Builder();
+	}
+
+	private static Set<BlueprintEntry> compilePalette(Iterable<? extends Blueprint> blueprints)
+	{
+		ImmutableSet.Builder<BlueprintEntry> sb = ImmutableSet.builder();
+		for(Blueprint blueprint : blueprints)
+			sb.addAll(blueprint.palette());
+		return sb.build();
 	}
 
 	public static class Builder
@@ -229,6 +246,12 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		public BlueprintReader reader()
 		{
 			return this.regionBlueprint.reader();
+		}
+
+		@Override
+		public Set<? extends BlueprintEntry> palette()
+		{
+			return this.regionBlueprint.palette();
 		}
 
 		@Override

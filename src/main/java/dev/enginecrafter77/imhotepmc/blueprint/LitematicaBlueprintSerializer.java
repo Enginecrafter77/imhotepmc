@@ -109,13 +109,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		region.setTag(NBT_KEY_REGION_ENTITIES, new NBTTagList());
 		region.setTag(NBT_KEY_REGION_PENDING_TILE_TICKS, new NBTTagList());
 
-		List<SavedBlockState> unique = blueprint.getRegionBlueprint()
-				.getStructureBlocks()
-				.values()
-				.stream()
-				.map(SavedTileState::getSavedBlockState)
-				.distinct()
-				.collect(Collectors.toList());
+		List<SavedBlockState> unique = blueprint.palette().stream().map(SavedBlockState::copyOf).distinct().collect(Collectors.toList());
 
 		SavedBlockState air = SavedBlockState.ofBlock(Blocks.AIR);
 		unique.remove(air);
@@ -135,16 +129,16 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		int entries = size.getX() * size.getY() * size.getZ();
 		for(int index = 0; index < entries; ++index)
 		{
-			BlockPos pos = indexer.fromIndex(index);
-			SavedTileState savedTileState = blueprint.getRegionBlueprint().getStructureBlocks().get(pos);
+			BlockPos relativePosition = indexer.fromIndex(index);
+			BlueprintEntry savedTileState = blueprint.getBlockAt(relativePosition.add(blueprint.getOriginOffset()));
 			if(savedTileState != null)
 			{
-				vector.set(index, savedTileState.getSavedBlockState());
-				NBTTagCompound tileEntity = savedTileState.getTileEntity();
+				vector.set(index, SavedBlockState.copyOf(savedTileState));
+				NBTTagCompound tileEntity = savedTileState.getTileEntitySavedData();
 				if(tileEntity != null)
 				{
 					tileEntity = tileEntity.copy();
-					this.serializeVectorInto(pos, tileEntity);
+					this.serializeVectorInto(relativePosition, tileEntity);
 					tileEntities.appendTag(tileEntity);
 				}
 			}

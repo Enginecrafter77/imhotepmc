@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -7,17 +8,23 @@ import net.minecraft.util.math.Vec3i;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Immutable
 public class RegionBlueprint implements Blueprint {
-	private final Map<BlockPos, SavedTileState> blocks;
+	private final Set<SavedTileState> palette;
+	private final CompactPalettedBitVector<SavedTileState> vector;
+	private final VoxelIndexer indexer;
+	private final int definedBlocks;
 	private final Vec3i size;
 
-	public RegionBlueprint(Map<BlockPos, SavedTileState> blocks, Vec3i size)
+	protected RegionBlueprint(VoxelIndexer indexer, Set<SavedTileState> palette, CompactPalettedBitVector<SavedTileState> vector, Vec3i size, int definedBlocks)
 	{
-		this.blocks = blocks;
+		this.definedBlocks = definedBlocks;
+		this.indexer = indexer;
+		this.palette = palette;
+		this.vector = vector;
 		this.size = size;
 	}
 
@@ -35,21 +42,26 @@ public class RegionBlueprint implements Blueprint {
 
 	@Nullable
 	@Override
-	public SavedTileState getBlockAt(BlockPos position)
+	public BlueprintEntry getBlockAt(BlockPos position)
 	{
-		return this.blocks.get(position);
+		position = position.subtract(this.getOriginOffset());
+		int index = this.indexer.toIndex(position);
+		BlueprintEntry entry = this.vector.get(index);
+		if(entry.getBlockName().equals(Blocks.AIR.getRegistryName()))
+			return null;
+		return entry;
 	}
 
 	@Override
 	public int getDefinedBlockCount()
 	{
-		return this.blocks.size();
+		return this.definedBlocks;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash(this.blocks, this.size);
+		return Objects.hash(this.vector, this.size, this.definedBlocks);
 	}
 
 	@Override
@@ -62,7 +74,10 @@ public class RegionBlueprint implements Blueprint {
 		if(!Objects.equals(this.size, other.size))
 			return false;
 
-		return Objects.equals(this.blocks, other.blocks);
+		if(this.definedBlocks != other.definedBlocks)
+			return false;
+
+		return Objects.equals(this.vector, other.vector);
 	}
 
 	@Nonnull
@@ -72,21 +87,17 @@ public class RegionBlueprint implements Blueprint {
 		return new RegionReader();
 	}
 
+	@Override
+	public Set<? extends BlueprintEntry> palette()
+	{
+		return this.palette;
+	}
+
 	public BlueprintEditor edit()
 	{
 		BlueprintEditor blueprintEditor = new BlueprintEditor();
 		blueprintEditor.importBlueprint(this);
 		return blueprintEditor;
-	}
-
-	public int getTotalBlocks()
-	{
-		return this.blocks.size();
-	}
-
-	public Map<BlockPos, SavedTileState> getStructureBlocks()
-	{
-		return this.blocks;
 	}
 
 	public static BlueprintEditor begin()
@@ -96,15 +107,11 @@ public class RegionBlueprint implements Blueprint {
 
 	private class RegionReader implements BlueprintReader
 	{
-		private final BlockPos.MutableBlockPos blockPos;
 		private final MutableBlueprintVoxel voxel;
-		private final VoxelIndexer indexer;
 		private int index;
 
 		public RegionReader()
 		{
-			this.blockPos = new BlockPos.MutableBlockPos();
-			this.indexer = new NaturalVoxelIndexer(RegionBlueprint.this.getSize());
 			this.voxel = new MutableBlueprintVoxel();
 			this.index = -1;
 		}
@@ -112,10 +119,10 @@ public class RegionBlueprint implements Blueprint {
 		private int findNextNonEmpty()
 		{
 			int next = this.index + 1;
-			while(next < this.indexer.getVolume())
+			while(next < RegionBlueprint.this.indexer.getVolume())
 			{
-				BlockPos pos = this.indexer.fromIndex(next);
-				if(RegionBlueprint.this.blocks.containsKey(pos))
+				SavedTileState entry = RegionBlueprint.this.vector.get(next);
+				if(!entry.getBlockName().equals(Blocks.AIR.getRegistryName()))
 					break;
 				++next;
 			}
@@ -125,15 +132,15 @@ public class RegionBlueprint implements Blueprint {
 		@Override
 		public boolean hasNext()
 		{
-			return this.findNextNonEmpty() < this.indexer.getVolume();
+			return this.findNextNonEmpty() < RegionBlueprint.this.indexer.getVolume();
 		}
 
 		@Override
 		public BlueprintVoxel next()
 		{
 			this.index = this.findNextNonEmpty();
-			this.blockPos.setPos(this.indexer.fromIndex(this.index)).add(RegionBlueprint.this.getOriginOffset());
-			this.voxel.set(this.blockPos, RegionBlueprint.this.getBlockAt(this.blockPos));
+			BlockPos pos = RegionBlueprint.this.indexer.fromIndex(this.index).add(RegionBlueprint.this.getOriginOffset());
+			this.voxel.set(pos, RegionBlueprint.this.vector.get(this.index));
 			return this.voxel;
 		}
 

@@ -1,18 +1,20 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationContext;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.CommonTranslationContext;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
-import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BlueprintEditor {
 	private final Map<BlockPos, SavedTileState> data;
@@ -96,12 +98,20 @@ public class BlueprintEditor {
 			origin = min.toImmutable();
 		}
 
-		ImmutableMap.Builder<BlockPos, SavedTileState> mb = ImmutableMap.builder();
+		SavedTileState air = SavedTileState.ofBlock(Blocks.AIR);
+
+		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
+		List<SavedTileState> palette = this.data.values().stream().distinct().collect(Collectors.toList());
+		palette.remove(air);
+		palette.add(0, air);
+
+		CompactPalettedBitVector<SavedTileState> vector = new CompactPalettedBitVector<SavedTileState>(palette, indexer.getVolume());
 		for(Map.Entry<BlockPos, SavedTileState> entry : this.data.entrySet())
 		{
-			BlockPos offset = new BlockPos(VecUtil.difference(entry.getKey(), origin));
-			mb.put(offset, entry.getValue());
+			BlockPos offset = entry.getKey().subtract(origin);
+			int index = indexer.toIndex(offset);
+			vector.set(index, entry.getValue());
 		}
-		return new RegionBlueprint(mb.build(), size);
+		return new RegionBlueprint(indexer, ImmutableSet.copyOf(palette), vector, size, this.data.size());
 	}
 }

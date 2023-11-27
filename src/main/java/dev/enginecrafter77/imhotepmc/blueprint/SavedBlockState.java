@@ -205,6 +205,8 @@ public class SavedBlockState implements BlueprintEntry {
 	{
 		if(entry instanceof SavedBlockState)
 			return (SavedBlockState)entry;
+		if(entry instanceof SavedTileState)
+			return ((SavedTileState)entry).getSavedBlockState();
 		return new SavedBlockState(entry.getBlockName(), entry.getBlockProperties());
 	}
 
