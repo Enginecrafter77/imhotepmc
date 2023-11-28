@@ -24,6 +24,7 @@ public class RenderPlayerTapeLinking {
 	private final Point3d anchorPoint1;
 	private final Point3d anchorPoint2;
 	private final Point3d renderPoint;
+	private final Point3d midPoint;
 
 	private final Matrix3d handRotationMatrix;
 	private final Vector3d handOffset;
@@ -36,6 +37,7 @@ public class RenderPlayerTapeLinking {
 		this.anchorPoint2 = new Point3d();
 		this.renderPoint = new Point3d();
 		this.handOffset = new Vector3d();
+		this.midPoint = new Point3d();
 	}
 
 	@SubscribeEvent
@@ -60,11 +62,11 @@ public class RenderPlayerTapeLinking {
 
 		this.anchorPoint2.add(this.handOffset);
 
-		this.renderPoint.x = (this.anchorPoint1.x - this.anchorPoint2.x) / 2D;
-		this.renderPoint.y = (this.anchorPoint1.y - this.anchorPoint2.y) / 2D;
-		this.renderPoint.z = (this.anchorPoint1.z - this.anchorPoint2.z) / 2D;
+		this.midPoint.x = (this.anchorPoint2.x + this.anchorPoint1.x) / 2D;
+		this.midPoint.y = (this.anchorPoint2.y + this.anchorPoint1.y) / 2D;
+		this.midPoint.z = (this.anchorPoint2.z + this.anchorPoint1.z) / 2D;
 
-		this.renderPoint.add(this.handOffset);
+		VecUtil.calculateRenderPoint(player, this.midPoint, this.renderPoint, event.getPartialTicks());
 
 		this.tapeRender.setTexture(RenderTape.TEXTURE);
 		this.tapeRender.setAnchors(this.anchorPoint1, this.anchorPoint2);

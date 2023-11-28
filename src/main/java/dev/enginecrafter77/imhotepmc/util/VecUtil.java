@@ -1,8 +1,11 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Tuple3d;
@@ -26,5 +29,22 @@ public class VecUtil {
 		matrix.transform(boxStart);
 		matrix.transform(boxEnd);
 		return new AxisAlignedBB(boxStart.x, boxStart.y, boxStart.z, boxEnd.x, boxEnd.y, boxEnd.z);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void interpolatePlayerPosition(EntityPlayerSP playerSP, Tuple3d dest, float partialTicks)
+	{
+		dest.x = playerSP.prevPosX + (playerSP.posX - playerSP.prevPosX) * partialTicks;
+		dest.y = playerSP.prevPosY + (playerSP.posY - playerSP.prevPosY) * partialTicks;
+		dest.z = playerSP.prevPosZ + (playerSP.posZ - playerSP.prevPosZ) * partialTicks;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void calculateRenderPoint(EntityPlayerSP player, Tuple3d src, Tuple3d dest, float partialTicks)
+	{
+		//dest = src - player.pos = -player.pos + src
+		interpolatePlayerPosition(player, dest, partialTicks);
+		dest.negate();
+		dest.add(src);
 	}
 }
