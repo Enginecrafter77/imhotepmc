@@ -17,12 +17,15 @@ public class RenderTape implements IRenderable {
 	public static final ResourceLocation TEXTURE = new ResourceLocation(ImhotepMod.MOD_ID, "textures/entity/construction_tape.png");
 	public static final double HALF_PI = Math.PI / 2D;
 
+	private static final Vector3d DRAW_VECTOR = new Vector3d(1D, 0D, 0D);
+
 	private final Tessellator tessellator;
 	private final Matrix4d transformMatrix;
 	private final Point3d tpoint;
 
 	private final Point3d a1, a2;
 	private final Vector3d heading;
+	private final Vector3d drawCrossProduct;
 	private final AxisAngle4d rot;
 
 	private ResourceLocation texture;
@@ -38,6 +41,7 @@ public class RenderTape implements IRenderable {
 		this.heading = new Vector3d();
 		this.rot = new AxisAngle4d();
 		this.tpoint = new Point3d();
+		this.drawCrossProduct = new Vector3d();
 		this.texture = null;
 		this.radius = 0.0625D; // 1/16th of block
 		this.segmentLength = 1D;
@@ -77,8 +81,10 @@ public class RenderTape implements IRenderable {
 		this.heading.sub(this.a1);
 		double length = this.heading.length();
 
-		this.heading.normalize();
-		this.rot.set(this.heading.x, this.heading.z, this.heading.y, HALF_PI);
+		this.drawCrossProduct.cross(DRAW_VECTOR, this.heading);
+		double angle = DRAW_VECTOR.angle(this.heading);
+		this.rot.set(this.drawCrossProduct, angle);
+
 		this.transformMatrix.setIdentity();
 		this.transformMatrix.set(this.rot);
 
