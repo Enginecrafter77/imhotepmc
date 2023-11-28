@@ -31,6 +31,13 @@ public class VecUtil {
 		return new AxisAlignedBB(boxStart.x, boxStart.y, boxStart.z, boxEnd.x, boxEnd.y, boxEnd.z);
 	}
 
+	public static void midpoint(Tuple3d v1, Tuple3d v2, Tuple3d mid)
+	{
+		mid.set(v1);
+		mid.add(v2);
+		mid.scale(0.5D);
+	}
+
 	@SideOnly(Side.CLIENT)
 	public static void interpolatePlayerPosition(EntityPlayerSP playerSP, Tuple3d dest, float partialTicks)
 	{
