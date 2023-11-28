@@ -7,7 +7,6 @@ import dev.enginecrafter77.imhotepmc.block.BlockBuilder;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
-import dev.enginecrafter77.imhotepmc.entity.EntityConstructionTape;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
 import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
@@ -17,12 +16,17 @@ import dev.enginecrafter77.imhotepmc.net.MessageInscribeBlueprint;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.msg.*;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
-import dev.enginecrafter77.imhotepmc.render.RenderConstructionTape;
+import dev.enginecrafter77.imhotepmc.render.RenderWorldAreaMarkers;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
+import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
+import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncHandler;
+import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncMessage;
+import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncRequest;
+import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncRequestHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -34,14 +38,11 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -86,6 +87,7 @@ public class ImhotepMod {
 
     private PacketStreamDispatcher packetStreamClient;
     private PacketStreamManager packetStreamServer;
+    private WorldDataSyncHandler worldDataSyncHandler;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
@@ -101,6 +103,7 @@ public class ImhotepMod {
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID);
         this.netChannel.registerMessage(MessageBlueprintInscribeHandler.class, MessageInscribeBlueprint.class, 0, Side.SERVER);
 
+        this.worldDataSyncHandler = new WorldDataSyncHandler();
         this.packetStreamServer = new PacketStreamManager();
         this.packetStreamClient = new PacketStreamDispatcher(this.netChannel, 8192);
         this.netChannel.registerMessage(this.packetStreamServer.getStartHandler(), PacketStreamStartMessage.class, 1, Side.SERVER);
@@ -108,6 +111,9 @@ public class ImhotepMod {
         this.netChannel.registerMessage(this.packetStreamServer.getEndHandler(), PacketStreamEndMessage.class, 3, Side.SERVER);
         this.netChannel.registerMessage(this.packetStreamClient.getStartConfirmHandler(), PacketStreamStartConfirmMessage.class, 4, Side.CLIENT);
         this.netChannel.registerMessage(this.packetStreamClient.getTransferConfimHandler(), PacketStreamTransferConfirmMessage.class, 5, Side.CLIENT);
+
+        this.netChannel.registerMessage(WorldDataSyncMessage.WorldDataSyncMessageHandler.class, WorldDataSyncMessage.class, 6, Side.CLIENT);
+        this.netChannel.registerMessage(WorldDataSyncRequestHandler.class, WorldDataSyncRequest.class, 7, Side.SERVER);
 
         this.packetStreamServer.subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance()), MessageBlueprintInscribeHandler::onBlueprintReceived));
 
@@ -118,7 +124,10 @@ public class ImhotepMod {
         ITEM_CONSTRUCTION_TAPE = new ItemConstructionTape();
         BLOCK_BUILDER = new BlockBuilder();
 
+        this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
+
         CapabilityAreaMarker.register();
+        MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
 
         File configDir = event.getModConfigurationDirectory();
         File gameDirectory = configDir.getParentFile();
@@ -129,7 +138,7 @@ public class ImhotepMod {
     @SideOnly(Side.CLIENT)
     public void onPreInitClient(FMLPreInitializationEvent event)
     {
-        RenderingRegistry.registerEntityRenderingHandler(EntityConstructionTape.class, RenderConstructionTape::new);
+        RenderWorldAreaMarkers.register();
     }
 
     public File getSchematicsDir()
@@ -152,24 +161,17 @@ public class ImhotepMod {
         return this.packetStreamClient;
     }
 
+    public WorldDataSyncHandler getWorldDataSyncHandler()
+    {
+        return this.worldDataSyncHandler;
+    }
+
     @SubscribeEvent
     public void registerSerializers(RegistryEvent.Register<DataSerializerEntry> event)
     {
         DataSerializerEntry v3ds = new DataSerializerEntry(Vec3dSerializer.INSTANCE);
         v3ds.setRegistryName(new ResourceLocation(ImhotepMod.MOD_ID, "v3d_serializer"));
         event.getRegistry().register(v3ds);
-    }
-
-    @SubscribeEvent
-    public void registerEntities(RegistryEvent.Register<EntityEntry> event)
-    {
-        IForgeRegistry<EntityEntry> reg = event.getRegistry();
-        reg.register(EntityEntryBuilder.create()
-                .entity(EntityConstructionTape.class)
-                .id(new ResourceLocation(ImhotepMod.MOD_ID, "construction_tape"), 1)
-                .name("construction_tape")
-                .tracker(16, 1, false)
-                .build());
     }
 
     @SubscribeEvent

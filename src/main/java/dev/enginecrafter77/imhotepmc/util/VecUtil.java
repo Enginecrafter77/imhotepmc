@@ -1,6 +1,6 @@
 package dev.enginecrafter77.imhotepmc.util;
 
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
@@ -39,18 +39,18 @@ public class VecUtil {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void interpolatePlayerPosition(EntityPlayerSP playerSP, Tuple3d dest, float partialTicks)
+	public static void interpolateEntityPosition(Entity entity, Tuple3d dest, float partialTicks)
 	{
-		dest.x = playerSP.prevPosX + (playerSP.posX - playerSP.prevPosX) * partialTicks;
-		dest.y = playerSP.prevPosY + (playerSP.posY - playerSP.prevPosY) * partialTicks;
-		dest.z = playerSP.prevPosZ + (playerSP.posZ - playerSP.prevPosZ) * partialTicks;
+		dest.x = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
+		dest.y = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
+		dest.z = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void calculateRenderPoint(EntityPlayerSP player, Tuple3d src, Tuple3d dest, float partialTicks)
+	public static void calculateRenderPoint(Entity ent, Tuple3d src, Tuple3d dest, float partialTicks)
 	{
 		//dest = src - player.pos = -player.pos + src
-		interpolatePlayerPosition(player, dest, partialTicks);
+		interpolateEntityPosition(ent, dest, partialTicks);
 		dest.negate();
 		dest.add(src);
 	}

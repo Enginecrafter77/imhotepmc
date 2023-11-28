@@ -15,6 +15,20 @@ public class Edge3d {
 		this.p2 = new Point3d();
 	}
 
+	public Edge3d(Tuple3d p1, Tuple3d p2)
+	{
+		this();
+		this.p1.set(p1);
+		this.p2.set(p2);
+	}
+
+	public Edge3d(Edge3d other)
+	{
+		this();
+		this.p1.set(other.p1);
+		this.p2.set(other.p2);
+	}
+
 	public void set(Vec3d v1, Vec3d v2)
 	{
 		this.set(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
@@ -32,14 +46,19 @@ public class Edge3d {
 		this.p2.set(x2, y2, z2);
 	}
 
-	public void getFirstPoint(Tuple3d dest)
+	public Tuple3d getFirstPoint()
 	{
-		dest.set(this.p1);
+		return this.p1;
 	}
 
-	public void getSecondPoint(Tuple3d dest)
+	public Tuple3d getSecondPoint()
 	{
-		dest.set(this.p2);
+		return this.p2;
+	}
+
+	public void midpoint(Tuple3d dest)
+	{
+		VecUtil.midpoint(this.p1, this.p2, dest);
 	}
 
 	public Vec3d getFirstPointAsVec3d()
@@ -55,5 +74,36 @@ public class Edge3d {
 	public double getLength()
 	{
 		return this.p2.distance(this.p1);
+	}
+
+	public static class ImmutableEdge3d extends Edge3d
+	{
+		public ImmutableEdge3d(Edge3d from)
+		{
+			super(from);
+		}
+
+		public ImmutableEdge3d(Tuple3d p1, Tuple3d p2)
+		{
+			super(p1, p2);
+		}
+
+		@Override
+		public void set(Vec3d v1, Vec3d v2)
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void set(Tuple3d p1, Tuple3d p2)
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void set(double x1, double y1, double z1, double x2, double y2, double z2)
+		{
+			throw new UnsupportedOperationException();
+		}
 	}
 }

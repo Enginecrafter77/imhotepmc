@@ -76,9 +76,12 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 			IAreaMarker marker = (IAreaMarker)tile;
 
 			AreaMarkGroup group = marker.getCurrentMarkGroup();
+			if(group == null)
+				return;
+
 			group.select(this.selection);
-			group.dismantle(this.world, TileEntityAreaMarker::getMarkerFromTile);
-			for(BlockPos corner : group.getDefinedCorners())
+			group.dismantle(this.world);
+			for(BlockPos corner : group.getDefiningCorners())
 				this.world.destroyBlock(corner, true);
 			this.initialized = true;
 			this.markDirty();

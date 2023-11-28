@@ -113,12 +113,15 @@ public class BlockAreaMarker extends Block {
 		if(marker != null)
 		{
 			AreaMarkGroup group = marker.getCurrentMarkGroup();
-			ItemStack tape = new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, group.getUsedTapeCount());
-			EntityItem item = new EntityItem(worldIn);
-			item.setItem(tape);
-			item.setPosition(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-			worldIn.spawnEntity(item);
-			group.dismantle(worldIn, TileEntityAreaMarker::getMarkerFromTile);
+			if(group != null)
+			{
+				ItemStack tape = new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, group.getUsedTapeCount());
+				EntityItem item = new EntityItem(worldIn);
+				item.setItem(tape);
+				item.setPosition(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+				worldIn.spawnEntity(item);
+				group.dismantle(worldIn);
+			}
 		}
 		super.breakBlock(worldIn, pos, state);
 	}

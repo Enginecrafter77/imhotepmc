@@ -1,12 +1,11 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import com.google.common.collect.ImmutableList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,6 +24,14 @@ public class BlockPosUtil {
 			return Axis3d.X;
 
 		return null;
+	}
+
+	public static AxisAlignedBB contain(Iterable<BlockPos> itr)
+	{
+		BlockPos.MutableBlockPos min = new BlockPos.MutableBlockPos();
+		BlockPos.MutableBlockPos max = new BlockPos.MutableBlockPos();
+		findBoxMinMax(itr, min, max);
+		return new AxisAlignedBB(min.getX(), min.getY(), min.getZ(), max.getX() + 1D, max.getY() + 1D, max.getZ() + 1D);
 	}
 
 	public static Stream<BlockPos> neighbors(BlockPos pos)
@@ -88,11 +95,11 @@ public class BlockPosUtil {
 		return Stream.of(c1, c2, c3, c4, c5, c6, c7, c8);
 	}
 
-	public static Stream<BlockPosEdge> findEdges(Iterable<BlockPos> range)
+	public static Collection<BlockPosEdge> findEdges(Iterable<BlockPos> range)
 	{
 		List<BlockPos> corners = findCorners(range).distinct().collect(Collectors.toList());
 
-		List<BlockPosEdge> edges = new ArrayList<BlockPosEdge>(12);
+		ImmutableList.Builder<BlockPosEdge> edges = ImmutableList.builder();
 		for(CombiningIterator.Pair<BlockPos, BlockPos> pos : CombiningIterator.selfCombinations(corners))
 		{
 			BlockPosEdge edge = BlockPosEdge.tryConnect(pos.getFirst(), pos.getSecond());
@@ -102,6 +109,6 @@ public class BlockPosUtil {
 				continue;
 			edges.add(edge);
 		}
-		return edges.stream();
+		return edges.build();
 	}
 }

@@ -1,36 +1,54 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
+import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class TileEntityAreaMarker extends TileEntity implements IAreaMarker {
-	private static final String NBT_KEY_LINK = "link";
+	private static final String NBT_KEY_GROUP = "group";
 
-	@Nonnull
-	private AreaMarkGroup group;
+	@Nullable
+	private UUID areaMarkGroupId;
 
 	public TileEntityAreaMarker()
 	{
-		this.group = AreaMarkGroup.voxel(BlockPos.ORIGIN);
+		this.areaMarkGroupId = null;
 	}
 
 	public boolean tryConnect(TileEntityAreaMarker other, EntityPlayer actor)
 	{
-		AreaMarkGroup ng = this.group.merge(other.getCurrentMarkGroup());
+		if(this.areaMarkGroupId != null && other.areaMarkGroupId != null)
+			return false;
+
+		if(this.areaMarkGroupId == null && other.areaMarkGroupId != null)
+			return other.tryConnect(this, actor);
+
+		int stored = 0;
+		AreaMarkGroup ng;
+		AreaMarkGroup grp = this.getCurrentMarkGroup();
+		if(grp == null)
+		{
+			ng = AreaMarkGroup.create(this.getPos(), other.getPos());
+		}
+		else
+		{
+			stored = grp.getUsedTapeCount();
+			ng = grp.expand(other.getPos());
+		}
+
 		if(ng == null)
 			return false;
 
-		int stored = this.group.getUsedTapeCount() + other.group.getUsedTapeCount();
 		int required = ng.getUsedTapeCount();
 		int consume = required - stored;
 		ItemStack stack = new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, Math.abs(consume));
@@ -54,9 +72,9 @@ public class TileEntityAreaMarker extends TileEntity implements IAreaMarker {
 			actor.inventory.decrStackSize(slot, consume);
 		}
 
-		this.group.dismantle(this.world, TileEntityAreaMarker::getMarkerFromTile);
-		other.group.dismantle(this.world, TileEntityAreaMarker::getMarkerFromTile);
-		ng.construct(this.world, TileEntityAreaMarker::getMarkerFromTile);
+		if(grp != null)
+			grp.dismantle(this.world);
+		ng.construct(this.world);
 		return true;
 	}
 
@@ -66,47 +84,46 @@ public class TileEntityAreaMarker extends TileEntity implements IAreaMarker {
 		return this.getPos();
 	}
 
+	@Nullable
 	@Override
 	public AreaMarkGroup getCurrentMarkGroup()
 	{
-		return this.group;
+		if(this.areaMarkGroupId == null)
+			return null;
+
+		AreaMarkDatabase db = AreaMarkDatabase.getDefault(this.world);
+		if(db == null)
+			return null;
+		return db.getGroup(this.areaMarkGroupId);
 	}
 
 	@Override
-	public void setMarkGroup(AreaMarkGroup group)
+	public void setMarkGroup(@Nullable AreaMarkGroup group)
 	{
-		this.group = group;
-	}
-
-	@Override
-	public void onLoad()
-	{
-		super.onLoad();
-		if(this.group.getDefined() == 1)
-			this.group = AreaMarkGroup.voxel(this.getPos());
+		if(group == null)
+		{
+			this.areaMarkGroupId = null;
+			return;
+		}
+		this.areaMarkGroupId = group.getId();
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
-		this.group.deserializeNBT(compound.getCompoundTag(NBT_KEY_LINK));
+		if(compound.hasKey(NBT_KEY_GROUP))
+			this.areaMarkGroupId = NBTUtil.getUUIDFromTag(compound.getCompoundTag(NBT_KEY_GROUP));
+		else
+			this.areaMarkGroupId = null;
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
 		compound = super.writeToNBT(compound);
-		compound.setTag(NBT_KEY_LINK, this.group.serializeNBT());
+		if(this.areaMarkGroupId != null)
+			compound.setTag(NBT_KEY_GROUP, NBTUtil.createUUIDTag(this.areaMarkGroupId));
 		return compound;
-	}
-
-	@Nullable
-	public static IAreaMarker getMarkerFromTile(IBlockAccess world, BlockPos pos)
-	{
-		TileEntity tile = (TileEntity)world.getTileEntity(pos);
-		if(!(tile instanceof IAreaMarker))
-			return null;
-		return (IAreaMarker)tile;
 	}
 }
