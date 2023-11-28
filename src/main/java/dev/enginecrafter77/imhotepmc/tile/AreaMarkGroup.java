@@ -2,8 +2,11 @@ package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.util.*;
 import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -14,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Point3d;
 import java.util.*;
 
 public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
@@ -190,10 +194,29 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 		db.unregisterGroup(this);
 	}
 
+	protected int getTapeItemsForLength(double length)
+	{
+		return (int)Math.ceil(length * TAPE_ITEMS_PER_BLOCK);
+	}
+
 	public int getUsedTapeCount()
 	{
-		double length = this.getTapeEdges().stream().mapToDouble(Edge3d::getLength).sum();
-		return (int)Math.ceil(length * TAPE_ITEMS_PER_BLOCK);
+		return this.getTapeEdges().stream().mapToDouble(Edge3d::getLength).mapToInt(this::getTapeItemsForLength).sum();
+	}
+
+	public void dropTapes(World world)
+	{
+		Point3d point = new Point3d();
+		for(Edge3d edge : this.getTapeEdges())
+		{
+			edge.midpoint(point);
+
+			ItemStack stack = new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, this.getTapeItemsForLength(edge.getLength()));
+			EntityItem item = new EntityItem(world);
+			item.setPosition(point.x, point.y, point.z);
+			item.setItem(stack);
+			world.spawnEntity(item);
+		}
 	}
 
 	protected Vec3d tapeAnchorFor(BlockPos pos)

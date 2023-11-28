@@ -121,6 +121,7 @@ public class BlockAreaMarker extends Block {
 				item.setPosition(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
 				worldIn.spawnEntity(item);
 				group.dismantle(worldIn);
+				group.dropTapes(worldIn);
 			}
 		}
 		super.breakBlock(worldIn, pos, state);
