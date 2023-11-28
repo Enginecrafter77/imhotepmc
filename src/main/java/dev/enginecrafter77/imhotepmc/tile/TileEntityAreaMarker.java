@@ -45,7 +45,13 @@ public class TileEntityAreaMarker extends TileEntity implements IAreaMarker {
 		}
 		else if(!actor.isCreative())
 		{
-			actor.inventory.clearMatchingItems(ImhotepMod.ITEM_CONSTRUCTION_TAPE, -1, consume, null);
+			int slot = actor.inventory.findSlotMatchingUnusedItem(stack);
+			if(slot == -1)
+				return false;
+			ItemStack stackInSlot = actor.inventory.getStackInSlot(slot);
+			if(stackInSlot.getCount() < consume)
+				return false;
+			actor.inventory.decrStackSize(slot, consume);
 		}
 
 		this.group.dismantle(this.world, TileEntityAreaMarker::getMarkerFromTile);

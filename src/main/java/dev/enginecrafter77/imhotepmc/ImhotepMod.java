@@ -6,6 +6,7 @@ import dev.enginecrafter77.imhotepmc.block.BlockBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.block.BlockBuilder;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
+import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.entity.EntityConstructionTape;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
@@ -116,6 +117,8 @@ public class ImhotepMod {
         BLOCK_AREA_MARKER = new BlockAreaMarker();
         ITEM_CONSTRUCTION_TAPE = new ItemConstructionTape();
         BLOCK_BUILDER = new BlockBuilder();
+
+        CapabilityAreaMarker.register();
 
         File configDir = event.getModConfigurationDirectory();
         File gameDirectory = configDir.getParentFile();
