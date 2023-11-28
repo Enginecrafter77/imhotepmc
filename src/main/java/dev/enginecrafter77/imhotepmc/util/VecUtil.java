@@ -1,12 +1,19 @@
 package dev.enginecrafter77.imhotepmc.util;
 
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 import javax.vecmath.Matrix4d;
+import javax.vecmath.Tuple3d;
 import javax.vecmath.Vector3d;
 
 public class VecUtil {
+	public static void copyVec3d(Vec3d src, Tuple3d dest)
+	{
+		dest.set(src.x, src.y, src.z);
+	}
+
 	public static Vec3i difference(Vec3i first, Vec3i second)
 	{
 		return new Vec3i(first.getX() - second.getX(), first.getY() - second.getY(), first.getZ() - second.getZ());
