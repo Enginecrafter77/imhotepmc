@@ -10,7 +10,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class SchematicBlueprint extends SchematicMetadataWrapper implements Blueprint {
@@ -53,7 +52,6 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		return BlockPos.ORIGIN;
 	}
 
-	@Nullable
 	@Override
 	public BlueprintEntry getBlockAt(BlockPos position)
 	{
@@ -64,7 +62,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			if(box.contains(position))
 				return blueprint.getBlockAt(position);
 		}
-		return null;
+		return SavedTileState.air();
 	}
 
 	@Override
@@ -222,7 +220,6 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			return this.offset;
 		}
 
-		@Nullable
 		@Override
 		public BlueprintEntry getBlockAt(BlockPos position)
 		{

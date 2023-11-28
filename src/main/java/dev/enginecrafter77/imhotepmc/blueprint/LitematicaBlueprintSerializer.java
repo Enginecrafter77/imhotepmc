@@ -9,10 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
@@ -131,16 +128,13 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		{
 			BlockPos relativePosition = indexer.fromIndex(index);
 			BlueprintEntry savedTileState = blueprint.getBlockAt(relativePosition.add(blueprint.getOriginOffset()));
-			if(savedTileState != null)
+			vector.set(index, SavedBlockState.copyOf(savedTileState));
+			NBTTagCompound tileEntity = savedTileState.getTileEntitySavedData();
+			if(tileEntity != null)
 			{
-				vector.set(index, SavedBlockState.copyOf(savedTileState));
-				NBTTagCompound tileEntity = savedTileState.getTileEntitySavedData();
-				if(tileEntity != null)
-				{
-					tileEntity = tileEntity.copy();
-					this.serializeVectorInto(relativePosition, tileEntity);
-					tileEntities.appendTag(tileEntity);
-				}
+				tileEntity = tileEntity.copy();
+				this.serializeVectorInto(relativePosition, tileEntity);
+				tileEntities.appendTag(tileEntity);
 			}
 		}
 
@@ -231,12 +225,12 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 
 		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
 		blueprintEditor.setSize(size);
-		for(int index = 0; index < vector.getLength(); ++index)
+		for(int index = 0; index < indexer.getVolume(); ++index)
 		{
 			SavedBlockState block = vector.get(index);
-			if(block == air)
-				continue;
 			BlockPos pos = indexer.fromIndex(index);
+			if(Objects.equals(block, air))
+				continue;
 			blueprintEditor.addBlock(pos, block);
 		}
 

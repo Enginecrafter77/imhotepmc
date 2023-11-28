@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BlueprintEditor {
@@ -35,7 +36,7 @@ public class BlueprintEditor {
 
 	public void addVoxel(BlueprintVoxel voxel)
 	{
-		this.data.put(voxel.getPosition().toImmutable(), SavedTileState.copyOf(voxel));
+		this.addBlock(voxel.getPosition().toImmutable(), voxel);
 	}
 
 	public BlueprintEditor setSize(Vec3i size)
@@ -44,14 +45,11 @@ public class BlueprintEditor {
 		return this;
 	}
 
-	public BlueprintEditor addBlock(BlockPos position, SavedBlockState data)
+	public BlueprintEditor addBlock(BlockPos position, BlueprintEntry block)
 	{
-		return this.addBlock(position, new SavedTileState(data, null));
-	}
-
-	public BlueprintEditor addBlock(BlockPos position, SavedTileState data)
-	{
-		this.data.put(position, data);
+		if(Objects.equals(block.getBlockName(), Blocks.AIR.getRegistryName()))
+			return this;
+		this.data.put(position, SavedTileState.copyOf(block));
 		return this;
 	}
 
@@ -98,12 +96,10 @@ public class BlueprintEditor {
 			origin = min.toImmutable();
 		}
 
-		SavedTileState air = SavedTileState.ofBlock(Blocks.AIR);
-
 		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
 		List<SavedTileState> palette = this.data.values().stream().distinct().collect(Collectors.toList());
-		palette.remove(air);
-		palette.add(0, air);
+		palette.remove(SavedTileState.air());
+		palette.add(0, SavedTileState.air());
 
 		CompactPalettedBitVector<SavedTileState> vector = new CompactPalettedBitVector<SavedTileState>(palette, indexer.getVolume());
 		for(Map.Entry<BlockPos, SavedTileState> entry : this.data.entrySet())

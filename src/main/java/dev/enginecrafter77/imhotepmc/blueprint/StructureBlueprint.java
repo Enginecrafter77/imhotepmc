@@ -1,12 +1,10 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import java.util.Objects;
 import java.util.Set;
@@ -40,16 +38,12 @@ public class StructureBlueprint implements Blueprint {
 		return BlockPos.ORIGIN;
 	}
 
-	@Nullable
 	@Override
 	public BlueprintEntry getBlockAt(BlockPos position)
 	{
 		position = position.subtract(this.getOriginOffset());
 		int index = this.indexer.toIndex(position);
-		BlueprintEntry entry = this.vector.get(index);
-		if(entry.getBlockName().equals(Blocks.AIR.getRegistryName()))
-			return null;
-		return entry;
+		return this.vector.get(index);
 	}
 
 	@Override
@@ -116,29 +110,17 @@ public class StructureBlueprint implements Blueprint {
 			this.index = -1;
 		}
 
-		private int findNextNonEmpty()
-		{
-			int next = this.index + 1;
-			while(next < StructureBlueprint.this.indexer.getVolume())
-			{
-				SavedTileState entry = StructureBlueprint.this.vector.get(next);
-				if(!entry.getBlockName().equals(Blocks.AIR.getRegistryName()))
-					break;
-				++next;
-			}
-			return next;
-		}
-
 		@Override
 		public boolean hasNext()
 		{
-			return this.findNextNonEmpty() < StructureBlueprint.this.indexer.getVolume();
+			return (this.index + 1) < StructureBlueprint.this.indexer.getVolume();
 		}
 
 		@Override
 		public BlueprintVoxel next()
 		{
-			this.index = this.findNextNonEmpty();
+			++this.index;
+
 			BlockPos pos = StructureBlueprint.this.indexer.fromIndex(this.index).add(StructureBlueprint.this.getOriginOffset());
 			this.voxel.set(pos, StructureBlueprint.this.vector.get(this.index));
 			return this.voxel;

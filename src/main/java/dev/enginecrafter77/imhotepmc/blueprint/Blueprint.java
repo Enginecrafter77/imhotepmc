@@ -4,7 +4,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Set;
 
 public interface Blueprint {
@@ -12,7 +11,6 @@ public interface Blueprint {
 
 	public BlockPos getOriginOffset();
 
-	@Nullable
 	public BlueprintEntry getBlockAt(BlockPos position);
 
 	public Set<? extends BlueprintEntry> palette();

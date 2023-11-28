@@ -3,6 +3,7 @@ package dev.enginecrafter77.imhotepmc.blueprint;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -164,5 +165,13 @@ public class SavedTileState implements BlueprintEntry {
 		if(entry instanceof SavedTileState)
 			return (SavedTileState)entry;
 		return new SavedTileState(SavedBlockState.copyOf(entry), entry.getTileEntitySavedData());
+	}
+
+	private static SavedTileState AIR_STS = null;
+	public static SavedTileState air()
+	{
+		if(AIR_STS == null)
+			AIR_STS = SavedTileState.ofBlock(Blocks.AIR);
+		return AIR_STS;
 	}
 }

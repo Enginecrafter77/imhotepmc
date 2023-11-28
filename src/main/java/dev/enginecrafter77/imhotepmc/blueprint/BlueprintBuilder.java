@@ -97,7 +97,9 @@ public class BlueprintBuilder {
 
 	public void placeNextBlock()
 	{
-		BlueprintVoxel voxel = this.getNextVoxel();
+		BlueprintVoxel voxel = null;
+		while(voxel == null && this.hasNextBlock())
+			voxel = this.getNextVoxel();
 		if(voxel == null)
 			return;
 
@@ -139,8 +141,6 @@ public class BlueprintBuilder {
 		{
 			BlockPos pos = this.indexer.fromIndex(deferredIndex);
 			BlueprintEntry entry = this.blueprint.getBlockAt(pos);
-			if(entry == null)
-				continue;
 			this.deferred.add(new ImmutableBlueprintVoxel(pos, entry));
 		}
 	}

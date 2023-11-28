@@ -70,9 +70,8 @@ public class TestBlueprintSemantics {
 		BlueprintEntry block000 = blueprint.getBlockAt(new BlockPos(0, 0, 0));
 		BlueprintEntry block111 = blueprint.getBlockAt(new BlockPos(1, 1, 1));
 
-		Assertions.assertNull(block000);
-		Assertions.assertNotNull(block111);
-		Assertions.assertEquals(Blocks.IRON_BLOCK, block111.getBlock());
+		Assertions.assertEquals(SavedTileState.air(), block000);
+		Assertions.assertEquals(SavedTileState.ofBlock(Blocks.IRON_BLOCK), block111);
 	}
 
 	@Test
@@ -111,9 +110,8 @@ public class TestBlueprintSemantics {
 		BlueprintEntry block000 = blueprint.getBlockAt(new BlockPos(0, 0, 0));
 		BlueprintEntry block111 = blueprint.getBlockAt(new BlockPos(1, 1, 1));
 
-		Assertions.assertNull(block000);
-		Assertions.assertNotNull(block111);
-		Assertions.assertEquals(Blocks.IRON_BLOCK, block111.getBlock());
+		Assertions.assertEquals(SavedTileState.air(), block000);
+		Assertions.assertEquals(SavedTileState.ofBlock(Blocks.IRON_BLOCK), block111);
 	}
 
 	@Test
@@ -147,11 +145,9 @@ public class TestBlueprintSemantics {
 		BlueprintEntry block333 = blueprint.getBlockAt(new BlockPos(3, 3, 3));
 		BlueprintEntry block666 = blueprint.getBlockAt(new BlockPos(6, 6, 6));
 
-		Assertions.assertNotNull(block111);
-		Assertions.assertNull(block333);
-		Assertions.assertNotNull(block666);
-
-		Assertions.assertEquals(block111, block666);
+		Assertions.assertEquals(SavedTileState.ofBlock(Blocks.IRON_BLOCK), block111);
+		Assertions.assertEquals(SavedTileState.air(), block333);
+		Assertions.assertEquals(SavedTileState.ofBlock(Blocks.IRON_BLOCK), block666);
 	}
 
 	private StructureBlueprint createRegion()
