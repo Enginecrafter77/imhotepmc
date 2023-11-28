@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.util;
 
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 
 import javax.vecmath.Point3d;
 import javax.vecmath.Tuple3d;
@@ -51,6 +52,19 @@ public class Box3d {
 		this.max.x = box.maxX;
 		this.max.y = box.maxY;
 		this.max.z = box.maxZ;
+	}
+
+	public void set(BlockSelectionBox box)
+	{
+		BlockPos start = box.getStart();
+		BlockPos end = box.getEnd();
+
+		this.min.x = start.getX();
+		this.min.y = start.getY();
+		this.min.z = start.getZ();
+		this.max.x = end.getX() + 1D;
+		this.max.y = end.getY() + 1D;
+		this.max.z = end.getZ() + 1D;
 	}
 
 	public void grow(Tuple3d dim)

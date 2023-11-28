@@ -16,6 +16,8 @@ import dev.enginecrafter77.imhotepmc.net.MessageInscribeBlueprint;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.msg.*;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
+import dev.enginecrafter77.imhotepmc.render.RenderArchitectTable;
+import dev.enginecrafter77.imhotepmc.render.RenderBuilder;
 import dev.enginecrafter77.imhotepmc.render.RenderWorldAreaMarkers;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
@@ -38,6 +40,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -138,6 +141,8 @@ public class ImhotepMod {
     @SideOnly(Side.CLIENT)
     public void onPreInitClient(FMLPreInitializationEvent event)
     {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArchitectTable.class, new RenderArchitectTable());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBuilder.class, new RenderBuilder());
         RenderWorldAreaMarkers.register();
     }
 

@@ -17,6 +17,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -83,7 +84,11 @@ public class BlockBuilder extends Block {
 	@Override
 	public TileEntityBuilder createTileEntity(World world, IBlockState state)
 	{
-		return new TileEntityBuilder();
+		EnumFacing facing = state.getValue(BlockBuilder.FACING);
+		Vec3i buildOrigin = facing.getOpposite().getDirectionVec(); // block behind
+		TileEntityBuilder builder = new TileEntityBuilder();
+		builder.setBuildOriginOffset(buildOrigin);
+		return builder;
 	}
 
 	@Override

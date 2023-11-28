@@ -1,14 +1,20 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
+import com.google.common.collect.ImmutableList;
 import dev.enginecrafter77.imhotepmc.blueprint.*;
+import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public class TileEntityArchitectTable extends TileEntity implements ITickable {
 	private static final String NBT_KEY_SELECTION = "selection";
@@ -16,11 +22,15 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 
 	private final BlockSelectionBox selection;
 
+	@Nonnull
+	private Collection<BlockPosEdge> edges;
+
 	private boolean initialized;
 	private int scanDelay;
 
 	public TileEntityArchitectTable()
 	{
+		this.edges = ImmutableList.of();
 		this.selection = new BlockSelectionBox();
 		this.initialized = false;
 		this.scanDelay = 10;
@@ -54,6 +64,16 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 		return this.initialized;
 	}
 
+	protected void onSelectionUpdated(BlockSelectionBox box)
+	{
+		this.edges = BlockPosUtil.findEdges(ImmutableList.of(box.getStart(), box.getEnd()));
+	}
+
+	public Collection<BlockPosEdge> getSelectionEdges()
+	{
+		return this.edges;
+	}
+
 	@Override
 	public void update()
 	{
@@ -84,8 +104,19 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 			for(BlockPos corner : group.getDefiningCorners())
 				this.world.destroyBlock(corner, true);
 			this.initialized = true;
+			this.onSelectionUpdated(this.selection);
 			this.markDirty();
 		});
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public AxisAlignedBB getRenderBoundingBox()
+	{
+		if(!this.initialized)
+			return super.getRenderBoundingBox();
+
+		return BlockPosUtil.contain(ImmutableList.of(this.getPos(), this.selection.getEnd()));
 	}
 
 	@Override
@@ -94,6 +125,9 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 		super.readFromNBT(compound);
 		this.selection.deserializeNBT(compound.getCompoundTag(NBT_KEY_SELECTION));
 		this.initialized = compound.getBoolean(NBT_KEY_INITIALIZED);
+
+		if(this.initialized)
+			this.onSelectionUpdated(this.selection);
 	}
 
 	@Nonnull

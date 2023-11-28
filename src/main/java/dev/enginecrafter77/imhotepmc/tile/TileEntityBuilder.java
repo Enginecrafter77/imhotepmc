@@ -1,23 +1,31 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
-import dev.enginecrafter77.imhotepmc.block.BlockBuilder;
+import com.google.common.collect.ImmutableList;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintBuilder;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
-import net.minecraft.block.state.IBlockState;
+import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
+import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
 
 public class TileEntityBuilder extends TileEntity implements ITickable {
+	private static final Vec3i VEC_ONE = new Vec3i(1, 1, 1);
+
 	private static final int ENERGY_PER_BLOCK = 100;
 	private static final int MAX_BLOCKS_PER_TICK = 8;
 
@@ -28,8 +36,17 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	@Nullable
 	private SchematicBlueprint blueprint;
 
+	@Nonnull
+	private Collection<BlockPosEdge> buildAreaEdges;
+
+	@Nullable
+	private AxisAlignedBB boundingBox;
+
 	@Nullable
 	private BlueprintBuilder builder;
+
+	@Nonnull
+	private Vec3i buildOriginOffset;
 
 	private long tickTime;
 	private long lastBuildTick;
@@ -37,23 +54,50 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	public TileEntityBuilder()
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 0);
+		this.buildAreaEdges = ImmutableList.of();
+		this.buildOriginOffset = Vec3i.NULL_VECTOR;
+		this.boundingBox = null;
 		this.blueprint = null;
 		this.builder = null;
 		this.tickTime = 0L;
 		this.lastBuildTick = 0L;
 	}
 
+	public void setBuildOriginOffset(Vec3i origin)
+	{
+		this.buildOriginOffset = origin;
+	}
+
 	public BlockPos getBuildOrigin()
 	{
-		IBlockState state = this.world.getBlockState(this.getPos());
-		EnumFacing facing = state.getValue(BlockBuilder.FACING);
-		return this.getPos().add(facing.getOpposite().getDirectionVec()); // block behind
+		return this.getPos().add(this.buildOriginOffset);
+	}
+
+	public Collection<BlockPosEdge> getBuildAreaEdges()
+	{
+		return this.buildAreaEdges;
 	}
 
 	public void setBlueprint(SchematicBlueprint blueprint)
 	{
 		this.blueprint = blueprint;
 		this.builder = new BlueprintBuilder(blueprint);
+		this.onBlueprintChanged(blueprint);
+	}
+
+	protected void onBlueprintChanged(SchematicBlueprint blueprint)
+	{
+		List<BlockPos> corners = ImmutableList.of(this.getBuildOrigin(), this.getBuildOrigin().add(blueprint.getSize()).subtract(VEC_ONE));
+		this.buildAreaEdges = BlockPosUtil.findEdges(corners);
+		this.boundingBox = BlockPosUtil.contain(ImmutableList.<BlockPos>builder().addAll(corners).add(this.getPos()).build());
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox()
+	{
+		if(this.boundingBox == null)
+			return super.getRenderBoundingBox();
+		return this.boundingBox;
 	}
 
 	@Override
@@ -117,6 +161,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		this.blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag("blueprint"));
 		this.builder = new BlueprintBuilder(this.blueprint);
 		this.builder.restoreState(compound.getCompoundTag("builder_state"));
+		this.onBlueprintChanged(this.blueprint);
 	}
 
 	@Override
