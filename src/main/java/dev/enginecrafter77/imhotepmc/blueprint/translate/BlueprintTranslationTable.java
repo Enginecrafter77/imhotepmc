@@ -6,6 +6,7 @@ import dev.enginecrafter77.imhotepmc.util.ImmutableListCollector;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,5 +36,10 @@ public class BlueprintTranslationTable implements BlueprintTranslation {
 				.sorted(BlueprintTranslationRule.priorityComparator())
 				.collect(ImmutableListCollector.get());
 		return new BlueprintTranslationTable(rulePriorityList);
+	}
+
+	public static BlueprintTranslationTable compile(BlueprintTranslationRule... rules)
+	{
+		return compile(Arrays.asList(rules));
 	}
 }

@@ -1,7 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint.translate;
 
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +13,7 @@ public class BlueprintTranslationRuleCompiler {
 		this.scanner = new Scanner(inputStream);
 	}
 
-	public BlueprintTranslationTable compile() throws ParseException
+	public BlueprintTranslationTable compile() throws MalformedTranslationRuleException
 	{
 		List<BlueprintTranslationRule> rules = new ArrayList<BlueprintTranslationRule>();
 		while(this.scanner.hasNextLine())

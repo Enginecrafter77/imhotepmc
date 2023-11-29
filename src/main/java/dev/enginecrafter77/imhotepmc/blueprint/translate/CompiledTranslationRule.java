@@ -8,7 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
-import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,18 +91,20 @@ public class CompiledTranslationRule implements BlueprintTranslationRule {
 	}
 
 	private static final Pattern ENTRY_VAL = Pattern.compile("([A-Za-z0-9_%-]+:[A-Za-z0-9_%-]+)(?:\\[((?:[a-zA-Z0-9_]+=[a-zA-Z0-9_%]+\\s*,?\\s*)*)])?(?:\\{(\\*)})?");
-	public static CompiledTranslationRule compile(String src) throws ParseException
+	public static CompiledTranslationRule compile(String src) throws MalformedTranslationRuleException
 	{
 		String[] sides = src.split("\\s*=>\\s*");
+		if(sides.length != 2)
+			throw new MalformedTranslationRuleException(src, "Rule requires exactly two operands between => operator");
 		String lval = sides[0];
 		String rval = sides[1];
 
 		Matcher lmatcher = ENTRY_VAL.matcher(lval);
 		if(!lmatcher.matches())
-			throw new ParseException(lval, lmatcher.end());
+			throw new MalformedTranslationRuleException(src, "L-value does not match rule pattern");
 		Matcher rmatcher = ENTRY_VAL.matcher(rval);
 		if(!rmatcher.matches())
-			throw new ParseException(lval, rmatcher.end());
+			throw new MalformedTranslationRuleException(src, "R-value does not match rule pattern");
 
 		String lname = lmatcher.group(1);
 		String rname = rmatcher.group(1);
@@ -117,26 +118,33 @@ public class CompiledTranslationRule implements BlueprintTranslationRule {
 		String lpropBundle = lmatcher.group(2);
 		String rpropBundle = rmatcher.group(2);
 
-		if(lpropBundle != null)
+		try
 		{
-			Map<String, String> lprop = parseProperties(lpropBundle);
-			for(String key : lprop.keySet())
+			if(lpropBundle != null)
 			{
-				String val = lprop.get(key);
-				Matcher matcher = VARIABLE_PATTERN.matcher(val);
-				if(matcher.matches())
+				Map<String, String> lprop = parseProperties(lpropBundle);
+				for(String key : lprop.keySet())
 				{
-					extractors.put(matcher.group(1), EntryValueExtractor.property(key));
-				}
-				else
-				{
-					conditions.add(new PropertyMatchingCondition(key, val));
+					String val = lprop.get(key);
+					Matcher matcher = VARIABLE_PATTERN.matcher(val);
+					if(matcher.matches())
+					{
+						extractors.put(matcher.group(1), EntryValueExtractor.property(key));
+					}
+					else
+					{
+						conditions.add(new PropertyMatchingCondition(key, val));
+					}
 				}
 			}
-		}
 
-		if(rpropBundle != null)
-			rprop = parseProperties(rpropBundle);
+			if(rpropBundle != null)
+				rprop = parseProperties(rpropBundle);
+		}
+		catch(MalformedPropertyException exc)
+		{
+			throw new MalformedTranslationRuleException(src, "Property expression parsing failed", exc);
+		}
 
 		boolean copyTE = Objects.equals(lmatcher.group(3), "*") && Objects.equals(rmatcher.group(3), "*");
 
@@ -144,13 +152,15 @@ public class CompiledTranslationRule implements BlueprintTranslationRule {
 		return new CompiledTranslationRule(weighedConditions, extractors.build(), rname, rprop, copyTE);
 	}
 
-	public static Map<String, String> parseProperties(String propBundle) throws ParseException
+	public static Map<String, String> parseProperties(String propBundle) throws MalformedPropertyException
 	{
 		ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
 		String[] parts = propBundle.split("\\s*,\\s*");
 		for(String part : parts)
 		{
 			String[] lr = part.split("=");
+			if(lr.length != 2)
+				throw new MalformedPropertyException(propBundle);
 			builder.put(lr[0], lr[1]);
 		}
 		return builder.build();
@@ -165,4 +175,5 @@ public class CompiledTranslationRule implements BlueprintTranslationRule {
 			return (BlueprintEntry entry) -> entry.getBlockProperties().get(name);
 		}
 	}
+
 }

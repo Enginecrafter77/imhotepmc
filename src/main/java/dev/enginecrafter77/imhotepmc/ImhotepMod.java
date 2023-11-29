@@ -7,6 +7,7 @@ import dev.enginecrafter77.imhotepmc.block.BlockBuilder;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.MalformedTranslationRuleException;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
@@ -57,7 +58,6 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(modid = ImhotepMod.MOD_ID)
@@ -113,7 +113,7 @@ public class ImhotepMod {
             translation = compiler.compile();
             in.close();
         }
-        catch(IOException | ParseException exc)
+        catch(IOException | MalformedTranslationRuleException exc)
         {
             exc.printStackTrace();
         }
