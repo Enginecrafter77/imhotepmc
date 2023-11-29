@@ -1,0 +1,15 @@
+minecraft:oak_planks => minecraft:planks[variant=oak]
+minecraft:oak_fence => minecraft:fence
+minecraft:spruce_fence => minecraft:fence
+minecraft:birch_fence => minecraft:fence
+minecraft:jungle_fence => minecraft:fence
+minecraft:acacia_fence => minecraft:fence
+minecraft:dark_oak_fence => minecraft:fence
+minecraft:mangrove_fence => minecraft:fence
+minecraft:cherry_fence => minecraft:fence
+minecraft:bamboo_fence => minecraft:fence
+minecraft:crimson_fence => minecraft:fence
+minecraft:warped_fence => minecraft:fence
+minecraft:nether_brick_fence => minecraft:fence
+minecraft:oak_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+

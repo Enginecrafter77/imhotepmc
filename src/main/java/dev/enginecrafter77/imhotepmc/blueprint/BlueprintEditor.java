@@ -3,7 +3,6 @@ package dev.enginecrafter77.imhotepmc.blueprint;
 import com.google.common.collect.ImmutableSet;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationContext;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.CommonTranslationContext;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -65,16 +64,16 @@ public class BlueprintEditor {
 
 	public BlueprintEditor translate(BlueprintTranslation mapper)
 	{
-		BlueprintTranslationContext ctx = new CommonTranslationContext(mapper, this.data::get);
+		BlueprintTranslationContext ctx = BlueprintTranslationContext.dummy();
 
 		for(BlockPos key : this.data.keySet())
 		{
 			SavedTileState currentState = this.data.get(key);
-			SavedTileState translated = mapper.translate(ctx, key, currentState);
+			BlueprintEntry translated = mapper.translate(ctx, key, currentState);
 			if(translated == null)
 				this.data.remove(key);
 			else
-				this.data.put(key, translated);
+				this.data.put(key, SavedTileState.copyOf(translated));
 		}
 		return this;
 	}

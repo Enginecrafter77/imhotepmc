@@ -46,7 +46,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 
 	public LitematicaBlueprintSerializer()
 	{
-		this(BlueprintTranslation.identity());
+		this(BlueprintTranslation.pass());
 	}
 
 	protected void serializeVectorInto(Vec3i vector, NBTTagCompound tag)

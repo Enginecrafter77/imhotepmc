@@ -3,7 +3,6 @@ package dev.enginecrafter77.imhotepmc.gui;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
 import dev.enginecrafter77.imhotepmc.container.ContainerBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamClientChannel;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
@@ -175,7 +174,7 @@ public class GUIBlueprintLibrary extends GuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException
 	{
-		LitematicaBlueprintSerializer serializer = new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance());
+		LitematicaBlueprintSerializer serializer = new LitematicaBlueprintSerializer();
 
 		switch(button.id)
 		{

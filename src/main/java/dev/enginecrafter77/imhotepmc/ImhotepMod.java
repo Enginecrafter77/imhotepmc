@@ -5,7 +5,8 @@ import dev.enginecrafter77.imhotepmc.block.BlockAreaMarker;
 import dev.enginecrafter77.imhotepmc.block.BlockBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.block.BlockBuilder;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlockRecordCompatTranslationTable;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
@@ -27,6 +28,7 @@ import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
 import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
 import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncHandler;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -53,6 +55,9 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(modid = ImhotepMod.MOD_ID)
@@ -99,10 +104,24 @@ public class ImhotepMod {
         GameRegistry.registerTileEntity(TileEntityBuilder.class, new ResourceLocation(ImhotepMod.MOD_ID, "builder"));
         GameRegistry.registerTileEntity(TileEntityArchitectTable.class, new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"));
 
+        BlueprintTranslation translation = BlueprintTranslation.pass();
+        try
+        {
+            ResourceLocation res = new ResourceLocation(ImhotepMod.MOD_ID, "btt/test.btt");
+            InputStream in = Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
+            BlueprintTranslationRuleCompiler compiler = new BlueprintTranslationRuleCompiler(in);
+            translation = compiler.compile();
+            in.close();
+        }
+        catch(IOException | ParseException exc)
+        {
+            exc.printStackTrace();
+        }
+
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID + ":main");
         this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "world_data_sync"));
         this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "packet_stream"), 8192);
-        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance())));
+        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(translation)));
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
 
