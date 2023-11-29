@@ -12,9 +12,8 @@ import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
 import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.net.BlueprintTransferHandler;
 import dev.enginecrafter77.imhotepmc.net.MessageBlueprintInscribeHandler;
-import dev.enginecrafter77.imhotepmc.net.MessageInscribeBlueprint;
+import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamWrapper;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
-import dev.enginecrafter77.imhotepmc.net.stream.msg.*;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
 import dev.enginecrafter77.imhotepmc.render.RenderArchitectTable;
 import dev.enginecrafter77.imhotepmc.render.RenderBuilder;
@@ -85,8 +84,7 @@ public class ImhotepMod {
     private File schematicsDir;
     private SimpleNetworkWrapper netChannel;
 
-    private PacketStreamDispatcher packetStreamClient;
-    private PacketStreamManager packetStreamServer;
+    private PacketStreamWrapper packetStreamer;
     private WorldDataSyncHandler worldDataSyncHandler;
 
     @Mod.EventHandler
@@ -100,20 +98,11 @@ public class ImhotepMod {
         GameRegistry.registerTileEntity(TileEntityBuilder.class, new ResourceLocation(ImhotepMod.MOD_ID, "builder"));
         GameRegistry.registerTileEntity(TileEntityArchitectTable.class, new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"));
 
-        this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID);
-        this.netChannel.registerMessage(MessageBlueprintInscribeHandler.class, MessageInscribeBlueprint.class, 0, Side.SERVER);
-
+        this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID + ":main");
         this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "world_data_sync"));
+        this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "packet_stream"), 8192);
 
-        this.packetStreamServer = new PacketStreamManager();
-        this.packetStreamClient = new PacketStreamDispatcher(this.netChannel, 8192);
-        this.netChannel.registerMessage(this.packetStreamServer.getStartHandler(), PacketStreamStartMessage.class, 1, Side.SERVER);
-        this.netChannel.registerMessage(this.packetStreamServer.getTransferHandler(), PacketStreamTransferMessage.class, 2, Side.SERVER);
-        this.netChannel.registerMessage(this.packetStreamServer.getEndHandler(), PacketStreamEndMessage.class, 3, Side.SERVER);
-        this.netChannel.registerMessage(this.packetStreamClient.getStartConfirmHandler(), PacketStreamStartConfirmMessage.class, 4, Side.CLIENT);
-        this.netChannel.registerMessage(this.packetStreamClient.getTransferConfimHandler(), PacketStreamTransferConfirmMessage.class, 5, Side.CLIENT);
-
-        this.packetStreamServer.subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance()), MessageBlueprintInscribeHandler::onBlueprintReceived));
+        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance()), MessageBlueprintInscribeHandler::onBlueprintReceived));
 
         BLOCK_ARCHITECT_TABLE = new BlockArchitectTable();
         BLOCK_BLUEPRINT_LIBRARY = new BlockBlueprintLibrary();
@@ -153,12 +142,12 @@ public class ImhotepMod {
 
     public PacketStreamManager getPacketStreamServer()
     {
-        return this.packetStreamServer;
+        return this.packetStreamer.getServerSide();
     }
 
     public PacketStreamDispatcher getPacketStreamClient()
     {
-        return this.packetStreamClient;
+        return this.packetStreamer.getClientSide();
     }
 
     public WorldDataSyncHandler getWorldDataSyncHandler()
