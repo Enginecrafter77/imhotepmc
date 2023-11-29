@@ -9,9 +9,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ImhotepGUIHandler implements IGuiHandler {
@@ -22,15 +24,14 @@ public class ImhotepGUIHandler implements IGuiHandler {
 	@Override
 	public Container getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
+		BlockPos pos = new BlockPos(x, y, z);
+
 		switch(ID)
 		{
 		case GUI_ID_BLUEPRINT_LIBRARY:
-			TileEntityBlueprintLibrary library = (TileEntityBlueprintLibrary)world.getTileEntity(new BlockPos(x, y, z));
-			if(library == null)
-				throw new IllegalStateException("Tile entity not found");
-			return new ContainerBlueprintLibrary(player.inventory, library);
+			return new ContainerBlueprintLibrary(player.inventory, this.obtainTileEntity(TileEntityBlueprintLibrary.class, world, pos));
 		case GUI_ID_ARCHITECT_TABLE:
-			return new ContainerArchitectTable(player.inventory);
+			return new ContainerArchitectTable(player.inventory, this.obtainTileEntity(TileEntityArchitectTable.class, world, pos));
 		default:
 			return null;
 		}
@@ -41,20 +42,29 @@ public class ImhotepGUIHandler implements IGuiHandler {
 	public Gui getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
 		BlockPos pos = new BlockPos(x, y, z);
-		TileEntity tile = world.getTileEntity(pos);
-
 		switch(ID)
 		{
 		case GUI_ID_BLUEPRINT_LIBRARY:
-			if(tile == null)
-				throw new IllegalStateException("Tile entity not found");
-			ContainerBlueprintLibrary containerBlueprintLibrary = new ContainerBlueprintLibrary(player.inventory, (TileEntityBlueprintLibrary)tile);
-			return new GUIBlueprintLibrary(player.inventory, (TileEntityBlueprintLibrary)tile, containerBlueprintLibrary);
+			TileEntityBlueprintLibrary libraryTile = this.obtainTileEntity(TileEntityBlueprintLibrary.class, world, pos);
+			ContainerBlueprintLibrary containerBlueprintLibrary = new ContainerBlueprintLibrary(player.inventory, libraryTile);
+			return new GUIBlueprintLibrary(player.inventory, libraryTile, containerBlueprintLibrary);
 		case GUI_ID_ARCHITECT_TABLE:
-			ContainerArchitectTable container = new ContainerArchitectTable(player.inventory);
-			return new GUIArchitectTable(player.inventory, container, (TileEntityArchitectTable)tile);
+			TileEntityArchitectTable architectTable = this.obtainTileEntity(TileEntityArchitectTable.class, world, pos);
+			ContainerArchitectTable container = new ContainerArchitectTable(player.inventory, architectTable);
+			return new GUIArchitectTable(player.inventory, container, architectTable);
 		default:
 			return null;
 		}
+	}
+
+	@Nonnull
+	protected <T extends TileEntity> T obtainTileEntity(Class<T> tileClass, IBlockAccess world, BlockPos pos)
+	{
+		TileEntity tile = world.getTileEntity(pos);
+		if(tile == null)
+			throw new IllegalStateException();
+		if(!tileClass.isInstance(tile))
+			throw new ClassCastException();
+		return tileClass.cast(tile);
 	}
 }

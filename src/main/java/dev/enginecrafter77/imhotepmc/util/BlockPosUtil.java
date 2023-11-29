@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.util;
 
 import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
@@ -110,5 +111,20 @@ public class BlockPosUtil {
 			edges.add(edge);
 		}
 		return edges.build();
+	}
+
+	public static void writeToByteBuf(ByteBuf buf, BlockPos pos)
+	{
+		buf.writeInt(pos.getX());
+		buf.writeInt(pos.getY());
+		buf.writeInt(pos.getZ());
+	}
+
+	public static BlockPos readFromByteBuf(ByteBuf buf)
+	{
+		int x = buf.readInt();
+		int y = buf.readInt();
+		int z = buf.readInt();
+		return new BlockPos(x, y, z);
 	}
 }

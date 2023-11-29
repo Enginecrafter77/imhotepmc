@@ -1,24 +1,34 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.collect.ImmutableList;
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.*;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class TileEntityArchitectTable extends TileEntity implements ITickable {
 	private static final String NBT_KEY_SELECTION = "selection";
 	private static final String NBT_KEY_INITIALIZED = "initialized";
+	private static final String NBT_KEY_INVENTORY = "inventory";
+
+	private final ItemStackHandler inventory;
 
 	private final BlockSelectionBox selection;
 
@@ -30,6 +40,7 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 
 	public TileEntityArchitectTable()
 	{
+		this.inventory = new ItemStackHandler(1);
 		this.edges = ImmutableList.of();
 		this.selection = new BlockSelectionBox();
 		this.initialized = false;
@@ -41,7 +52,7 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 		dest.set(this.selection);
 	}
 
-	public SchematicBlueprint sample()
+	public StructureBlueprint scanStructure()
 	{
 		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
 		for(BlockPos pos : this.selection.internalBlocks())
@@ -49,14 +60,27 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 			SavedTileState sts = SavedTileState.sample(this.world, pos);
 			blueprintEditor.addBlock(pos.toImmutable(), sts);
 		}
+		return blueprintEditor.build();
+	}
 
-		MutableSchematicMetadata msm = new MutableSchematicMetadata();
-		msm.setDescription("Created by ImhotepMC");
+	public SchematicBlueprint createSchematic(SchematicMetadata metadata)
+	{
+		StructureBlueprint blueprint = this.scanStructure();
 
 		SchematicBlueprint.Builder schematicBuilder = SchematicBlueprint.builder();
-		schematicBuilder.addRegion("Unnamed", blueprintEditor.build(), BlockPos.ORIGIN);
-		schematicBuilder.setMetadata(msm);
+		schematicBuilder.addRegion(metadata.getName(), blueprint, BlockPos.ORIGIN);
+		schematicBuilder.setMetadata(metadata);
 		return schematicBuilder.build();
+	}
+
+	public boolean scanToBlueprintItem(SchematicMetadata metadata)
+	{
+		ItemStack stack = this.inventory.getStackInSlot(0);
+		if(stack.getItem() != ImhotepMod.ITEM_SCHEMATIC_BLUEPRINT)
+			return false;
+		SchematicBlueprint blueprint = this.createSchematic(metadata);
+		ImhotepMod.ITEM_SCHEMATIC_BLUEPRINT.setSchematic(stack, blueprint);
+		return true;
 	}
 
 	public boolean isInitialized()
@@ -123,6 +147,7 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 	public void readFromNBT(@Nonnull NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
+		this.inventory.deserializeNBT(compound.getCompoundTag(NBT_KEY_INVENTORY));
 		this.selection.deserializeNBT(compound.getCompoundTag(NBT_KEY_SELECTION));
 		this.initialized = compound.getBoolean(NBT_KEY_INITIALIZED);
 
@@ -135,9 +160,25 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 	public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound)
 	{
 		compound = super.writeToNBT(compound);
+		compound.setTag(NBT_KEY_INVENTORY, this.inventory.serializeNBT());
 		compound.setTag(NBT_KEY_SELECTION, this.selection.serializeNBT());
 		compound.setBoolean(NBT_KEY_INITIALIZED, this.initialized);
 		return compound;
+	}
+
+	@Override
+	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+	{
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+	}
+
+	@Nullable
+	@Override
+	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+	{
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.inventory);
+		return super.getCapability(capability, facing);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.gui;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.container.ContainerArchitectTable;
+import dev.enginecrafter77.imhotepmc.net.BlueprintSampleMessage;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -13,6 +14,8 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.util.Point;
 import org.lwjgl.util.ReadableRectangle;
 import org.lwjgl.util.Rectangle;
@@ -35,6 +38,7 @@ public class GUIArchitectTable extends GuiContainer {
 
 	private final TileEntityArchitectTable tile;
 	private final InventoryPlayer inventoryPlayer;
+	private final IItemHandler tileInventory;
 
 	private final Rectangle drawRect;
 	private final Point guiOffset;
@@ -46,6 +50,7 @@ public class GUIArchitectTable extends GuiContainer {
 	public GUIArchitectTable(InventoryPlayer inventoryPlayer, ContainerArchitectTable container, TileEntityArchitectTable tile)
 	{
 		super(container);
+		this.tileInventory = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		this.drawRect = new Rectangle();
 		this.guiOffset = new Point();
 		this.inventoryPlayer = inventoryPlayer;
@@ -63,7 +68,17 @@ public class GUIArchitectTable extends GuiContainer {
 		this.descField = new GuiTextField(GUI_COMPONENT_ID_DESC, this.fontRenderer, this.guiLeft + 7, this.guiTop + 75, 112, 18);
 		this.saveButton = new GuiButtonImage(GUI_BUTTON_ID_SAVE, this.guiLeft + 132, this.guiTop + 45, 18, 18, 176, 0, 18, TEXTURE);
 
+		this.nameField.setTextColor(Color.WHITE.getRGB());
+		this.descField.setTextColor(Color.WHITE.getRGB());
+
 		this.addButton(this.saveButton);
+	}
+
+	@Override
+	public void updateScreen()
+	{
+		super.updateScreen();
+		this.saveButton.enabled = !this.tileInventory.getStackInSlot(0).isEmpty();
 	}
 
 	@Override
@@ -86,11 +101,10 @@ public class GUIArchitectTable extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
 	{
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-		this.renderHoveredToolTip(mouseX - this.guiLeft, mouseY - this.guiTop);
-
 		GuiUtil.drawStringInRectangle(this, this.fontRenderer, TITLE_RECT, this.getTitle().getUnformattedText(), Color.WHITE.getRGB());
 		GuiUtil.drawStringInRectangle(this, this.fontRenderer, NAME_LABEL_RECT, "Name", Color.WHITE.getRGB());
 		GuiUtil.drawStringInRectangle(this, this.fontRenderer, DESC_LABEL_RECT, "Description", Color.WHITE.getRGB());
+		this.renderHoveredToolTip(mouseX - this.guiLeft, mouseY - this.guiTop);
 	}
 
 	@Override
@@ -104,9 +118,13 @@ public class GUIArchitectTable extends GuiContainer {
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException
 	{
-		super.keyTyped(typedChar, keyCode);
-		this.nameField.textboxKeyTyped(typedChar, keyCode);
-		this.descField.textboxKeyTyped(typedChar, keyCode);
+		if(this.nameField.isFocused())
+			this.nameField.textboxKeyTyped(typedChar, keyCode);
+		if(this.descField.isFocused())
+			this.descField.textboxKeyTyped(typedChar, keyCode);
+
+		if(!this.nameField.isFocused() && !this.descField.isFocused())
+			super.keyTyped(typedChar, keyCode);
 	}
 
 	@Override
@@ -114,7 +132,8 @@ public class GUIArchitectTable extends GuiContainer {
 	{
 		if(button.id == GUI_BUTTON_ID_SAVE)
 		{
-
+			BlueprintSampleMessage message = new BlueprintSampleMessage(this.tile.getPos(), this.nameField.getText(), this.descField.getText());
+			ImhotepMod.instance.getNetChannel().sendToServer(message);
 			return;
 		}
 		super.actionPerformed(button);

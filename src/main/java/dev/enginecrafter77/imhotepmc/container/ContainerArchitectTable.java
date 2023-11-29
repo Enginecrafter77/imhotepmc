@@ -1,19 +1,23 @@
 package dev.enginecrafter77.imhotepmc.container;
 
+import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
 public class ContainerArchitectTable extends Container {
-	private final TemporaryInventory tmp;
-
-	public ContainerArchitectTable(InventoryPlayer inventoryPlayer)
+	public ContainerArchitectTable(InventoryPlayer inventoryPlayer, TileEntityArchitectTable tile)
 	{
-		this.tmp = new TemporaryInventory(1);
-		this.addSlotToContainer(new Slot(this.tmp, 0, 133, 21));
+		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		if(handler == null)
+			throw new IllegalStateException();
+
+		this.addSlotToContainer(new SlotBlueprint(handler, 0, 133, 21));
 
 		for(int row = 0; row < 3; ++row)
 		{

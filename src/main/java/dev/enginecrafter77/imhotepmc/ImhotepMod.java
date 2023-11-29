@@ -10,6 +10,8 @@ import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
 import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.net.BlueprintSampleMessage;
+import dev.enginecrafter77.imhotepmc.net.BlueprintSampleMessageHandler;
 import dev.enginecrafter77.imhotepmc.net.BlueprintTransferHandler;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamWrapper;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
@@ -100,8 +102,9 @@ public class ImhotepMod {
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID + ":main");
         this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "world_data_sync"));
         this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "packet_stream"), 8192);
-
         this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance())));
+
+        this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
 
         BLOCK_ARCHITECT_TABLE = new BlockArchitectTable();
         BLOCK_BLUEPRINT_LIBRARY = new BlockBlueprintLibrary();
