@@ -24,6 +24,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class TileEntityBuilder extends TileEntity implements ITickable {
+	private static final String NBT_KEY_BLUEPRINT = "blueprint";
+	private static final String NBT_KEY_BUILDER = "builder_state";
+	private static final String NBT_KEY_FACING = "facing";
+
 	private static final Vec3i VEC_ONE = new Vec3i(1, 1, 1);
 
 	private static final int ENERGY_PER_BLOCK = 100;
@@ -32,9 +36,6 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	private static final NBTBlueprintSerializer SERIALIZER = new LitematicaBlueprintSerializer();
 
 	private final EnergyStorage energyStorage;
-
-	@Nullable
-	private SchematicBlueprint blueprint;
 
 	@Nonnull
 	private Collection<BlockPosEdge> buildAreaEdges;
@@ -46,7 +47,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	private BlueprintBuilder builder;
 
 	@Nonnull
-	private Vec3i buildOriginOffset;
+	private EnumFacing facing;
 
 	private long tickTime;
 	private long lastBuildTick;
@@ -55,22 +56,21 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 0);
 		this.buildAreaEdges = ImmutableList.of();
-		this.buildOriginOffset = Vec3i.NULL_VECTOR;
+		this.facing = EnumFacing.NORTH;
 		this.boundingBox = null;
-		this.blueprint = null;
 		this.builder = null;
 		this.tickTime = 0L;
 		this.lastBuildTick = 0L;
 	}
 
-	public void setBuildOriginOffset(Vec3i origin)
+	public void setFacing(EnumFacing facing)
 	{
-		this.buildOriginOffset = origin;
+		this.facing = facing;
 	}
 
 	public BlockPos getBuildOrigin()
 	{
-		return this.getPos().add(this.buildOriginOffset);
+		return this.getPos().add(this.facing.getOpposite().getDirectionVec());
 	}
 
 	public Collection<BlockPosEdge> getBuildAreaEdges()
@@ -80,14 +80,22 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 
 	public void setBlueprint(SchematicBlueprint blueprint)
 	{
-		this.blueprint = blueprint;
-		this.builder = new BlueprintBuilder(blueprint);
-		this.onBlueprintChanged(blueprint);
+		this.builder = this.createBuilder(blueprint);
+		this.onBuilderCreated(this.builder);
 	}
 
-	protected void onBlueprintChanged(SchematicBlueprint blueprint)
+	protected BlueprintBuilder createBuilder(SchematicBlueprint blueprint)
 	{
-		List<BlockPos> corners = ImmutableList.of(this.getBuildOrigin(), this.getBuildOrigin().add(blueprint.getSize()).subtract(VEC_ONE));
+		BlueprintBuilder builder = new BlueprintBuilder(blueprint);
+		builder.setRotationFromFacing(this.facing.getOpposite());
+		return builder;
+	}
+
+	protected void onBuilderCreated(BlueprintBuilder builder)
+	{
+		BlockPos first = this.getBuildOrigin();
+		BlockPos last = this.getBuildOrigin().add(builder.getBuildSize()).subtract(VEC_ONE);
+		List<BlockPos> corners = ImmutableList.of(first, last);
 		this.buildAreaEdges = BlockPosUtil.findEdges(corners);
 		this.boundingBox = BlockPosUtil.contain(ImmutableList.<BlockPos>builder().addAll(corners).add(this.getPos()).build());
 	}
@@ -103,7 +111,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	@Override
 	public void update()
 	{
-		if(this.blueprint == null || this.builder == null)
+		if(this.builder == null)
 			return;
 
 		// We require redstone power
@@ -150,31 +158,26 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	public void readFromNBT(NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
-		boolean set = compound.getBoolean("set");
-		if(!set)
-		{
-			this.blueprint = null;
-			this.builder = null;
+		this.facing = EnumFacing.byHorizontalIndex(compound.getByte(NBT_KEY_FACING));
+		if(!compound.hasKey(NBT_KEY_BLUEPRINT))
 			return;
-		}
 
-		this.blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag("blueprint"));
-		this.builder = new BlueprintBuilder(this.blueprint);
-		this.builder.restoreState(compound.getCompoundTag("builder_state"));
-		this.onBlueprintChanged(this.blueprint);
+		SchematicBlueprint blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag(NBT_KEY_BLUEPRINT));
+		this.builder = this.createBuilder(blueprint);
+		this.builder.restoreState(compound.getCompoundTag(NBT_KEY_BUILDER));
+		this.onBuilderCreated(this.builder);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
 		compound = super.writeToNBT(compound);
-		compound.setBoolean("set", this.blueprint != null);
-
-		if(this.blueprint == null || this.builder == null)
+		compound.setByte(NBT_KEY_FACING, (byte)this.facing.getHorizontalIndex());
+		if(this.builder == null)
 			return compound;
 
-		compound.setTag("blueprint", SERIALIZER.serializeBlueprint(this.blueprint));
-		compound.setTag("builder_state", this.builder.saveState());
+		compound.setTag(NBT_KEY_BLUEPRINT, SERIALIZER.serializeBlueprint(this.builder.getBlueprint()));
+		compound.setTag(NBT_KEY_BUILDER, this.builder.saveState());
 		return compound;
 	}
 

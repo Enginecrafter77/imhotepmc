@@ -7,10 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
@@ -105,9 +102,12 @@ public class ItemSchematicBlueprint extends Item {
 		if(blueprint == null)
 			return EnumActionResult.PASS;
 
+		EnumFacing playerFacing = player.getHorizontalFacing();
+
 		BlueprintBuilder builder = new BlueprintBuilder(blueprint);
 		builder.setWorld(worldIn);
 		builder.setOrigin(pos.up());
+		builder.setRotationFromFacing(playerFacing);
 		while(builder.hasNextBlock())
 			builder.placeNextBlock();
 
