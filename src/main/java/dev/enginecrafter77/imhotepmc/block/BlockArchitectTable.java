@@ -1,13 +1,12 @@
 package dev.enginecrafter77.imhotepmc.block;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -44,16 +43,7 @@ public class BlockArchitectTable extends Block {
 		if(hand != EnumHand.MAIN_HAND)
 			return false;
 
-		ItemStack stack = playerIn.getHeldItem(hand);
-		if(stack.getItem() != ImhotepMod.ITEM_SCHEMATIC_BLUEPRINT)
-			return false;
-
-		TileEntityArchitectTable tile = (TileEntityArchitectTable)worldIn.getTileEntity(pos);
-		if(tile == null)
-			return false;
-
-		SchematicBlueprint blueprint = tile.sample();
-		ImhotepMod.ITEM_SCHEMATIC_BLUEPRINT.setSchematic(stack, blueprint);
+		playerIn.openGui(ImhotepMod.instance, ImhotepGUIHandler.GUI_ID_ARCHITECT_TABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 }
