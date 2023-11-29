@@ -1,16 +1,10 @@
 package dev.enginecrafter77.imhotepmc.world.sync;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WorldDataSyncMessage implements IMessage {
 	private Class<? extends SynchronizedWorldSavedData> cls;
@@ -31,26 +25,24 @@ public class WorldDataSyncMessage implements IMessage {
 		this.name = null;
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void apply(World world)
+	public SynchronizedWorldSavedData obtainInstance(MapStorage mapStorage)
 	{
-		MapStorage ms = world.getMapStorage();
-		if(ms == null)
-			return;
-		SynchronizedWorldSavedData sd = (SynchronizedWorldSavedData)ms.getOrLoadData(this.cls, this.name);
-		if(sd == null)
-		{
-			try
-			{
-				sd = this.cls.getConstructor(new Class<?>[] {String.class}).newInstance(this.name);
-				ms.setData(this.name, sd);
-			}
-			catch(ReflectiveOperationException exc)
-			{
-				throw new RuntimeException(exc);
-			}
-		}
-		sd.deserializeNBT(this.data);
+		return (SynchronizedWorldSavedData)mapStorage.getOrLoadData(this.cls, this.name);
+	}
+
+	public SynchronizedWorldSavedData createNewInstance() throws ReflectiveOperationException
+	{
+		return this.cls.getConstructor(new Class<?>[] {String.class}).newInstance(this.name);
+	}
+
+	public NBTTagCompound getSavedData()
+	{
+		return this.data;
+	}
+
+	public String getName()
+	{
+		return this.name;
 	}
 
 	@Override
@@ -75,15 +67,5 @@ public class WorldDataSyncMessage implements IMessage {
 		ByteBufUtils.writeUTF8String(buf, this.cls.getName());
 		ByteBufUtils.writeUTF8String(buf, this.name);
 		ByteBufUtils.writeTag(buf, this.data);
-	}
-
-	public static class WorldDataSyncMessageHandler implements IMessageHandler<WorldDataSyncMessage, IMessage>
-	{
-		@Override
-		public IMessage onMessage(WorldDataSyncMessage message, MessageContext ctx)
-		{
-			message.apply(Minecraft.getMinecraft().world);
-			return null;
-		}
 	}
 }

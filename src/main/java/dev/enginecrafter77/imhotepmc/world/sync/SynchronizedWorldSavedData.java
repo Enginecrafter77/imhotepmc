@@ -11,10 +11,8 @@ public abstract class SynchronizedWorldSavedData extends WorldSavedData {
 		this.needsSync = false;
 	}
 
-	@Override
-	public void markDirty()
+	public void markForSync()
 	{
-		super.markDirty();
 		this.needsSync = true;
 	}
 

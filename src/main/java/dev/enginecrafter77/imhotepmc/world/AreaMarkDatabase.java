@@ -25,12 +25,14 @@ public class AreaMarkDatabase extends SynchronizedWorldSavedData {
 	public void registerGroup(AreaMarkGroup group)
 	{
 		this.groups.put(group.getId(), group);
+		this.markForSync();
 		this.markDirty();
 	}
 
 	public void unregisterGroup(AreaMarkGroup group)
 	{
 		this.groups.remove(group.getId());
+		this.markForSync();
 		this.markDirty();
 	}
 

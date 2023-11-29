@@ -26,9 +26,6 @@ import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
 import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
 import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncHandler;
-import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncMessage;
-import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncRequest;
-import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncRequestHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -106,7 +103,8 @@ public class ImhotepMod {
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID);
         this.netChannel.registerMessage(MessageBlueprintInscribeHandler.class, MessageInscribeBlueprint.class, 0, Side.SERVER);
 
-        this.worldDataSyncHandler = new WorldDataSyncHandler();
+        this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "world_data_sync"));
+
         this.packetStreamServer = new PacketStreamManager();
         this.packetStreamClient = new PacketStreamDispatcher(this.netChannel, 8192);
         this.netChannel.registerMessage(this.packetStreamServer.getStartHandler(), PacketStreamStartMessage.class, 1, Side.SERVER);
@@ -114,9 +112,6 @@ public class ImhotepMod {
         this.netChannel.registerMessage(this.packetStreamServer.getEndHandler(), PacketStreamEndMessage.class, 3, Side.SERVER);
         this.netChannel.registerMessage(this.packetStreamClient.getStartConfirmHandler(), PacketStreamStartConfirmMessage.class, 4, Side.CLIENT);
         this.netChannel.registerMessage(this.packetStreamClient.getTransferConfimHandler(), PacketStreamTransferConfirmMessage.class, 5, Side.CLIENT);
-
-        this.netChannel.registerMessage(WorldDataSyncMessage.WorldDataSyncMessageHandler.class, WorldDataSyncMessage.class, 6, Side.CLIENT);
-        this.netChannel.registerMessage(WorldDataSyncRequestHandler.class, WorldDataSyncRequest.class, 7, Side.SERVER);
 
         this.packetStreamServer.subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(BlockRecordCompatTranslationTable.getInstance()), MessageBlueprintInscribeHandler::onBlueprintReceived));
 
