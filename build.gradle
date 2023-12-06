@@ -37,11 +37,12 @@ test {
 dependencies {
     compile 'li.cil.oc:OpenComputers:MC1.12.2-1.7.5.+:api'
 
-    runtime "codechicken:CodeChickenLib:1.12.2-3.1.7.+:universal"
-    runtime "cofh:CoFHCore:1.12.2-4.6.0.+:universal"
-    runtime "cofh:CoFHWorld:1.12.2-1.3.1.7:universal"
+    runtime "codechicken:CodeChickenLib:1.12.2-3.2.3.+:universal"
+    runtime "cofh:CoFHCore:1.12.2-4.6.3.+:universal"
+    runtime "cofh:CoFHWorld:1.12.2-1.3.1.+:universal"
     runtime "cofh:ThermalFoundation:1.12.2-2.6.0.+:universal"
-    runtime "cofh:ThermalExpansion:1.12.2-5.5.4.43:universal"
+    runtime "cofh:ThermalExpansion:1.12.2-5.5.4.+:universal"
+    runtime "cofh:ThermalDynamics:1.12.2-2.5.5.+:universal"
     runtime "cofh:RedstoneFlux:1.12-2.1.0.7:universal"
     runtime "curse.maven:Hwyla-253449:2568751"
 
