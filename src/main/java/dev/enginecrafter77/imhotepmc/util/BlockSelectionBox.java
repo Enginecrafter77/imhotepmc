@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -8,7 +9,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
+public class BlockSelectionBox extends BlockPosBox implements INBTSerializable<NBTTagCompound> {
 	private static final String KEY_NBT_SOURCE_X = "x1";
 	private static final String KEY_NBT_SOURCE_Y = "y1";
 	private static final String KEY_NBT_SOURCE_Z = "z1";
@@ -16,10 +17,8 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 	private static final String KEY_NBT_DEST_Y = "y2";
 	private static final String KEY_NBT_DEST_Z = "z2";
 
-	private static final Vec3i ONE = new Vec3i(1, 1, 1);
-
 	private final BlockPos.MutableBlockPos start; // Inclusive
-	private final BlockPos.MutableBlockPos end; // Exclusive
+	private final BlockPos.MutableBlockPos end; // Inclusive
 
 	public BlockSelectionBox()
 	{
@@ -27,100 +26,142 @@ public class BlockSelectionBox implements INBTSerializable<NBTTagCompound> {
 		this.end = new BlockPos.MutableBlockPos(BlockPos.ORIGIN);
 	}
 
-	public BlockSelectionBox(@Nonnull BlockPos start, @Nonnull BlockPos end)
+	public void setStartEnd(@Nonnull BlockPos start, @Nonnull BlockPos end)
 	{
-		this();
-		this.setStart(start);
-		this.setEnd(end);
+		this.setToContain(ImmutableList.of(start, end));
 	}
 
-	public void setStart(@Nonnull BlockPos start)
+	public void setStartSize(@Nonnull BlockPos start, @Nonnull Vec3i size)
 	{
-		this.start.setPos(start);
+		int stx = start.getX();
+		int sty = start.getY();
+		int stz = start.getZ();
+
+		int vx = size.getX();
+		int vy = size.getY();
+		int vz = size.getZ();
+
+		if(vx < 0)
+		{
+			stx += vx + 1;
+			vx = Math.abs(vx);
+		}
+
+		if(vy < 0)
+		{
+			sty += vy + 1;
+			vy = Math.abs(vy);
+		}
+
+		if(vz < 0)
+		{
+			stz += vz + 1;
+			vz = Math.abs(vz);
+		}
+
+		this.start.setPos(stx, sty, stz);
+		this.end.setPos(stx + vx - 1, sty + vy - 1, stz + vz - 1);
 	}
 
-	public void setEnd(@Nonnull BlockPos end)
-	{
-		this.end.setPos(end.add(ONE));
-	}
-
-	public BlockPos getStart()
+	@Override
+	public BlockPos getMinCorner()
 	{
 		return this.start;
 	}
 
-	public BlockPos getEnd()
-	{
-		return this.end.subtract(ONE);
-	}
-
-	public void set(BlockSelectionBox other)
-	{
-		this.start.setPos(other.start);
-		this.end.setPos(other.end);
-	}
-
-	public void reset()
-	{
-		this.start.setPos(BlockPos.ORIGIN);
-		this.end.setPos(BlockPos.ORIGIN);
-	}
-
+	@Override
 	public Vec3i getSize()
 	{
-		int sx = Math.abs(this.end.getX() - this.start.getX());
-		int sy = Math.abs(this.end.getY() - this.start.getY());
-		int sz = Math.abs(this.end.getZ() - this.start.getZ());
+		int sx = Math.max(this.end.getX() - this.start.getX() + 1, 0);
+		int sy = Math.max(this.end.getY() - this.start.getY() + 1, 0);
+		int sz = Math.max(this.end.getZ() - this.start.getZ() + 1, 0);
 		return new Vec3i(sx, sy, sz);
 	}
 
-	public boolean contains(Vec3i vector)
+	@Override
+	public BlockPos getMaxCorner()
 	{
-		return vector.getX() >= this.start.getX() && vector.getX() < this.end.getX() &&
-				vector.getY() >= this.start.getY() && vector.getY() < this.end.getY() &&
-				vector.getZ() >= this.start.getZ() && vector.getZ() < this.end.getZ();
+		return this.end;
 	}
 
-	public void intersect(BlockSelectionBox other)
+	public void set(BlockPosBox other)
 	{
-		int dmx = Math.max(this.start.getX(), other.start.getX());
-		int dmy = Math.max(this.start.getY(), other.start.getY());
-		int dmz = Math.max(this.start.getZ(), other.start.getZ());
-		int dMx = Math.min(this.end.getX(), other.end.getX());
-		int dMy = Math.min(this.end.getY(), other.end.getY());
-		int dMz = Math.min(this.end.getZ(), other.end.getZ());
+		this.start.setPos(other.getMinCorner());
+		this.end.setPos(other.getMaxCorner());
+	}
 
-		if(dMx < dmx || dMy < dmy || dMz < dmz) // Non-overlapping
-		{
-			this.reset();
-			return;
-		}
+	public void intersect(BlockPosBox other)
+	{
+		BlockPos minOther = other.getMinCorner();
+		BlockPos maxOther = other.getMaxCorner();
+
+		int dmx = Math.max(this.start.getX(), minOther.getX());
+		int dmy = Math.max(this.start.getY(), minOther.getY());
+		int dmz = Math.max(this.start.getZ(), minOther.getZ());
+		int dMx = Math.min(this.end.getX(), maxOther.getX());
+		int dMy = Math.min(this.end.getY(), maxOther.getY());
+		int dMz = Math.min(this.end.getZ(), maxOther.getZ());
 
 		this.start.setPos(dmx, dmy, dmz);
 		this.end.setPos(dMx, dMy, dMz);
 	}
 
-	public void union(BlockSelectionBox other)
+	public void union(BlockPosBox other)
 	{
-		int dmx = Math.min(this.start.getX(), other.start.getX());
-		int dmy = Math.min(this.start.getY(), other.start.getY());
-		int dmz = Math.min(this.start.getZ(), other.start.getZ());
-		int dMx = Math.max(this.end.getX(), other.end.getX());
-		int dMy = Math.max(this.end.getY(), other.end.getY());
-		int dMz = Math.max(this.end.getZ(), other.end.getZ());
+		BlockPos minOther = other.getMinCorner();
+		BlockPos maxOther = other.getMaxCorner();
+
+		int dmx = Math.min(this.start.getX(), minOther.getX());
+		int dmy = Math.min(this.start.getY(), minOther.getY());
+		int dmz = Math.min(this.start.getZ(), minOther.getZ());
+		int dMx = Math.max(this.end.getX(), maxOther.getX());
+		int dMy = Math.max(this.end.getY(), maxOther.getY());
+		int dMz = Math.max(this.end.getZ(), maxOther.getZ());
+
 		this.start.setPos(dmx, dmy, dmz);
 		this.end.setPos(dMx, dMy, dMz);
-	}
-
-	public int getVolume()
-	{
-		Vec3i size = this.getSize();
-		return size.getX() * size.getY() * size.getZ();
 	}
 
 	public Iterable<BlockPos.MutableBlockPos> internalBlocks()
 	{
 		return BlockPos.getAllInBoxMutable(this.start, this.end);
+	}
+
+	public void setToContain(Iterable<BlockPos> itr)
+	{
+		boolean empty = true;
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int minZ = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		int maxZ = Integer.MIN_VALUE;
+		int x, y, z;
+		for(BlockPos pos : itr)
+		{
+			x = pos.getX();
+			y = pos.getY();
+			z = pos.getZ();
+			if(x < minX)
+				minX = x;
+			if(y < minY)
+				minY = y;
+			if(z < minZ)
+				minZ = z;
+			if(x > maxX)
+				maxX = x;
+			if(y > maxY)
+				maxY = y;
+			if(z > maxZ)
+				maxZ = z;
+			empty = false;
+		}
+
+		if(empty)
+			return;
+
+		this.start.setPos(minX, minY, minZ);
+		this.end.setPos(maxX, maxY, maxZ);
 	}
 
 	@Override

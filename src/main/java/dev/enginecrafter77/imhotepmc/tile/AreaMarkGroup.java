@@ -153,12 +153,7 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 	{
 		if(!this.isComplete())
 			return;
-
-		BlockPos.MutableBlockPos min = new BlockPos.MutableBlockPos();
-		BlockPos.MutableBlockPos max = new BlockPos.MutableBlockPos();
-		BlockPosUtil.findBoxMinMax(this.getDefiningCorners(), min, max);
-		box.setStart(min);
-		box.setEnd(max);
+		box.setToContain(this.getDefiningCorners());
 	}
 
 	public void construct(World world)

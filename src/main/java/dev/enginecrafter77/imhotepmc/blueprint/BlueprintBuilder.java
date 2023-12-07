@@ -4,10 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -18,77 +15,29 @@ import java.util.NoSuchElementException;
 public class BlueprintBuilder {
 	private static final String NBT_KEY_DEFERRED = "deferred";
 
-	private static final Vec3i VEC_ONE = new Vec3i(1, 1, 1);
-
 	private final LinkedList<BlueprintVoxel> deferred;
 	private final VoxelIndexer indexer;
-
-	private final SchematicBlueprint blueprint;
-
-	private Rotation rotation;
+	private final BlueprintPlacement placement;
 
 	@Nonnull
 	private BlueprintReader reader;
 
-	@Nullable
-	private BlockPos origin;
-	@Nullable
-	private World world;
-
-	public BlueprintBuilder(SchematicBlueprint blueprint)
+	public BlueprintBuilder(BlueprintPlacement placement)
 	{
-		this.indexer = new NaturalVoxelIndexer(blueprint.getSize());
+		this.indexer = new NaturalVoxelIndexer(placement.getOriginOffset(), placement.getSize());
 		this.deferred = new LinkedList<BlueprintVoxel>();
-		this.rotation = Rotation.NONE;
-		this.blueprint = blueprint;
-		this.reader = this.blueprint.reader();
+		this.placement = placement;
+		this.reader = placement.reader();
 	}
 
-	public SchematicBlueprint getBlueprint()
+	public BlueprintPlacement getPlacement()
 	{
-		return this.blueprint;
-	}
-
-	public void setWorld(World world)
-	{
-		this.world = world;
-	}
-
-	@Nullable
-	public World getWorld()
-	{
-		return this.world;
-	}
-
-	public void setOrigin(BlockPos origin)
-	{
-		this.origin = origin;
-	}
-
-	@Nullable
-	public BlockPos getOrigin()
-	{
-		return this.origin;
-	}
-
-	public void setRotation(Rotation rotation)
-	{
-		this.rotation = rotation;
-	}
-
-	public Rotation getRotation()
-	{
-		return this.rotation;
-	}
-
-	public void setRotationFromFacing(EnumFacing facing)
-	{
-		this.setRotation(getRotationFromFacing(facing));
+		return this.placement;
 	}
 
 	public void reset()
 	{
-		this.reader = this.blueprint.reader();
+		this.reader = this.placement.reader();
 	}
 
 	public boolean hasNextBlock()
@@ -97,19 +46,15 @@ public class BlueprintBuilder {
 	}
 
 	@Nullable
-	protected BlueprintVoxel getNextVoxel()
+	protected BlueprintVoxel getNextVoxel(World world)
 	{
-		if(this.world == null || this.origin == null)
-			throw new IllegalStateException("World or origin not defined!");
-
 		if(this.reader.hasNext())
 		{
 			BlueprintVoxel voxel = this.reader.next();
-			BlockPos pos = voxel.getPosition().add(this.origin);
-			Block blk = voxel.getBlock();
+			Block blk = voxel.getBlueprintEntry().getBlock();
 			if(blk == null)
 				return null;
-			if(!blk.canPlaceBlockAt(this.world, pos))
+			if(!blk.canPlaceBlockAt(world, voxel.getPosition()))
 			{
 				this.deferred.add(ImmutableBlueprintVoxel.copyOf(voxel));
 				return null;
@@ -123,54 +68,24 @@ public class BlueprintBuilder {
 		throw new NoSuchElementException();
 	}
 
-	public Vec3i getBuildSize()
-	{
-		BlockPos max = new BlockPos(this.blueprint.getSize()).subtract(VEC_ONE);
-		max = transformBlockPosition(max);
-		max = max.add(VEC_ONE);
-		return max;
-	}
-
-	protected BlockPos transformBlockPosition(BlockPos blueprintPosition)
-	{
-		Vec3i unitShift = new Vec3i(this.blueprint.getSize().getX() / 2, this.blueprint.getSize().getY() / 2, this.blueprint.getSize().getZ() / 2);
-		BlockPos unitPosition = blueprintPosition.subtract(unitShift);
-
-		unitPosition = unitPosition.rotate(this.rotation);
-		unitShift = new BlockPos(unitShift).rotate(this.rotation);
-
-		return unitPosition.add(unitShift);
-	}
-
-	protected BlockPos transformBlockPositionToFinal(BlockPos blueprintPosition)
-	{
-		blueprintPosition = this.transformBlockPosition(blueprintPosition);
-		if(this.origin != null)
-			blueprintPosition = blueprintPosition.add(this.origin);
-		return blueprintPosition;
-	}
-
-	public void placeNextBlock()
+	public void placeNextBlock(World world)
 	{
 		BlueprintVoxel voxel = null;
 		while(voxel == null && this.hasNextBlock())
-			voxel = this.getNextVoxel();
+			voxel = this.getNextVoxel(world);
 		if(voxel == null)
 			return;
 
-		if(this.world == null || this.origin == null)
-			throw new IllegalStateException("World or origin not defined!");
-
-		IBlockState state = voxel.createBlockState();
+		IBlockState state = voxel.getBlueprintEntry().createBlockState();
 		if(state == null)
 			return;
 
-		BlockPos dest = this.transformBlockPositionToFinal(voxel.getPosition());
-		this.world.setBlockState(dest, state, 2);
-		TileEntity tile = voxel.createTileEntity(this.world);
+		BlockPos dest = voxel.getPosition();
+		world.setBlockState(dest, state, 2);
+		TileEntity tile = voxel.getBlueprintEntry().createTileEntity(world);
 		if(tile != null)
-			this.world.setTileEntity(dest, tile);
-		this.world.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
+			world.setTileEntity(dest, tile);
+		world.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
 	}
 
 	public NBTTagCompound saveState()
@@ -195,24 +110,8 @@ public class BlueprintBuilder {
 		for(int deferredIndex : deferredIndices)
 		{
 			BlockPos pos = this.indexer.fromIndex(deferredIndex);
-			BlueprintEntry entry = this.blueprint.getBlockAt(pos);
+			BlueprintEntry entry = this.placement.getBlockAt(pos);
 			this.deferred.add(new ImmutableBlueprintVoxel(pos, entry));
-		}
-	}
-
-	private static Rotation getRotationFromFacing(EnumFacing facing)
-	{
-		switch(facing.getOpposite())
-		{
-		default:
-		case NORTH:
-			return Rotation.NONE;
-		case SOUTH:
-			return Rotation.CLOCKWISE_180;
-		case WEST:
-			return Rotation.COUNTERCLOCKWISE_90;
-		case EAST:
-			return Rotation.CLOCKWISE_90;
 		}
 	}
 }

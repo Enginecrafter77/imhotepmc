@@ -32,6 +32,9 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 
 	private final BlockSelectionBox selection;
 
+	@Nullable
+	private AxisAlignedBB renderBox;
+
 	@Nonnull
 	private Collection<BlockPosEdge> edges;
 
@@ -40,6 +43,7 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 
 	public TileEntityArchitectTable()
 	{
+		this.renderBox = null;
 		this.inventory = new ItemStackHandler(1);
 		this.edges = ImmutableList.of();
 		this.selection = new BlockSelectionBox();
@@ -90,7 +94,15 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 
 	protected void onSelectionUpdated(BlockSelectionBox box)
 	{
-		this.edges = BlockPosUtil.findEdges(ImmutableList.of(box.getStart(), box.getEnd()));
+		this.edges = box.edges();
+
+		BlockSelectionBox ths = new BlockSelectionBox();
+		ths.setStartEnd(this.getPos(), this.getPos());
+
+		BlockSelectionBox rb = new BlockSelectionBox();
+		rb.set(box);
+		rb.union(ths);
+		this.renderBox = rb.toAABB();
 	}
 
 	public Collection<BlockPosEdge> getSelectionEdges()
@@ -137,10 +149,9 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 	@SideOnly(Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox()
 	{
-		if(!this.initialized)
+		if(this.renderBox == null)
 			return super.getRenderBoundingBox();
-
-		return BlockPosUtil.contain(ImmutableList.of(this.getPos(), this.selection.getEnd()));
+		return this.renderBox;
 	}
 
 	@Override

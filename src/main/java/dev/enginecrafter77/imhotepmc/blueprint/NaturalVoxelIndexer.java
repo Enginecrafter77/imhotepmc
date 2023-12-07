@@ -11,24 +11,12 @@ public class NaturalVoxelIndexer implements VoxelIndexer {
 	private final int floor;
 	private final int row;
 
-	public NaturalVoxelIndexer(BlockPos from, BlockPos to)
-	{
-		this.origin = BlockPos.ORIGIN;
-		this.size = VecUtil.difference(from, to);
-		if(this.size.getX() == 0 || this.size.getY() == 0 || this.size.getZ() == 0)
-			throw new IllegalArgumentException("Attempting to create indexer of volume 0!");
-
-		this.volume = this.size.getY() * this.size.getX() * this.size.getZ();
-		this.floor = this.size.getX() * this.size.getZ();
-		this.row = this.size.getX();
-	}
-
-	public NaturalVoxelIndexer(Vec3i size)
+	public NaturalVoxelIndexer(BlockPos origin, Vec3i size)
 	{
 		if(size.getX() == 0 || size.getY() == 0 || size.getZ() == 0)
 			throw new IllegalArgumentException("Attempting to create indexer of volume 0!");
 		this.size = size;
-		this.origin = BlockPos.ORIGIN;
+		this.origin = origin;
 		this.volume = size.getY() * size.getX() * size.getZ();
 		this.floor = size.getX() * size.getZ();
 		this.row = size.getX();
@@ -66,5 +54,16 @@ public class NaturalVoxelIndexer implements VoxelIndexer {
 	public int getVolume()
 	{
 		return this.volume;
+	}
+
+	public static NaturalVoxelIndexer inRange(BlockPos from, BlockPos to)
+	{
+		Vec3i size = VecUtil.difference(to, from);
+		return new NaturalVoxelIndexer(from, size);
+	}
+
+	public static NaturalVoxelIndexer inVolume(Vec3i size)
+	{
+		return new NaturalVoxelIndexer(BlockPos.ORIGIN, size);
 	}
 }

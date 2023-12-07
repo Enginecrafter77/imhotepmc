@@ -12,17 +12,51 @@ public class BlockSelectionBoxTest {
 	public void testSize()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 		Assertions.assertEquals(new Vec3i(3, 3, 3), box.getSize());
+	}
+
+	@Test
+	public void testSetStartSize()
+	{
+		BlockPos start = new BlockPos(-1, -1, -1);
+		Vec3i size = new Vec3i(3, 3, 3);
+
+		BlockSelectionBox box = new BlockSelectionBox();
+		box.setStartSize(start, size);
+
+		Assertions.assertEquals(size, box.getSize());
+		Assertions.assertEquals(start, box.getMinCorner());
+		Assertions.assertEquals(new BlockPos(1, 1, 1), box.getMaxCorner());
+	}
+
+	@Test
+	public void testSetStartSizeNegative1()
+	{
+		BlockSelectionBox box = new BlockSelectionBox();
+		box.setStartSize(new BlockPos(1, 1, 1), new Vec3i(-3, -3, -3));
+
+		Assertions.assertEquals(new Vec3i(3, 3, 3), box.getSize());
+		Assertions.assertEquals(new BlockPos(-1, -1, -1), box.getMinCorner());
+		Assertions.assertEquals(new BlockPos(1, 1, 1), box.getMaxCorner());
+	}
+
+	@Test
+	public void testSetStartSizeNegative2()
+	{
+		BlockSelectionBox box = new BlockSelectionBox();
+		box.setStartSize(new BlockPos(1, -1, 1), new Vec3i(-3, 3, -3));
+
+		Assertions.assertEquals(new Vec3i(3, 3, 3), box.getSize());
+		Assertions.assertEquals(new BlockPos(-1, -1, -1), box.getMinCorner());
+		Assertions.assertEquals(new BlockPos(1, 1, 1), box.getMaxCorner());
 	}
 
 	@Test
 	public void testVolume()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 		Assertions.assertEquals(27, box.getVolume());
 	}
 
@@ -30,35 +64,20 @@ public class BlockSelectionBoxTest {
 	public void testContains()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
-		Assertions.assertTrue(box.contains(new Vec3i(1, 0, 1)));
-		Assertions.assertFalse(box.contains(new Vec3i(0, 2, 0)));
-	}
-
-	@Test
-	public void testReset()
-	{
-		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
-		box.reset();
-
-		Assertions.assertEquals(0, box.getVolume());
-		Assertions.assertEquals(Vec3i.NULL_VECTOR, box.getSize());
+		Assertions.assertTrue(box.contains(new BlockPos(1, 0, 1)));
+		Assertions.assertFalse(box.contains(new BlockPos(0, 2, 0)));
 	}
 
 	@Test
 	public void testEquity()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		BlockSelectionBox box2 = new BlockSelectionBox();
-		box2.setStart(new BlockPos(-1, -1, -1));
-		box2.setEnd(new BlockPos(1, 1, 1));
+		box2.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		Assertions.assertEquals(box2, box);
 	}
@@ -67,12 +86,10 @@ public class BlockSelectionBoxTest {
 	public void testUnion()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		BlockSelectionBox box2 = new BlockSelectionBox();
-		box2.setStart(new BlockPos(0, 0, 0));
-		box2.setEnd(new BlockPos(2, 2, 2));
+		box2.setStartEnd(new BlockPos(0, 0, 0), new BlockPos(2, 2, 2));
 
 		box.union(box2);
 
@@ -84,8 +101,7 @@ public class BlockSelectionBoxTest {
 	public void testUnionSecondEmpty()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		BlockSelectionBox box2 = new BlockSelectionBox();
 		box.union(box2);
@@ -99,8 +115,7 @@ public class BlockSelectionBoxTest {
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
 		BlockSelectionBox box2 = new BlockSelectionBox();
-		box2.setStart(new BlockPos(-1, -1, -1));
-		box2.setEnd(new BlockPos(1, 1, 1));
+		box2.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		box.union(box2);
 
@@ -109,26 +124,13 @@ public class BlockSelectionBoxTest {
 	}
 
 	@Test
-	public void testUnionBothEmpty()
-	{
-		BlockSelectionBox box = new BlockSelectionBox();
-		BlockSelectionBox box2 = new BlockSelectionBox();
-		box.union(box2);
-
-		Assertions.assertEquals(Vec3i.NULL_VECTOR, box.getSize());
-		Assertions.assertEquals(0, box.getVolume());
-	}
-
-	@Test
 	public void testIntersect()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		BlockSelectionBox box2 = new BlockSelectionBox();
-		box2.setStart(new BlockPos(0, 0, 0));
-		box2.setEnd(new BlockPos(2, 2, 2));
+		box2.setStartEnd(new BlockPos(0, 0, 0), new BlockPos(2, 2, 2));
 
 		box.intersect(box2);
 
@@ -140,12 +142,10 @@ public class BlockSelectionBoxTest {
 	public void testIntersectNonOverlapping()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		BlockSelectionBox box2 = new BlockSelectionBox();
-		box2.setStart(new BlockPos(5, 5, 5));
-		box2.setEnd(new BlockPos(8, 8, 8));
+		box2.setStartEnd(new BlockPos(5, 5, 5), new BlockPos(8, 8, 8));
 
 		box.intersect(box2);
 
@@ -154,50 +154,10 @@ public class BlockSelectionBoxTest {
 	}
 
 	@Test
-	public void testIntersectBothEmpty()
-	{
-		BlockSelectionBox box = new BlockSelectionBox();
-		BlockSelectionBox box2 = new BlockSelectionBox();
-		box.intersect(box2);
-
-		Assertions.assertEquals(Vec3i.NULL_VECTOR, box.getSize());
-		Assertions.assertEquals(0, box.getVolume());
-	}
-
-	@Test
-	public void testIntersectSecondEmpty()
-	{
-		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
-
-		BlockSelectionBox box2 = new BlockSelectionBox();
-		box.intersect(box2);
-
-		Assertions.assertEquals(Vec3i.NULL_VECTOR, box.getSize());
-		Assertions.assertEquals(0, box.getVolume());
-	}
-
-	@Test
-	public void testIntersectFirstEmpty()
-	{
-		BlockSelectionBox box = new BlockSelectionBox();
-		BlockSelectionBox box2 = new BlockSelectionBox();
-		box2.setStart(new BlockPos(-1, -1, -1));
-		box2.setEnd(new BlockPos(1, 1, 1));
-
-		box.intersect(box2);
-
-		Assertions.assertEquals(Vec3i.NULL_VECTOR, box.getSize());
-		Assertions.assertEquals(0, box.getVolume());
-	}
-
-	@Test
 	public void testCopy()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		BlockSelectionBox box2 = new BlockSelectionBox();
 		box2.set(box);
@@ -209,8 +169,7 @@ public class BlockSelectionBoxTest {
 	public void testSerialize()
 	{
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStart(new BlockPos(-1, -1, -1));
-		box.setEnd(new BlockPos(1, 1, 1));
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		NBTTagCompound tag = box.serializeNBT();
 		BlockSelectionBox box2 = new BlockSelectionBox();
@@ -222,7 +181,8 @@ public class BlockSelectionBoxTest {
 	@Test
 	public void testInitRange()
 	{
-		BlockSelectionBox box = new BlockSelectionBox(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
+		BlockSelectionBox box = new BlockSelectionBox();
+		box.setStartEnd(new BlockPos(-1, -1, -1), new BlockPos(1, 1, 1));
 
 		Assertions.assertEquals(new Vec3i(3, 3, 3), box.getSize());
 		Assertions.assertEquals(27, box.getVolume());

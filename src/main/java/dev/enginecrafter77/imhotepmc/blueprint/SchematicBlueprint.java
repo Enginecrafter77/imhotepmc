@@ -210,8 +210,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 
 		public void computeBoundingBox(BlockSelectionBox box)
 		{
-			box.setStart(this.getOriginOffset());
-			box.setEnd(this.getOriginOffset().add(this.getSize()).subtract(ONE));
+			box.setStartSize(this.getOriginOffset(), this.getSize());
 		}
 
 		@Override

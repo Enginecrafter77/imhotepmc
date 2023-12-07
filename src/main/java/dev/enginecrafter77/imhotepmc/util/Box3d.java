@@ -54,10 +54,10 @@ public class Box3d {
 		this.max.z = box.maxZ;
 	}
 
-	public void set(BlockSelectionBox box)
+	public void set(BlockPosBox box)
 	{
-		BlockPos start = box.getStart();
-		BlockPos end = box.getEnd();
+		BlockPos start = box.getMinCorner();
+		BlockPos end = box.getMaxCorner();
 
 		this.min.x = start.getX();
 		this.min.y = start.getY();

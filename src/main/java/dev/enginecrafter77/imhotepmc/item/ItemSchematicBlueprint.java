@@ -104,13 +104,10 @@ public class ItemSchematicBlueprint extends Item {
 
 		EnumFacing playerFacing = player.getHorizontalFacing();
 
-		BlueprintBuilder builder = new BlueprintBuilder(blueprint);
-		builder.setWorld(worldIn);
-		builder.setOrigin(pos.up());
-		builder.setRotationFromFacing(playerFacing);
+		BlueprintPlacement placement = BlueprintPlacement.facing(blueprint, pos.up(), playerFacing);
+		BlueprintBuilder builder = new BlueprintBuilder(placement);
 		while(builder.hasNextBlock())
-			builder.placeNextBlock();
-
+			builder.placeNextBlock(worldIn);
 		return EnumActionResult.SUCCESS;
 	}
 

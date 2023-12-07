@@ -3,7 +3,7 @@ package dev.enginecrafter77.imhotepmc.blueprint;
 import com.google.common.collect.ImmutableSet;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationContext;
-import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
+import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +35,7 @@ public class BlueprintEditor {
 
 	public void addVoxel(BlueprintVoxel voxel)
 	{
-		this.addBlock(voxel.getPosition().toImmutable(), voxel);
+		this.addBlock(voxel.getPosition().toImmutable(), voxel.getBlueprintEntry());
 	}
 
 	public BlueprintEditor setSize(Vec3i size)
@@ -88,14 +88,13 @@ public class BlueprintEditor {
 
 		if(size == null)
 		{
-			BlockPos.MutableBlockPos min = new BlockPos.MutableBlockPos();
-			BlockPos.MutableBlockPos max = new BlockPos.MutableBlockPos();
-			BlockPosUtil.findBoxMinMax(this.data.keySet(), min, max);
-			size = max.subtract(min).add(1, 1, 1);
-			origin = min.toImmutable();
+			BlockSelectionBox box = new BlockSelectionBox();
+			box.setToContain(this.data.keySet());
+			origin = box.getMinCorner();
+			size = box.getSize();
 		}
 
-		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
+		VoxelIndexer indexer = NaturalVoxelIndexer.inVolume(size);
 		List<SavedTileState> palette = this.data.values().stream().distinct().collect(Collectors.toList());
 		palette.remove(SavedTileState.air());
 		palette.add(0, SavedTileState.air());

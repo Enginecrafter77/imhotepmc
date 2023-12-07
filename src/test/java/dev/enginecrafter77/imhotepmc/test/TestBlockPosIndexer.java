@@ -12,7 +12,7 @@ public class TestBlockPosIndexer {
 	public void testSimple2x2()
 	{
 		Vec3i size = new Vec3i(2, 2, 2);
-		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
+		VoxelIndexer indexer = NaturalVoxelIndexer.inVolume(size);
 
 		assertBlockPos(indexer, 0, "0:0:0");
 		assertBlockPos(indexer, 1, "1:0:0");
@@ -28,7 +28,7 @@ public class TestBlockPosIndexer {
 	public void testMatchingPairs()
 	{
 		Vec3i size = new Vec3i(16, 16, 16);
-		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
+		VoxelIndexer indexer = NaturalVoxelIndexer.inVolume(size);
 
 		for(int index = 0; index < indexer.getVolume(); ++index)
 		{
@@ -42,7 +42,7 @@ public class TestBlockPosIndexer {
 	public void testPositionNotOutsideBounds()
 	{
 		Vec3i size = new Vec3i(16, 16, 16);
-		VoxelIndexer indexer = new NaturalVoxelIndexer(size);
+		VoxelIndexer indexer = NaturalVoxelIndexer.inVolume(size);
 
 		for(int index = 0; index < indexer.getVolume(); ++index)
 		{

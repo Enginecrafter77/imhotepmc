@@ -1,10 +1,7 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.collect.ImmutableList;
-import dev.enginecrafter77.imhotepmc.blueprint.BlueprintBuilder;
-import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
-import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.*;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,7 +10,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
@@ -27,8 +23,6 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	private static final String NBT_KEY_BLUEPRINT = "blueprint";
 	private static final String NBT_KEY_BUILDER = "builder_state";
 	private static final String NBT_KEY_FACING = "facing";
-
-	private static final Vec3i VEC_ONE = new Vec3i(1, 1, 1);
 
 	private static final int ENERGY_PER_BLOCK = 100;
 	private static final int MAX_BLOCKS_PER_TICK = 8;
@@ -68,33 +62,29 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		this.facing = facing;
 	}
 
-	public BlockPos getBuildOrigin()
-	{
-		return this.getPos().add(this.facing.getOpposite().getDirectionVec());
-	}
-
 	public Collection<BlockPosEdge> getBuildAreaEdges()
 	{
 		return this.buildAreaEdges;
 	}
 
-	public void setBlueprint(SchematicBlueprint blueprint)
+	protected BlueprintPlacement createPlacement(SchematicBlueprint blueprint, BlockPos builderPosition, EnumFacing builderFacing)
 	{
-		this.builder = this.createBuilder(blueprint);
-		this.onBuilderCreated(this.builder);
+		EnumFacing facing = builderFacing.getOpposite();
+		BlockPos origin = builderPosition.add(facing.getDirectionVec());
+		return BlueprintPlacement.facing(blueprint, origin, facing);
 	}
 
-	protected BlueprintBuilder createBuilder(SchematicBlueprint blueprint)
+	public void setBlueprint(SchematicBlueprint blueprint)
 	{
-		BlueprintBuilder builder = new BlueprintBuilder(blueprint);
-		builder.setRotationFromFacing(this.facing.getOpposite());
-		return builder;
+		BlueprintPlacement placement = this.createPlacement(blueprint, this.pos, this.facing);
+		this.builder = new BlueprintBuilder(placement);
+		this.onBuilderCreated(this.builder);
 	}
 
 	protected void onBuilderCreated(BlueprintBuilder builder)
 	{
-		BlockPos first = this.getBuildOrigin();
-		BlockPos last = this.getBuildOrigin().add(builder.getBuildSize()).subtract(VEC_ONE);
+		BlockPos first = builder.getPlacement().getOriginOffset();
+		BlockPos last = builder.getPlacement().getOriginOffset().add(builder.getPlacement().getSize()).add(-1, -1, -1);
 		List<BlockPos> corners = ImmutableList.of(first, last);
 		this.buildAreaEdges = BlockPosUtil.findEdges(corners);
 		this.boundingBox = BlockPosUtil.contain(ImmutableList.<BlockPos>builder().addAll(corners).add(this.getPos()).build());
@@ -144,13 +134,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	{
 		if(this.builder == null)
 			return false;
-
-		this.builder.setOrigin(this.getBuildOrigin());
-		this.builder.setWorld(this.world);
 		if(!this.builder.hasNextBlock())
 			return false;
-
-		this.builder.placeNextBlock();
+		this.builder.placeNextBlock(this.world);
 		return true;
 	}
 
@@ -163,7 +149,8 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 			return;
 
 		SchematicBlueprint blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag(NBT_KEY_BLUEPRINT));
-		this.builder = this.createBuilder(blueprint);
+		BlueprintPlacement placement = this.createPlacement(blueprint, this.pos, this.facing);
+		this.builder = new BlueprintBuilder(placement);
 		this.builder.restoreState(compound.getCompoundTag(NBT_KEY_BUILDER));
 		this.onBuilderCreated(this.builder);
 	}
@@ -176,7 +163,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		if(this.builder == null)
 			return compound;
 
-		compound.setTag(NBT_KEY_BLUEPRINT, SERIALIZER.serializeBlueprint(this.builder.getBlueprint()));
+		compound.setTag(NBT_KEY_BLUEPRINT, SERIALIZER.serializeBlueprint((SchematicBlueprint)this.builder.getPlacement().getBlueprint()));
 		compound.setTag(NBT_KEY_BUILDER, this.builder.saveState());
 		return compound;
 	}

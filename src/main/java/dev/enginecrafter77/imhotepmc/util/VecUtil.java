@@ -17,6 +17,11 @@ public class VecUtil {
 		dest.set(src.x, src.y, src.z);
 	}
 
+	public static Vec3i absolute(Vec3i src)
+	{
+		return new Vec3i(Math.abs(src.getX()), Math.abs(src.getY()), Math.abs(src.getZ()));
+	}
+
 	public static Vec3i difference(Vec3i first, Vec3i second)
 	{
 		return new Vec3i(first.getX() - second.getX(), first.getY() - second.getY(), first.getZ() - second.getZ());
