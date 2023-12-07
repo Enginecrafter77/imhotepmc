@@ -30,7 +30,7 @@ public class BlockAreaMarker extends Block {
 	private static final AxisAlignedBB UP_AABB = new AxisAlignedBB(0.4D, 0.0D, 0.4D, 0.6D, 0.6D, 0.6D); // +y
 	private static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.4D, 0.4D, 0.4D, 0.6D, 1D, 0.6D); // -y
 	private static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.4D, 0.4D, 0D, 0.6D, 0.6D, 0.6D); // +z
-	private static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.4D, 0.4D, 0.6D, 0.6D, 0.6D, 1D); // -z
+	private static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.4D, 0.4D, 0.4D, 0.6D, 0.6D, 1D); // -z
 	private static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0D, 0.4D, 0.4D, 0.6D, 0.6D, 0.6D); // +x
 	private static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.4D, 0.4D, 0.4D, 1D, 0.6D, 0.6D); // -x
 
