@@ -103,6 +103,7 @@ public class BlueprintBuilder {
 		IBlockState state = voxel.getBlueprintEntry().createBlockState();
 		if(state == null)
 			return;
+		state = state.withRotation(this.placement.getRotation());
 
 		BlockPos dest = voxel.getPosition();
 		world.setBlockState(dest, state, 2);
