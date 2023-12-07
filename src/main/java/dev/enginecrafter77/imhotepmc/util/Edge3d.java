@@ -1,6 +1,5 @@
 package dev.enginecrafter77.imhotepmc.util;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import javax.vecmath.Point3d;
@@ -47,11 +46,10 @@ public class Edge3d {
 		this.p2.set(x2, y2, z2);
 	}
 
-	public void set(BlockPosEdge edge, Tuple3d anchor)
+	public void set(BlockPosEdge edge, BlockAnchor start, BlockAnchor end)
 	{
-		BlockPos f = edge.getFirst();
-		BlockPos s = edge.getSecond();
-		this.set(f.getX() + anchor.x, f.getY() + anchor.y, f.getZ() + anchor.z, s.getX() + anchor.x, s.getY() + anchor.y, s.getZ() + anchor.z);
+		start.anchorToBlock(edge.getFirst(), this.p1);
+		end.anchorToBlock(edge.getSecond(), this.p2);
 	}
 
 	public Tuple3d getFirstPoint()
@@ -131,7 +129,7 @@ public class Edge3d {
 		}
 
 		@Override
-		public void set(BlockPosEdge edge, Tuple3d anchor)
+		public void set(BlockPosEdge edge, BlockAnchor start, BlockAnchor end)
 		{
 			throw new UnsupportedOperationException();
 		}

@@ -27,6 +27,7 @@ public class BlockPosUtil {
 		return null;
 	}
 
+	@Deprecated
 	public static AxisAlignedBB contain(Iterable<BlockPos> itr)
 	{
 		BlockPos.MutableBlockPos min = new BlockPos.MutableBlockPos();
@@ -40,6 +41,7 @@ public class BlockPosUtil {
 		return Stream.of(pos.up(), pos.down(), pos.north(), pos.south(), pos.east(), pos.west());
 	}
 
+	@Deprecated
 	public static void findBoxMinMax(Iterable<BlockPos> itr, BlockPos.MutableBlockPos outMin, BlockPos.MutableBlockPos outMax)
 	{
 		Iterator<BlockPos> iterator = itr.iterator();
@@ -78,6 +80,7 @@ public class BlockPosUtil {
 		outMax.setPos(maxX, maxY, maxZ);
 	}
 
+	@Deprecated
 	public static Stream<BlockPos> findCorners(Iterable<BlockPos> range)
 	{
 		BlockPos.MutableBlockPos min = new BlockPos.MutableBlockPos();
@@ -96,6 +99,7 @@ public class BlockPosUtil {
 		return Stream.of(c1, c2, c3, c4, c5, c6, c7, c8);
 	}
 
+	@Deprecated
 	public static Collection<BlockPosEdge> findEdges(Iterable<BlockPos> range)
 	{
 		List<BlockPos> corners = findCorners(range).distinct().collect(Collectors.toList());

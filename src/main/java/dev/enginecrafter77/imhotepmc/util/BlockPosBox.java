@@ -5,6 +5,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
+import javax.vecmath.Vector3d;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,11 +20,18 @@ public abstract class BlockPosBox {
 		return this.getMinCorner().add(this.getSize()).add(-1, -1, -1);
 	}
 
+	public AxisAlignedBB toAABB(BlockAnchor minAnchor, BlockAnchor maxAnchor)
+	{
+		Vector3d minv = new Vector3d();
+		Vector3d maxv = new Vector3d();
+		minAnchor.anchorToBlock(this.getMinCorner(), minv);
+		maxAnchor.anchorToBlock(this.getMaxCorner(), maxv);
+		return new AxisAlignedBB(minv.x, minv.y, minv.z, maxv.x, maxv.y, maxv.z);
+	}
+
 	public AxisAlignedBB toAABB()
 	{
-		BlockPos min = this.getMinCorner();
-		BlockPos max = this.getMaxCorner();
-		return new AxisAlignedBB(min.getX(), min.getY(), min.getZ(), max.getX() + 1D, max.getY() + 1D, max.getZ() + 1D);
+		return this.toAABB(BlockAnchor.START, BlockAnchor.END);
 	}
 
 	public int getVolume()

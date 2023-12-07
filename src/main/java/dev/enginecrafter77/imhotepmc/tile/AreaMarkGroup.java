@@ -12,7 +12,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -21,7 +20,7 @@ import javax.vecmath.Point3d;
 import java.util.*;
 
 public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
-	private static float TAPE_ITEMS_PER_BLOCK = 0.125F;
+	private static final float TAPE_ITEMS_PER_BLOCK = 0.125F;
 
 	private static final String NBT_KEY_CORNERS = "corners";
 
@@ -58,18 +57,19 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 
 	private void computeParameters()
 	{
+		BlockSelectionBox box = new BlockSelectionBox();
+		box.setToContain(this.getDefiningCorners());
+
 		this.definedAxes = ImmutableSet.copyOf(calculateDefinedAxes(this.getDefiningCorners()));
-		this.boundingBox = BlockPosUtil.contain(this.getDefiningCorners());
-		this.blockEdges = ImmutableList.copyOf(BlockPosUtil.findEdges(this.getDefiningCorners()));
+		this.boundingBox = box.toAABB();
+		this.blockEdges = ImmutableList.copyOf(box.edges());
 		this.tapeEdges = this.blockEdges.stream().map(this::transformBlockEdge).collect(ImmutableListCollector.get());
 	}
 
 	private Edge3d transformBlockEdge(BlockPosEdge edge)
 	{
-		Vec3d anchor1 = this.tapeAnchorFor(edge.getFirst());
-		Vec3d anchor2 = this.tapeAnchorFor(edge.getSecond());
 		Edge3d ne = new Edge3d();
-		ne.set(anchor1, anchor2);
+		ne.set(edge, this.getTapeAnchor(), this.getTapeAnchor());
 		return new Edge3d.ImmutableEdge3d(ne);
 	}
 
@@ -214,9 +214,9 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	protected Vec3d tapeAnchorFor(BlockPos pos)
+	protected BlockAnchor getTapeAnchor()
 	{
-		return new Vec3d(pos).add(0.5, 0.5, 0.5);
+		return BlockAnchor.CENTER;
 	}
 
 	@Override

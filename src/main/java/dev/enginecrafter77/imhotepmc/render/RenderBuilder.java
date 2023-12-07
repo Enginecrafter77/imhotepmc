@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.render;
 
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
+import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.Edge3d;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
@@ -12,8 +13,6 @@ import javax.annotation.Nonnull;
 import javax.vecmath.Point3d;
 
 public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> {
-	private static final Point3d ANCHOR_MIDDLE = new Point3d(0.5D, 0.5D, 0.5D);
-
 	private final RenderTape renderTape;
 
 	private final Edge3d edge3d;
@@ -44,7 +43,7 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.setLightmapDisabled(true);
 		for(BlockPosEdge edge : te.getBuildAreaEdges())
 		{
-			this.edge3d.set(edge, ANCHOR_MIDDLE);
+			this.edge3d.set(edge, BlockAnchor.CENTER, BlockAnchor.CENTER);
 			this.edge3d.midpoint(this.midpoint);
 
 			VecUtil.calculateRenderPoint(viewer, this.midpoint, this.renderPoint, partialTicks);

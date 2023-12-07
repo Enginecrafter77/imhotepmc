@@ -3,7 +3,7 @@ package dev.enginecrafter77.imhotepmc.tile;
 import com.google.common.collect.ImmutableList;
 import dev.enginecrafter77.imhotepmc.blueprint.*;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
-import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
+import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -17,7 +17,6 @@ import net.minecraftforge.energy.EnergyStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.List;
 
 public class TileEntityBuilder extends TileEntity implements ITickable {
 	private static final String NBT_KEY_BLUEPRINT = "blueprint";
@@ -83,11 +82,11 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 
 	protected void onBuilderCreated(BlueprintBuilder builder)
 	{
-		BlockPos first = builder.getPlacement().getOriginOffset();
-		BlockPos last = builder.getPlacement().getOriginOffset().add(builder.getPlacement().getSize()).add(-1, -1, -1);
-		List<BlockPos> corners = ImmutableList.of(first, last);
-		this.buildAreaEdges = BlockPosUtil.findEdges(corners);
-		this.boundingBox = BlockPosUtil.contain(ImmutableList.<BlockPos>builder().addAll(corners).add(this.getPos()).build());
+		BlockSelectionBox box = new BlockSelectionBox();
+		box.setStartSize(builder.getPlacement().getOriginOffset(), builder.getPlacement().getSize());
+		this.buildAreaEdges = box.edges();
+		box.include(this.getPos());
+		this.boundingBox = box.toAABB();
 	}
 
 	@Override

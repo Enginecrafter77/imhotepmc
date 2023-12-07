@@ -122,6 +122,19 @@ public class BlockSelectionBox extends BlockPosBox implements INBTSerializable<N
 		this.end.setPos(dMx, dMy, dMz);
 	}
 
+	public void include(BlockPos pos)
+	{
+		int dmx = Math.min(this.start.getX(), pos.getX());
+		int dmy = Math.min(this.start.getY(), pos.getY());
+		int dmz = Math.min(this.start.getZ(), pos.getZ());
+		int dMx = Math.max(this.end.getX(), pos.getX());
+		int dMy = Math.max(this.end.getY(), pos.getY());
+		int dMz = Math.max(this.end.getZ(), pos.getZ());
+
+		this.start.setPos(dmx, dmy, dmz);
+		this.end.setPos(dMx, dMy, dMz);
+	}
+
 	public Iterable<BlockPos.MutableBlockPos> internalBlocks()
 	{
 		return BlockPos.getAllInBoxMutable(this.start, this.end);
