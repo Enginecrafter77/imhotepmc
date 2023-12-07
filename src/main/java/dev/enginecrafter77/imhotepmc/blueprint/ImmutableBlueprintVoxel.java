@@ -43,6 +43,12 @@ public class ImmutableBlueprintVoxel implements BlueprintVoxel {
 		return new ImmutableBlueprintVoxel(this.pos, entry);
 	}
 
+	@Override
+	public String toString()
+	{
+		return String.format("%s @ %s", this.block, this.pos);
+	}
+
 	public static ImmutableBlueprintVoxel copyOf(BlueprintVoxel voxel)
 	{
 		if(voxel instanceof ImmutableBlueprintVoxel)

@@ -43,4 +43,10 @@ public class MutableBlueprintVoxel implements BlueprintVoxel {
 		this.block = entry;
 		return this;
 	}
+
+	@Override
+	public String toString()
+	{
+		return String.format("%s @ %s", this.block, this.pos);
+	}
 }
