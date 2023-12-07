@@ -53,7 +53,7 @@ public class RenderPlayerTapeLinking {
 			return;
 
 		this.anchorPoint1.set(link.getX() + 0.5D, link.getY() + 0.5D, link.getZ() + 0.5D);
-		VecUtil.copyVec3d(player.getPositionVector(), this.anchorPoint2);
+		VecUtil.interpolateEntityPosition(player, this.anchorPoint2, event.getPartialTicks());
 
 		this.handOffset.set(HAND_POSITION);
 		this.handRotationMatrix.setIdentity();
