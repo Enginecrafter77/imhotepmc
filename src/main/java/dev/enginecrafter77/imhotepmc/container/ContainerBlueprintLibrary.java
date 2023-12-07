@@ -11,12 +11,8 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 
 public class ContainerBlueprintLibrary extends Container {
-	private final TileEntityBlueprintLibrary tileEntity;
-
 	public ContainerBlueprintLibrary(InventoryPlayer inventoryPlayer, TileEntityBlueprintLibrary tileEntity)
 	{
-		this.tileEntity = tileEntity;
-
 		IItemHandler inventory = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		this.addSlotToContainer(new SlotBlueprint(inventory, 0, 145, 9));
 
