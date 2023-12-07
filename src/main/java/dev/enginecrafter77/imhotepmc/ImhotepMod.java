@@ -1,9 +1,6 @@
 package dev.enginecrafter77.imhotepmc;
 
-import dev.enginecrafter77.imhotepmc.block.BlockArchitectTable;
-import dev.enginecrafter77.imhotepmc.block.BlockAreaMarker;
-import dev.enginecrafter77.imhotepmc.block.BlockBlueprintLibrary;
-import dev.enginecrafter77.imhotepmc.block.BlockBuilder;
+import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
@@ -21,10 +18,7 @@ import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
 import dev.enginecrafter77.imhotepmc.render.RenderArchitectTable;
 import dev.enginecrafter77.imhotepmc.render.RenderBuilder;
 import dev.enginecrafter77.imhotepmc.render.RenderWorldAreaMarkers;
-import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
-import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
-import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
-import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
+import dev.enginecrafter77.imhotepmc.tile.*;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
 import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
 import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncHandler;
@@ -84,6 +78,7 @@ public class ImhotepMod {
     public static BlockAreaMarker BLOCK_AREA_MARKER;
     public static BlockBlueprintLibrary BLOCK_BLUEPRINT_LIBRARY;
     public static BlockBuilder BLOCK_BUILDER;
+    public static BlockTerraformer BLOCK_TERRAFORMER;
     public static ItemSchematicBlueprint ITEM_SCHEMATIC_BLUEPRINT;
     public static ItemConstructionTape ITEM_CONSTRUCTION_TAPE;
 
@@ -103,6 +98,7 @@ public class ImhotepMod {
         GameRegistry.registerTileEntity(TileEntityAreaMarker.class, new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"));
         GameRegistry.registerTileEntity(TileEntityBuilder.class, new ResourceLocation(ImhotepMod.MOD_ID, "builder"));
         GameRegistry.registerTileEntity(TileEntityArchitectTable.class, new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"));
+        GameRegistry.registerTileEntity(TileEntityTerraformer.class, new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"));
 
         BlueprintTranslation translation = BlueprintTranslation.pass();
         try
@@ -131,6 +127,7 @@ public class ImhotepMod {
         BLOCK_AREA_MARKER = new BlockAreaMarker();
         ITEM_CONSTRUCTION_TAPE = new ItemConstructionTape();
         BLOCK_BUILDER = new BlockBuilder();
+        BLOCK_TERRAFORMER = new BlockTerraformer();
 
         this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
 
@@ -194,6 +191,7 @@ public class ImhotepMod {
         this.registerItemBlock(reg, BLOCK_AREA_MARKER);
         this.registerItemBlock(reg, BLOCK_BUILDER);
         this.registerItemBlock(reg, BLOCK_ARCHITECT_TABLE);
+        this.registerItemBlock(reg, BLOCK_TERRAFORMER);
     }
 
     @SubscribeEvent
@@ -204,6 +202,7 @@ public class ImhotepMod {
         reg.register(BLOCK_AREA_MARKER);
         reg.register(BLOCK_BUILDER);
         reg.register(BLOCK_ARCHITECT_TABLE);
+        reg.register(BLOCK_TERRAFORMER);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
@@ -227,5 +226,6 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_AREA_MARKER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BUILDER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "builder"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_ARCHITECT_TABLE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_TERRAFORMER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"), "inventory"));
     }
 }

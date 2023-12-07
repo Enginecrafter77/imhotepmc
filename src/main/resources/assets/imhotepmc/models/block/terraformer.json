@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "imhotepmc:blocks/machine_blank",
+    "front": "imhotepmc:blocks/terraformer",
+    "side": "imhotepmc:blocks/machine_blank"
+  }
+}
