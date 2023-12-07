@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -9,8 +10,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class BlueprintBuilder {
 	private static final String NBT_KEY_DEFERRED = "deferred";
@@ -38,11 +38,34 @@ public class BlueprintBuilder {
 	public void reset()
 	{
 		this.reader = this.placement.reader();
+		this.deferred.clear();
 	}
 
 	public boolean hasNextBlock()
 	{
 		return this.reader.hasNext() || !this.deferred.isEmpty();
+	}
+
+	protected int getBlockDeferScore(World world, Block blk, BlockPos pos)
+	{
+		int score = 0;
+
+		if(blk instanceof BlockFalling)
+			score += 1;
+
+		if(!blk.canPlaceBlockAt(world, pos))
+			score += 10;
+
+		return score;
+	}
+
+	public void deferVoxel(World world, BlueprintVoxel voxel)
+	{
+		Comparator<BlueprintVoxel> cmp = Comparator.comparing((BlueprintVoxel vx) -> this.getBlockDeferScore(world, Objects.requireNonNull(vx.getBlueprintEntry().getBlock()), vx.getPosition()));
+		int index = Collections.binarySearch(this.deferred, voxel, cmp);
+		if(index < 0)
+			index = -index - 1;
+		this.deferred.add(index, voxel);
 	}
 
 	@Nullable
@@ -54,9 +77,10 @@ public class BlueprintBuilder {
 			Block blk = voxel.getBlueprintEntry().getBlock();
 			if(blk == null)
 				return null;
-			if(!blk.canPlaceBlockAt(world, voxel.getPosition()))
+			int deferScore = this.getBlockDeferScore(world, blk, voxel.getPosition());
+			if(deferScore > 0)
 			{
-				this.deferred.add(ImmutableBlueprintVoxel.copyOf(voxel));
+				this.deferVoxel(world, voxel);
 				return null;
 			}
 			return voxel;
