@@ -64,12 +64,12 @@ public class TileBuilderHandler implements BuilderHandler {
 			ItemStack stackInSlot = this.storage.getStackInSlot(slot);
 			if(ItemStack.areItemsEqual(consumed, stackInSlot))
 			{
+				this.energyStorage.extractEnergy(energy, false);
 				this.storage.extractItem(slot, 1, false);
 				return true;
 			}
 		}
-		this.energyStorage.extractEnergy(energy, false);
-		return true;
+		return false;
 	}
 
 	@Override
