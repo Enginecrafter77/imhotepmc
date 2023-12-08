@@ -16,17 +16,24 @@ public class ShapeBuilder implements StructureBuilder {
 	private final BuilderHost handler;
 	private final ShapeGenerator generator;
 	private final BlockSelectionBox area;
+	private final ShapeBuildMode buildMode;
 	private final VoxelIndexer indexer;
 
 	private int index;
 
-	public ShapeBuilder(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildStrategy strategy, BuilderHost handler)
+	public ShapeBuilder(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildMode buildMode, BuilderHost handler)
 	{
-		this.indexer = strategy.createVoxelIndexer(area.getMinCorner(), area.getSize());
+		this.indexer = buildMode.createVoxelIndexer(area);
 		this.generator = generator;
 		this.handler = handler;
+		this.buildMode = buildMode;
 		this.area = area;
 		this.index = -1;
+	}
+
+	public ShapeBuildMode getBuildMode()
+	{
+		return this.buildMode;
 	}
 
 	@Override
@@ -46,42 +53,45 @@ public class ShapeBuilder implements StructureBuilder {
 	{
 		int newindex = this.index;
 
-		ShapeGenerator.ShapeGeneratorAction action;
-		BlockPos pos;
-		do
+		while((newindex + 1) < this.indexer.getVolume())
 		{
+			BuilderAction action = this.buildMode.getBuilderAction(this.handler);
+			if(action == BuilderAction.STALL)
+				return;
+			if(action == BuilderAction.PASS)
+				continue;
+
 			++newindex;
+			BlockPos pos = this.indexer.fromIndex(newindex);
+			boolean included = this.generator.isBlockInShape(this.area, pos);
 
-			if(newindex >= this.indexer.getVolume())
+			if(!included)
+				continue;
+
+			IBlockState state = world.getBlockState(pos);
+			if(action == BuilderAction.PLACE)
 			{
-				this.index = newindex;
-				return;
+				Block blk = this.handler.getAvailableBlock();
+				if(blk == null)
+					break;
+				if(blk == state.getBlock())
+					continue;
+
+				state = blk.getDefaultState();
+				if(!this.handler.onPlaceBlock(world, pos, state))
+					return;
+				world.setBlockState(pos, state, 3);
+				break;
 			}
-
-			pos = this.indexer.fromIndex(newindex);
-			action = this.generator.blockActionFor(this.area, pos);
-
-			if(action == ShapeGenerator.ShapeGeneratorAction.CLEAR && world.getBlockState(pos).getBlock() == Blocks.AIR)
-				action = ShapeGenerator.ShapeGeneratorAction.PASS;
-		}
-		while(action == ShapeGenerator.ShapeGeneratorAction.PASS);
-
-		if(action == ShapeGenerator.ShapeGeneratorAction.PLACE)
-		{
-			Block blk = this.handler.getAvailableBlock();
-			if(blk == null)
-				return;
-			IBlockState blks = blk.getDefaultState();
-			if(!this.handler.onPlaceBlock(world, pos, blks))
-				return;
-			world.setBlockState(pos, blks, 3);
-		}
-		else if(action == ShapeGenerator.ShapeGeneratorAction.CLEAR)
-		{
-			IBlockState blks = world.getBlockState(pos);
-			if(!this.handler.onClearBlock(world, pos, blks))
-				return;
-			world.setBlockToAir(pos);
+			else if(action == BuilderAction.CLEAR)
+			{
+				if(state.getBlock() == Blocks.AIR)
+					continue;
+				if(!this.handler.onClearBlock(world, pos, state))
+					return;
+				world.setBlockToAir(pos);
+				break;
+			}
 		}
 
 		this.index = newindex;

@@ -5,16 +5,16 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
 public enum TerraformMode {
-	CLEAR(ShapeGenerator.clear(), ShapeBuildStrategy.TOP_DOWN),
-	FILL(ShapeGenerator.fill(), ShapeBuildStrategy.BOTTOM_UP),
-	ELLIPSOID(new EllipsoidShapeGenerator(), ShapeBuildStrategy.BOTTOM_UP),
-	PYRAMID(new PyramidShapeGenerator(), ShapeBuildStrategy.BOTTOM_UP),
-	DOME(new DomeShapeGenerator(), ShapeBuildStrategy.BOTTOM_UP);
+	CLEAR(ShapeGenerator.ALL, ShapeBuildMode.CLEAR),
+	FILL(ShapeGenerator.ALL, ShapeBuildMode.BUILD),
+	ELLIPSOID(new EllipsoidShapeGenerator(), ShapeBuildMode.BUILD),
+	PYRAMID(new PyramidShapeGenerator(), ShapeBuildMode.BUILD),
+	DOME(new DomeShapeGenerator(), ShapeBuildMode.BUILD);
 
 	private final ShapeGenerator shapeGenerator;
-	private final ShapeBuildStrategy buildStrategy;
+	private final ShapeBuildMode buildStrategy;
 
-	private TerraformMode(ShapeGenerator generator, ShapeBuildStrategy strategy)
+	private TerraformMode(ShapeGenerator generator, ShapeBuildMode strategy)
 	{
 		this.shapeGenerator = generator;
 		this.buildStrategy = strategy;
@@ -25,7 +25,7 @@ public enum TerraformMode {
 		return this.shapeGenerator;
 	}
 
-	public ShapeBuildStrategy getBuildStrategy()
+	public ShapeBuildMode getBuildStrategy()
 	{
 		return this.buildStrategy;
 	}

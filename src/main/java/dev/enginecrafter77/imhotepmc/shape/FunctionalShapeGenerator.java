@@ -25,13 +25,12 @@ public abstract class FunctionalShapeGenerator implements ShapeGenerator {
 
 	public abstract boolean isInShape(Point3d block, Point3d center, Tuple3d size);
 
-	@Override
-	public ShapeGeneratorAction blockActionFor(BlockSelectionBox area, BlockPos pos)
+	public boolean isBlockInShape(BlockSelectionBox area, BlockPos pos)
 	{
 		this.box.set(area);
 		this.box.getCenter(this.center);
 		this.box.getSize(this.size);
 		BlockAnchor.CENTER.anchorToBlock(pos, this.block);
-		return this.isInShape(this.block, this.center, this.size) ? ShapeGeneratorAction.PLACE : ShapeGeneratorAction.PASS;
+		return this.isInShape(this.block, this.center, this.size);
 	}
 }
