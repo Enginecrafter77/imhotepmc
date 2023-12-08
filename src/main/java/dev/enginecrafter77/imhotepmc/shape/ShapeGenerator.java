@@ -13,7 +13,7 @@ public interface ShapeGenerator {
 
 	public static ShapeGenerator fill()
 	{
-		return (BlockSelectionBox area, BlockPos pos) -> ShapeGeneratorAction.CLEAR;
+		return (BlockSelectionBox area, BlockPos pos) -> ShapeGeneratorAction.PLACE;
 	}
 
 	public static enum ShapeGeneratorAction {PLACE, CLEAR, PASS}
