@@ -1,7 +1,10 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.base.Predicates;
-import dev.enginecrafter77.imhotepmc.shape.*;
+import dev.enginecrafter77.imhotepmc.shape.BuilderHandler;
+import dev.enginecrafter77.imhotepmc.shape.ItemHandlerDelegate;
+import dev.enginecrafter77.imhotepmc.shape.ShapeBuilder;
+import dev.enginecrafter77.imhotepmc.shape.TileBuilderHandler;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,6 +12,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
@@ -54,6 +59,11 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 	{
 		this.mode = mode;
 		this.onSettingsChanged(this.selectionBox, mode);
+	}
+
+	public TerraformMode getMode()
+	{
+		return this.mode;
 	}
 
 	@Nullable
@@ -158,28 +168,10 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		return super.getCapability(capability, facing);
 	}
 
-	public static enum TerraformMode
+	@Nullable
+	@Override
+	public ITextComponent getDisplayName()
 	{
-		CLEAR(ShapeGenerator.clear(), ShapeBuildStrategy.TOP_DOWN),
-		FILL(ShapeGenerator.fill(), ShapeBuildStrategy.BOTTOM_UP);
-
-		private final ShapeGenerator shapeGenerator;
-		private final ShapeBuildStrategy buildStrategy;
-
-		private TerraformMode(ShapeGenerator generator, ShapeBuildStrategy strategy)
-		{
-			this.shapeGenerator = generator;
-			this.buildStrategy = strategy;
-		}
-
-		public ShapeGenerator getShapeGenerator()
-		{
-			return this.shapeGenerator;
-		}
-
-		public ShapeBuildStrategy getBuildStrategy()
-		{
-			return this.buildStrategy;
-		}
+		return new TextComponentTranslation("label.terraformer.mode").appendText(": ").appendSibling(this.mode.getTranslatedName());
 	}
 }

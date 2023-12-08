@@ -9,6 +9,7 @@ import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
 import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.item.ItemShapeCard;
 import dev.enginecrafter77.imhotepmc.net.BlueprintSampleMessage;
 import dev.enginecrafter77.imhotepmc.net.BlueprintSampleMessageHandler;
 import dev.enginecrafter77.imhotepmc.net.BlueprintTransferHandler;
@@ -17,6 +18,7 @@ import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
 import dev.enginecrafter77.imhotepmc.render.RenderArchitectTable;
 import dev.enginecrafter77.imhotepmc.render.RenderBuilder;
+import dev.enginecrafter77.imhotepmc.render.RenderTerraformer;
 import dev.enginecrafter77.imhotepmc.render.RenderWorldAreaMarkers;
 import dev.enginecrafter77.imhotepmc.tile.*;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
@@ -81,6 +83,7 @@ public class ImhotepMod {
     public static BlockTerraformer BLOCK_TERRAFORMER;
     public static ItemSchematicBlueprint ITEM_SCHEMATIC_BLUEPRINT;
     public static ItemConstructionTape ITEM_CONSTRUCTION_TAPE;
+    public static ItemShapeCard ITEM_SHAPE_CARD;
 
     private File schematicsDir;
     private SimpleNetworkWrapper netChannel;
@@ -128,6 +131,7 @@ public class ImhotepMod {
         ITEM_CONSTRUCTION_TAPE = new ItemConstructionTape();
         BLOCK_BUILDER = new BlockBuilder();
         BLOCK_TERRAFORMER = new BlockTerraformer();
+        ITEM_SHAPE_CARD = new ItemShapeCard();
 
         this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
 
@@ -145,6 +149,7 @@ public class ImhotepMod {
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArchitectTable.class, new RenderArchitectTable());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBuilder.class, new RenderBuilder());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTerraformer.class, new RenderTerraformer());
         RenderWorldAreaMarkers.register();
     }
 
@@ -187,6 +192,7 @@ public class ImhotepMod {
         IForgeRegistry<Item> reg = event.getRegistry();
         reg.register(ITEM_SCHEMATIC_BLUEPRINT);
         reg.register(ITEM_CONSTRUCTION_TAPE);
+        reg.register(ITEM_SHAPE_CARD);
         this.registerItemBlock(reg, BLOCK_BLUEPRINT_LIBRARY);
         this.registerItemBlock(reg, BLOCK_AREA_MARKER);
         this.registerItemBlock(reg, BLOCK_BUILDER);
@@ -222,6 +228,8 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(ITEM_SCHEMATIC_BLUEPRINT, ItemSchematicBlueprint.META_EMPTY, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_empty"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_SCHEMATIC_BLUEPRINT, ItemSchematicBlueprint.META_WRITTEN, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_written"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_CONSTRUCTION_TAPE, 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "construction_tape"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.FILL.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_fill"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.CLEAR.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_clear"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BLUEPRINT_LIBRARY), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "blueprint_library"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_AREA_MARKER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BUILDER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "builder"), "inventory"));

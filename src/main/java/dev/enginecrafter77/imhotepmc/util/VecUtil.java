@@ -17,6 +17,11 @@ public class VecUtil {
 		dest.set(src.x, src.y, src.z);
 	}
 
+	public static void copyVec3d(Vec3i src, Tuple3d dest)
+	{
+		dest.set(src.getX(), src.getY(), src.getZ());
+	}
+
 	public static Vec3i absolute(Vec3i src)
 	{
 		return new Vec3i(Math.abs(src.getX()), Math.abs(src.getY()), Math.abs(src.getZ()));

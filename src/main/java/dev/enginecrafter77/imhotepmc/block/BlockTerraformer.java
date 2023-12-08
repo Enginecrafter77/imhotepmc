@@ -87,11 +87,13 @@ public class BlockTerraformer extends Block {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		//playerIn.openGui(ImhotepMod.instance, ImhotepGUIHandler.GUI_ID_TERRAFORMER, worldIn, pos.getX(), pos.getY(), pos.getZ());
-		TileEntityTerraformer te = (TileEntityTerraformer)worldIn.getTileEntity(pos);
-		if(te == null)
+		ItemStack stack = playerIn.getHeldItem(hand);
+		if(stack.getItem() != ImhotepMod.ITEM_SHAPE_CARD)
 			return false;
-		te.update();
+		TileEntityTerraformer tile = (TileEntityTerraformer)worldIn.getTileEntity(pos);
+		if(tile == null)
+			return false;
+		tile.setMode(ImhotepMod.ITEM_SHAPE_CARD.getMode(stack));
 		return true;
 	}
 }

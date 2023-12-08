@@ -4,7 +4,6 @@ import dev.enginecrafter77.imhotepmc.container.ContainerArchitectTable;
 import dev.enginecrafter77.imhotepmc.container.ContainerBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
-import dev.enginecrafter77.imhotepmc.tile.TileEntityTerraformer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -20,7 +19,6 @@ import javax.annotation.Nullable;
 public class ImhotepGUIHandler implements IGuiHandler {
 	public static final int GUI_ID_BLUEPRINT_LIBRARY = 0;
 	public static final int GUI_ID_ARCHITECT_TABLE = 1;
-	public static final int GUI_ID_TERRAFORMER = 2;
 
 	@Nullable
 	@Override
@@ -54,9 +52,6 @@ public class ImhotepGUIHandler implements IGuiHandler {
 			TileEntityArchitectTable architectTable = this.obtainTileEntity(TileEntityArchitectTable.class, world, pos);
 			ContainerArchitectTable container = new ContainerArchitectTable(player.inventory, architectTable);
 			return new GUIArchitectTable(player.inventory, container, architectTable);
-		case GUI_ID_TERRAFORMER:
-			TileEntityTerraformer tileEntityTerraformer = this.obtainTileEntity(TileEntityTerraformer.class, world, pos);
-			return new GUITerraformer(tileEntityTerraformer);
 		default:
 			return null;
 		}

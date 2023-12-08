@@ -8,3 +8,9 @@ tile.terraformer.name=Terraformer
 
 item.schematic_blueprint.name=Schematic Blueprint
 item.construction_tape.name=Construction Tape
+item.shape_card.name=Shape Card
+
+label.terraformer.mode=Mode
+
+shape.fill.name=Fill
+shape.clear.name=Clear
