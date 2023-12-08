@@ -1,6 +1,6 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
-import dev.enginecrafter77.imhotepmc.shape.*;
+import dev.enginecrafter77.imhotepmc.blueprint.shape.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 

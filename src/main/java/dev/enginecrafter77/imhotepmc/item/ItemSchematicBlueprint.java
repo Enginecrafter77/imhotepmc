@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.item;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.*;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.BlueprintBuilder;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -106,8 +107,8 @@ public class ItemSchematicBlueprint extends Item {
 
 		BlueprintPlacement placement = BlueprintPlacement.facing(blueprint, pos.up(), playerFacing);
 		BlueprintBuilder builder = new BlueprintBuilder(placement);
-		while(builder.hasNextBlock())
-			builder.placeNextBlock(worldIn);
+		while(!builder.isFinished())
+			builder.tryPlaceNextBlock(worldIn);
 		return EnumActionResult.SUCCESS;
 	}
 

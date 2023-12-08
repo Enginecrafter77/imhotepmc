@@ -1,4 +1,4 @@
-package dev.enginecrafter77.imhotepmc.shape;
+package dev.enginecrafter77.imhotepmc.util;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;

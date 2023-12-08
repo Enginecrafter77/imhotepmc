@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.collect.ImmutableList;
 import dev.enginecrafter77.imhotepmc.blueprint.*;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.BlueprintBuilder;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
@@ -133,9 +134,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	{
 		if(this.builder == null)
 			return false;
-		if(!this.builder.hasNextBlock())
+		if(!this.builder.isReady() || this.builder.isFinished())
 			return false;
-		this.builder.placeNextBlock(this.world);
+		this.builder.tryPlaceNextBlock(this.world);
 		return true;
 	}
 

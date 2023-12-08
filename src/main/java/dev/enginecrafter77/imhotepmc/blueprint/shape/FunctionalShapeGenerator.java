@@ -1,4 +1,4 @@
-package dev.enginecrafter77.imhotepmc.shape;
+package dev.enginecrafter77.imhotepmc.blueprint.shape;
 
 import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;

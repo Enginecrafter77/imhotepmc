@@ -1,5 +1,6 @@
-package dev.enginecrafter77.imhotepmc.blueprint;
+package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
+import dev.enginecrafter77.imhotepmc.blueprint.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
@@ -12,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class BlueprintBuilder {
+public class BlueprintBuilder implements StructureBuilder {
 	private static final String NBT_KEY_DEFERRED = "deferred";
 
 	private final LinkedList<BlueprintVoxel> deferred;
@@ -41,11 +42,6 @@ public class BlueprintBuilder {
 		this.deferred.clear();
 	}
 
-	public boolean hasNextBlock()
-	{
-		return this.reader.hasNext() || !this.deferred.isEmpty();
-	}
-
 	protected int getBlockDeferScore(World world, Block blk, BlockPos pos)
 	{
 		int score = 0;
@@ -66,6 +62,18 @@ public class BlueprintBuilder {
 		if(index < 0)
 			index = -index - 1;
 		this.deferred.add(index, voxel);
+	}
+
+	@Override
+	public boolean isReady()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean isFinished()
+	{
+		return !this.reader.hasNext() && this.deferred.isEmpty();
 	}
 
 	@Nullable
@@ -92,10 +100,11 @@ public class BlueprintBuilder {
 		throw new NoSuchElementException();
 	}
 
-	public void placeNextBlock(World world)
+	@Override
+	public void tryPlaceNextBlock(World world)
 	{
 		BlueprintVoxel voxel = null;
-		while(voxel == null && this.hasNextBlock())
+		while(voxel == null && !this.isFinished())
 			voxel = this.getNextVoxel(world);
 		if(voxel == null)
 			return;
@@ -113,6 +122,7 @@ public class BlueprintBuilder {
 		world.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
 	}
 
+	@Override
 	public NBTTagCompound saveState()
 	{
 		NBTTagCompound tag = this.reader.saveReaderState();
@@ -126,6 +136,7 @@ public class BlueprintBuilder {
 		return tag;
 	}
 
+	@Override
 	public void restoreState(NBTTagCompound tag)
 	{
 		this.reader.restoreReaderState(tag);

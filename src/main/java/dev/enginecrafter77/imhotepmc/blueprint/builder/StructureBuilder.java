@@ -1,4 +1,4 @@
-package dev.enginecrafter77.imhotepmc.blueprint;
+package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import dev.enginecrafter77.imhotepmc.util.SaveableStateHolder;
 import net.minecraft.nbt.NBTTagCompound;

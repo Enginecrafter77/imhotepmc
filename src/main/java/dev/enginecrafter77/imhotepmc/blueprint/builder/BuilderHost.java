@@ -1,4 +1,4 @@
-package dev.enginecrafter77.imhotepmc.shape;
+package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

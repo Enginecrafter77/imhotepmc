@@ -1,10 +1,9 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.base.Predicates;
-import dev.enginecrafter77.imhotepmc.shape.BuilderHost;
-import dev.enginecrafter77.imhotepmc.shape.ItemHandlerDelegate;
-import dev.enginecrafter77.imhotepmc.shape.ShapeBuilder;
-import dev.enginecrafter77.imhotepmc.shape.PoweredBuilderHost;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderHost;
+import dev.enginecrafter77.imhotepmc.util.ItemHandlerDelegate;
+import dev.enginecrafter77.imhotepmc.blueprint.shape.ShapeBuilder;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,5 +1,6 @@
-package dev.enginecrafter77.imhotepmc.shape;
+package dev.enginecrafter77.imhotepmc.tile;
 
+import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderHost;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
