@@ -230,6 +230,9 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(ITEM_CONSTRUCTION_TAPE, 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "construction_tape"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.FILL.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_fill"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.CLEAR.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_clear"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.ELLIPSOID.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_ellipsoid"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.PYRAMID.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_pyramid"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.DOME.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_dome"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BLUEPRINT_LIBRARY), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "blueprint_library"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_AREA_MARKER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BUILDER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "builder"), "inventory"));

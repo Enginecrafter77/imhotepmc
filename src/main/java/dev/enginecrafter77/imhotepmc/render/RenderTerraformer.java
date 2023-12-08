@@ -22,6 +22,9 @@ import javax.vecmath.Vector3d;
 public class RenderTerraformer extends TileEntitySpecialRenderer<TileEntityTerraformer> {
 	private static final TextureSlice MODE_FILL = TextureSlice.full(new ResourceLocation(ImhotepMod.MOD_ID, "textures/items/shape_card_fill.png"), 32, 32).sub(8, 9, 16, 12);
 	private static final TextureSlice MODE_CLEAR = TextureSlice.full(new ResourceLocation(ImhotepMod.MOD_ID, "textures/items/shape_card_clear.png"), 32, 32).sub(8, 9, 16, 12);
+	private static final TextureSlice MODE_ELLIPSOID = TextureSlice.full(new ResourceLocation(ImhotepMod.MOD_ID, "textures/items/shape_card_ellipsoid.png"), 32, 32).sub(8, 9, 16, 12);
+	private static final TextureSlice MODE_PYRAMID = TextureSlice.full(new ResourceLocation(ImhotepMod.MOD_ID, "textures/items/shape_card_pyramid.png"), 32, 32).sub(8, 9, 16, 12);
+	private static final TextureSlice MODE_DOME = TextureSlice.full(new ResourceLocation(ImhotepMod.MOD_ID, "textures/items/shape_card_dome.png"), 32, 32).sub(8, 9, 16, 12);
 
 	private final TextureSliceRender render;
 
@@ -41,6 +44,12 @@ public class RenderTerraformer extends TileEntitySpecialRenderer<TileEntityTerra
 		{
 		case FILL:
 			return MODE_FILL;
+		case ELLIPSOID:
+			return MODE_ELLIPSOID;
+		case PYRAMID:
+			return MODE_PYRAMID;
+		case DOME:
+			return MODE_DOME;
 		default:
 		case CLEAR:
 			return MODE_CLEAR;

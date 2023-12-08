@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "imhotepmc:items/shape_card_empty",
+    "layer1": "imhotepmc:items/shape_card_dome"
+  }
+}
