@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public interface BuilderHandler {
+public interface BuilderHost {
 	@Nullable
 	public Block getAvailableBlock();
 

@@ -1,10 +1,10 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.base.Predicates;
-import dev.enginecrafter77.imhotepmc.shape.BuilderHandler;
+import dev.enginecrafter77.imhotepmc.shape.BuilderHost;
 import dev.enginecrafter77.imhotepmc.shape.ItemHandlerDelegate;
 import dev.enginecrafter77.imhotepmc.shape.ShapeBuilder;
-import dev.enginecrafter77.imhotepmc.shape.TileBuilderHandler;
+import dev.enginecrafter77.imhotepmc.shape.PoweredBuilderHost;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +34,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 
 	private final BlockSelectionBox selectionBox;
 
-	private final BuilderHandler builderHandler;
+	private final BuilderHost builderHost;
 
 	private boolean hasSearchedForArea;
 	private boolean hasArea;
@@ -49,7 +49,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
 		this.selectionBox = new BlockSelectionBox();
-		this.builderHandler = new TileBuilderHandler(new ItemHandlerDelegate(this::getBlockSource), this.energyStorage);
+		this.builderHost = new PoweredBuilderHost(new ItemHandlerDelegate(this::getBlockSource), this.energyStorage);
 
 		this.mode = TerraformMode.CLEAR;
 		this.hasSearchedForArea = false;
@@ -87,7 +87,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 			this.builder = null;
 			return;
 		}
-		this.builder = new ShapeBuilder(box, mode.getShapeGenerator(), mode.getBuildStrategy(), this.builderHandler);
+		this.builder = new ShapeBuilder(box, mode.getShapeGenerator(), mode.getBuildStrategy(), this.builderHost);
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		this.hasArea = compound.getBoolean(NBT_KEY_HAS_AREA);
 		if(compound.hasKey(NBT_KEY_STATE))
 		{
-			this.builder = new ShapeBuilder(this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy(), this.builderHandler);
+			this.builder = new ShapeBuilder(this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy(), this.builderHost);
 			this.builder.restoreState(compound.getCompoundTag(NBT_KEY_STATE));
 		}
 	}

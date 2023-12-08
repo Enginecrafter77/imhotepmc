@@ -13,14 +13,14 @@ import net.minecraft.world.World;
 public class ShapeBuilder implements StructureBuilder {
 	private static final String NBT_KEY_INDEX = "index";
 
-	private final BuilderHandler handler;
+	private final BuilderHost handler;
 	private final ShapeGenerator generator;
 	private final BlockSelectionBox area;
 	private final VoxelIndexer indexer;
 
 	private int index;
 
-	public ShapeBuilder(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildStrategy strategy, BuilderHandler handler)
+	public ShapeBuilder(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildStrategy strategy, BuilderHost handler)
 	{
 		this.indexer = strategy.createVoxelIndexer(area.getMinCorner(), area.getSize());
 		this.generator = generator;

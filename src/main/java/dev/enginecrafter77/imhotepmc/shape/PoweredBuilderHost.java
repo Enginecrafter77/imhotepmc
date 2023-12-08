@@ -12,11 +12,11 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 
-public class TileBuilderHandler implements BuilderHandler {
+public class PoweredBuilderHost implements BuilderHost {
 	private final IItemHandler storage;
 	private final IEnergyStorage energyStorage;
 
-	public TileBuilderHandler(IItemHandler storage, IEnergyStorage energyStorage)
+	public PoweredBuilderHost(IItemHandler storage, IEnergyStorage energyStorage)
 	{
 		this.storage = storage;
 		this.energyStorage = energyStorage;
