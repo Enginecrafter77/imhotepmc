@@ -36,6 +36,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 
 	private final BuilderHandler builderHandler;
 
+	private boolean hasSearchedForArea;
 	private boolean hasArea;
 
 	@Nonnull
@@ -51,6 +52,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		this.builderHandler = new TileBuilderHandler(new ItemHandlerDelegate(this::getBlockSource), this.energyStorage);
 
 		this.mode = TerraformMode.CLEAR;
+		this.hasSearchedForArea = false;
 		this.hasArea = false;
 		this.builder = null;
 	}
@@ -80,6 +82,11 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 
 	protected void onSettingsChanged(BlockSelectionBox box, TerraformMode mode)
 	{
+		if(!this.hasArea)
+		{
+			this.builder = null;
+			return;
+		}
 		this.builder = new ShapeBuilder(box, mode.getShapeGenerator(), mode.getBuildStrategy(), this.builderHandler);
 	}
 
@@ -89,7 +96,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		if(this.world.isRemote)
 			return;
 
-		if(!this.hasArea)
+		if(!this.hasArea && !this.hasSearchedForArea)
 		{
 			AreaMarkGroup group = BlockPosUtil.neighbors(this.getPos())
 					.map(this.world::getTileEntity)
@@ -111,6 +118,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 
 				this.onSettingsChanged(this.selectionBox, this.mode);
 			}
+			this.hasSearchedForArea = true;
 		}
 
 		if(this.builder == null)
