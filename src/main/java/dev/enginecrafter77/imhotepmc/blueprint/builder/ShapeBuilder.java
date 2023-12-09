@@ -2,31 +2,34 @@ package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import dev.enginecrafter77.imhotepmc.blueprint.VoxelIndexer;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public class ShapeBuilder implements StructureBuilder {
 	private static final String NBT_KEY_INDEX = "index";
 
-	private final BuilderHost handler;
+	private final BuilderHandler handler;
 	private final ShapeGenerator generator;
 	private final BlockSelectionBox area;
 	private final ShapeBuildMode buildMode;
 	private final VoxelIndexer indexer;
 
+	@Nullable
+	private BuilderTask currentTask;
+
 	private int index;
 
-	public ShapeBuilder(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildMode buildMode, BuilderHost handler)
+	public ShapeBuilder(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildMode buildMode, BuilderHandler handler)
 	{
 		this.indexer = buildMode.createVoxelIndexer(area);
 		this.generator = generator;
 		this.handler = handler;
 		this.buildMode = buildMode;
 		this.area = area;
+		this.currentTask = null;
 		this.index = -1;
 	}
 
@@ -36,64 +39,37 @@ public class ShapeBuilder implements StructureBuilder {
 	}
 
 	@Override
-	public boolean isReady()
+	public boolean nextTask(World world)
 	{
-		return true;
+		this.currentTask = null;
+		while(this.currentTask == null && (this.index + 1) < this.indexer.getVolume())
+			this.currentTask = this.createTaskFor(world, ++this.index);
+		return this.currentTask != null;
 	}
 
+	@Nullable
 	@Override
-	public boolean isFinished()
+	public BuilderTask getLastTask(World world)
 	{
-		return (this.index + 1) >= this.indexer.getVolume();
+		if(this.currentTask == null)
+			this.currentTask = this.createTaskFor(world, this.index);
+		return this.currentTask;
 	}
 
-	@Override
-	public void tryPlaceNextBlock(World world)
+	@Nullable
+	protected BuilderTask createTaskFor(World world, int index)
 	{
-		int newindex = this.index;
+		if(index < 0 || index >= this.indexer.getVolume())
+			return null;
 
-		while((newindex + 1) < this.indexer.getVolume())
-		{
-			BuilderAction action = this.buildMode.getBuilderAction(this.handler);
-			if(action == BuilderAction.STALL)
-				return;
-			if(action == BuilderAction.PASS)
-				continue;
+		BlockPos pos = this.indexer.fromIndex(index);
+		boolean incl = this.generator.isBlockInShape(this.area, pos);
+		if(!incl)
+			return null;
 
-			++newindex;
-			BlockPos pos = this.indexer.fromIndex(newindex);
-			boolean included = this.generator.isBlockInShape(this.area, pos);
-
-			if(!included)
-				continue;
-
-			IBlockState state = world.getBlockState(pos);
-			if(action == BuilderAction.PLACE)
-			{
-				Block blk = this.handler.getAvailableBlock();
-				if(blk == null)
-					break;
-				if(blk == state.getBlock())
-					continue;
-
-				state = blk.getDefaultState();
-				if(!this.handler.onPlaceBlock(world, pos, state))
-					return;
-				world.setBlockState(pos, state, 3);
-				break;
-			}
-			else if(action == BuilderAction.CLEAR)
-			{
-				if(state.getBlock() == Blocks.AIR)
-					continue;
-				if(!this.handler.onClearBlock(world, pos, state))
-					return;
-				world.setBlockToAir(pos);
-				break;
-			}
-		}
-
-		this.index = newindex;
+		if(this.buildMode.wouldTaskBeInVain(world, pos))
+			return null;
+		return this.buildMode.createShapeTask(this.handler, world, pos);
 	}
 
 	@Override

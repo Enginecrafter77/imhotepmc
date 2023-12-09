@@ -4,9 +4,11 @@ import dev.enginecrafter77.imhotepmc.util.SaveableStateHolder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public interface StructureBuilder extends SaveableStateHolder<NBTTagCompound> {
-	public boolean isReady();
-	public boolean isFinished();
+import javax.annotation.Nullable;
 
-	public void tryPlaceNextBlock(World world);
+public interface StructureBuilder extends SaveableStateHolder<NBTTagCompound> {
+	public boolean nextTask(World world);
+
+	@Nullable
+	public BuilderTask getLastTask(World world);
 }

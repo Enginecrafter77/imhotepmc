@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class BlueprintBuilder implements StructureBuilder {
+public class BlueprintBuilder {
 	private static final String NBT_KEY_DEFERRED = "deferred";
 
 	private final LinkedList<BlueprintVoxel> deferred;
@@ -64,13 +64,11 @@ public class BlueprintBuilder implements StructureBuilder {
 		this.deferred.add(index, voxel);
 	}
 
-	@Override
 	public boolean isReady()
 	{
 		return true;
 	}
 
-	@Override
 	public boolean isFinished()
 	{
 		return !this.reader.hasNext() && this.deferred.isEmpty();
@@ -100,7 +98,6 @@ public class BlueprintBuilder implements StructureBuilder {
 		throw new NoSuchElementException();
 	}
 
-	@Override
 	public void tryPlaceNextBlock(World world)
 	{
 		BlueprintVoxel voxel = null;
@@ -122,7 +119,6 @@ public class BlueprintBuilder implements StructureBuilder {
 		world.scheduleBlockUpdate(dest, state.getBlock(), 100, 1);
 	}
 
-	@Override
 	public NBTTagCompound saveState()
 	{
 		NBTTagCompound tag = this.reader.saveReaderState();
@@ -136,7 +132,6 @@ public class BlueprintBuilder implements StructureBuilder {
 		return tag;
 	}
 
-	@Override
 	public void restoreState(NBTTagCompound tag)
 	{
 		this.reader.restoreReaderState(tag);

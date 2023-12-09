@@ -6,6 +6,7 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
+@Deprecated
 public class ItemHandlerDelegate implements IItemHandler {
 	private final Supplier<IItemHandler> handlerSupplier;
 
