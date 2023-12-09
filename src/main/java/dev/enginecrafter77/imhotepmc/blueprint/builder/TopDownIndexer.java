@@ -1,4 +1,4 @@
-package dev.enginecrafter77.imhotepmc.blueprint.shape;
+package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import dev.enginecrafter77.imhotepmc.blueprint.VoxelIndexer;
 import net.minecraft.util.math.BlockPos;

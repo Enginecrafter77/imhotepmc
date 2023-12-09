@@ -1,8 +1,5 @@
-package dev.enginecrafter77.imhotepmc.blueprint.shape;
+package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
-import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderAction;
-import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderHost;
-import dev.enginecrafter77.imhotepmc.blueprint.builder.StructureBuilder;
 import dev.enginecrafter77.imhotepmc.blueprint.VoxelIndexer;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.block.Block;

@@ -1,4 +1,4 @@
-package dev.enginecrafter77.imhotepmc.blueprint.shape;
+package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import javax.vecmath.Point3d;
 import javax.vecmath.Tuple3d;
