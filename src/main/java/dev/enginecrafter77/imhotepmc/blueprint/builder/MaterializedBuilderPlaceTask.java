@@ -1,18 +1,14 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
-import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
 
 public class MaterializedBuilderPlaceTask extends BaseBuilderPlaceTask {
 	protected final BuilderMaterialStorageProvider storageProvider;
 
-	public MaterializedBuilderPlaceTask(World world, BlockPos pos, Block block, @Nullable NBTTagCompound tileSavedData, BuilderMaterialStorageProvider storageProvider)
+	public MaterializedBuilderPlaceTask(World world, BlockPos pos, BuilderBlockPlacementDetails details, BuilderMaterialStorageProvider storageProvider)
 	{
-		super(world, pos, block, tileSavedData);
+		super(world, pos, details);
 		this.storageProvider = storageProvider;
 	}
 
@@ -22,7 +18,7 @@ public class MaterializedBuilderPlaceTask extends BaseBuilderPlaceTask {
 		BuilderMaterialStorage storage = this.storageProvider.getBuilderMaterialStorage();
 		if(storage == null)
 			return false;
-		return storage.hasBlock(this.block);
+		return storage.hasBlock(this.details.getBlock());
 	}
 
 	@Override
@@ -31,7 +27,7 @@ public class MaterializedBuilderPlaceTask extends BaseBuilderPlaceTask {
 		BuilderMaterialStorage storage = this.storageProvider.getBuilderMaterialStorage();
 		if(storage == null)
 			return;
-		storage.consumeBlock(this.block);
+		storage.consumeBlock(this.details.getBlock());
 		super.executeTask();
 	}
 }

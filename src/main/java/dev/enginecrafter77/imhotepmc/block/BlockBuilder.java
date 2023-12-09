@@ -108,6 +108,7 @@ public class BlockBuilder extends Block {
 			tile.setBlueprint(blueprint);
 			return true;
 		}
-		return tile.builderStep();
+
+		return false;
 	}
 }

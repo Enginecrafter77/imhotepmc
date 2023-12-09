@@ -1,14 +1,10 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import dev.enginecrafter77.imhotepmc.blueprint.builder.*;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.IEnergyStorage;
-
-import javax.annotation.Nullable;
 
 public class PoweredBuilderHandler implements BuilderHandler {
 	private final BuilderMaterialStorageProvider materialStorage;
@@ -31,9 +27,9 @@ public class PoweredBuilderHandler implements BuilderHandler {
 	}
 
 	@Override
-	public BuilderTask createPlaceTask(World world, BlockPos pos, Block block, @Nullable NBTTagCompound tileSavedData)
+	public BuilderTask createPlaceTask(World world, BlockPos pos, BuilderBlockPlacementDetails details)
 	{
-		return new PoweredPlaceTask(world, pos, block, tileSavedData);
+		return new PoweredPlaceTask(world, pos, details);
 	}
 
 	@Override
@@ -50,14 +46,17 @@ public class PoweredBuilderHandler implements BuilderHandler {
 
 	public class PoweredPlaceTask extends MaterializedBuilderPlaceTask
 	{
-		public PoweredPlaceTask(World world, BlockPos pos, Block block, @Nullable NBTTagCompound tileSavedData)
+		public PoweredPlaceTask(World world, BlockPos pos, BuilderBlockPlacementDetails details)
 		{
-			super(world, pos, block, tileSavedData, PoweredBuilderHandler.this.materialStorage);
+			super(world, pos, details, PoweredBuilderHandler.this.materialStorage);
 		}
 
 		protected int getEnergyCost()
 		{
-			return PoweredBuilderHandler.this.getEnergyForPlace(this.world, this.pos, this.getStateForPlacement());
+			IBlockState state = this.getStateForPlacement();
+			if(state == null)
+				throw new IllegalStateException();
+			return PoweredBuilderHandler.this.getEnergyForPlace(this.world, this.pos, state);
 		}
 
 		@Override

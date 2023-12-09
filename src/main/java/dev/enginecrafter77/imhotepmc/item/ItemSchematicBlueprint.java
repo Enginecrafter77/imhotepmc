@@ -3,8 +3,11 @@ package dev.enginecrafter77.imhotepmc.item;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.*;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BlueprintBuilder;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.CreativeBuilderHandler;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.SynchronousBuilderInvoker;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -106,9 +109,10 @@ public class ItemSchematicBlueprint extends Item {
 		EnumFacing playerFacing = player.getHorizontalFacing();
 
 		BlueprintPlacement placement = BlueprintPlacement.facing(blueprint, pos.up(), playerFacing);
-		BlueprintBuilder builder = new BlueprintBuilder(placement);
-		while(!builder.isFinished())
-			builder.tryPlaceNextBlock(worldIn);
+		CreativeBuilderHandler handler = new CreativeBuilderHandler(Blocks.STONE);
+		BlueprintBuilder builder = new BlueprintBuilder(placement, handler);
+		SynchronousBuilderInvoker invoker = new SynchronousBuilderInvoker(builder);
+		invoker.run(worldIn);
 		return EnumActionResult.SUCCESS;
 	}
 
