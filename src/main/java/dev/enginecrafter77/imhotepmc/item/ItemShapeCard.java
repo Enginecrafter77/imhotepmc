@@ -47,6 +47,9 @@ public class ItemShapeCard extends Item {
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items)
 	{
+		if(!this.isInCreativeTab(tab))
+			return;
+
 		for(TerraformMode mode : TerraformMode.values())
 			items.add(new ItemStack(this, 1, mode.ordinal()));
 	}
