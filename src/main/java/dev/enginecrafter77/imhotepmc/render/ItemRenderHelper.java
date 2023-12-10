@@ -1,18 +1,9 @@
 package dev.enginecrafter77.imhotepmc.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.AxisAngle4d;
@@ -74,46 +65,24 @@ public class ItemRenderHelper implements IRenderable {
 		this.stack = stack;
 	}
 
-	protected List<BakedQuad> collectQuads()
-	{
-		WorldClient worldClient = Minecraft.getMinecraft().world;
-		IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(this.stack, worldClient, null);
-
-		this.quads.clear();
-		for(EnumFacing face : EnumFacing.values())
-			this.quads.addAll(model.getQuads(null, face, worldClient.getSeed()));
-		this.quads.addAll(model.getQuads(null, null, worldClient.getSeed()));
-		return this.quads;
-	}
-
 	@Override
 	public void doRender(double x, double y, double z, float partialTicks)
 	{
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder builder = tessellator.getBuffer();
-		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-
-		this.collectQuads();
-		this.pipeQuads(builder);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y, z);
+		GlStateManager.rotate((float)Math.toDegrees(this.angle.angle), (float)this.angle.x, (float)this.angle.y, (float)this.angle.z);
+		GlStateManager.scale(this.scale.x, this.scale.y, this.scale.z);
 
 		GlStateManager.pushMatrix();
-			GlStateManager.translate(x, y, z);
-			GlStateManager.pushMatrix();
-				GlStateManager.rotate((float)Math.toDegrees(this.angle.angle), (float)this.angle.x, (float)this.angle.y, (float)this.angle.z);
-				GlStateManager.scale(this.scale.x, this.scale.y, this.scale.z);
-				GlStateManager.pushMatrix();
-					GlStateManager.translate(-0.5D, -0.5D, -0.5D);
-					Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-					tessellator.draw();
-				GlStateManager.popMatrix();
-			GlStateManager.popMatrix();
-		GlStateManager.popMatrix();
-	}
+		GlStateManager.translate(0.5D, 0.5D, -0.084375D);
+		GlStateManager.rotate(180F, 0F, 0F, 1F);
+		GlStateManager.scale(0.0625D, 0.0625D, 0.0009765625D);
 
-	private void pipeQuads(BufferBuilder builder)
-	{
-		VertexBufferConsumer consumer = new VertexBufferConsumer(builder);
-		for(BakedQuad quad : this.quads)
-			quad.pipe(consumer);
+		GlStateManager.cullFace(GlStateManager.CullFace.FRONT);
+		Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(this.stack, 0, 0);
+		GlStateManager.cullFace(GlStateManager.CullFace.BACK);
+
+		GlStateManager.popMatrix();
+		GlStateManager.popMatrix();
 	}
 }

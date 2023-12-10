@@ -9,20 +9,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.pipeline.IVertexConsumer;
-import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
-import java.util.List;
 
 public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> {
 	private final RenderTape renderTape;
@@ -51,18 +45,18 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		Block block = te.getMissingBlock();
 		if(block == null)
 			return;
-		ItemStack stack = new ItemStack(ItemBlock.getItemFromBlock(block));
+		ItemStack stack = new ItemStack(block);
 
 		IBlockState state = te.getWorld().getBlockState(te.getPos());
 		EnumFacing facing = state.getValue(BlockHorizontal.FACING);
 		VecUtil.copyVec3d(facing.getDirectionVec(), this.faceOffset);
 		this.faceOffset.scale(0.5D);
 
-		this.itemDrawPos.set(x + 0.5D, y + 0.5D, z + 0.5D);
+		this.itemDrawPos.set(x + 0.5D, y + 0.275D, z + 0.5D);
 		this.itemDrawPos.add(this.faceOffset);
 
 		this.itemRenderer.setItem(stack);
-		this.itemRenderer.setScale(0.5D);
+		this.itemRenderer.setScale(0.25D);
 		this.itemRenderer.setRotationByVector(this.faceOffset);
 		this.itemRenderer.doRender(this.itemDrawPos, partialTicks);
 	}
@@ -94,12 +88,5 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 			this.renderTape.doRender(this.renderPoint, partialTicks);
 		}
 		this.setLightmapDisabled(false);
-	}
-
-	private void pushQuads(BufferBuilder builder, List<BakedQuad> quads)
-	{
-		IVertexConsumer consumer = new VertexBufferConsumer(builder);
-		for(BakedQuad quad : quads)
-			quad.pipe(consumer);
 	}
 }
