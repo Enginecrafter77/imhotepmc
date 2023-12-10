@@ -169,7 +169,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		{
 			++this.dwellingTicks;
 
-			if(this.dwellingTicks == 20)
+			if((this.dwellingTicks % 1000) == 20)
 			{
 				BuilderDwellUpdate update = new BuilderDwellUpdate(this.getPos(), this.missingBlock, this.dwellingTicks);
 				ImhotepMod.instance.getNetChannel().sendToAll(update);

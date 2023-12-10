@@ -70,26 +70,38 @@ public class BlueprintBuilder implements StructureBuilder {
 		return this.currentTask;
 	}
 
-	protected int getBlockDeferScore(World world, Block blk, BlockPos pos)
+	protected int getVoxelDeferScore(World world, BlueprintVoxel voxel)
 	{
+		BlockPos pos = voxel.getPosition();
+		IBlockState state = voxel.getBlueprintEntry().createBlockState();
+		if(state == null)
+			return 0;
+		Block blk = state.getBlock();
+
 		int score = 0;
 
 		if(blk instanceof BlockFalling)
 			score += 1;
 
+		if(!state.isFullCube())
+			score += 3;
+
+		if(!state.isFullBlock())
+			score += 4;
+
 		if(!blk.canPlaceBlockAt(world, pos))
-			score += 10;
+			score += 100;
 
 		return score;
 	}
 
 	public void deferVoxel(World world, BlueprintVoxel voxel)
 	{
-		Comparator<BlueprintVoxel> cmp = Comparator.comparing((BlueprintVoxel vx) -> this.getBlockDeferScore(world, Objects.requireNonNull(vx.getBlueprintEntry().getBlock()), vx.getPosition()));
+		Comparator<BlueprintVoxel> cmp = Comparator.comparing((BlueprintVoxel vx) -> this.getVoxelDeferScore(world, vx));
 		int index = Collections.binarySearch(this.deferred, voxel, cmp);
 		if(index < 0)
 			index = -index - 1;
-		this.deferred.add(index, voxel);
+		this.deferred.add(index, ImmutableBlueprintVoxel.copyOf(voxel));
 	}
 
 	protected boolean hasNextVoxel()
@@ -111,7 +123,7 @@ public class BlueprintBuilder implements StructureBuilder {
 			if(current.getBlock() == blk)
 				return null;
 
-			int deferScore = this.getBlockDeferScore(world, blk, voxel.getPosition());
+			int deferScore = this.getVoxelDeferScore(world, voxel);
 			if(deferScore > 0)
 			{
 				this.deferVoxel(world, voxel);
