@@ -6,25 +6,28 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BlueprintTranslationRuleCompiler {
-	private final Scanner scanner;
+	private final List<BlueprintTranslationRule> rules;
 
-	public BlueprintTranslationRuleCompiler(InputStream inputStream)
+	public BlueprintTranslationRuleCompiler()
 	{
-		this.scanner = new Scanner(inputStream);
+		this.rules = new ArrayList<BlueprintTranslationRule>();
 	}
 
-	public BlueprintTranslationTable compile() throws MalformedTranslationRuleException
+	public void append(InputStream inputStream) throws MalformedTranslationRuleException
 	{
-		List<BlueprintTranslationRule> rules = new ArrayList<BlueprintTranslationRule>();
-		while(this.scanner.hasNextLine())
+		Scanner scanner = new Scanner(inputStream);
+		while(scanner.hasNextLine())
 		{
-			String line = this.scanner.nextLine();
+			String line = scanner.nextLine();
 			if(line.startsWith("#") || line.isEmpty())
 				continue;
 			CompiledTranslationRule rule = CompiledTranslationRule.compile(line);
-			rules.add(rule);
+			this.rules.add(rule);
 		}
-		return BlueprintTranslationTable.compile(rules);
 	}
 
+	public BlueprintTranslationTable compile()
+	{
+		return BlueprintTranslationTable.compile(this.rules);
+	}
 }

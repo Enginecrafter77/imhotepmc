@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc;
 
+import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
@@ -24,7 +25,6 @@ import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
 import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
 import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncHandler;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -54,8 +54,16 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(modid = ImhotepMod.MOD_ID)
@@ -101,26 +109,10 @@ public class ImhotepMod {
     {
         MinecraftForge.EVENT_BUS.register(this);
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
-        GameRegistry.registerTileEntity(TileEntityBlueprintLibrary.class, TileEntityBlueprintLibrary.ID);
-        GameRegistry.registerTileEntity(TileEntityAreaMarker.class, new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"));
-        GameRegistry.registerTileEntity(TileEntityBuilder.class, new ResourceLocation(ImhotepMod.MOD_ID, "builder"));
-        GameRegistry.registerTileEntity(TileEntityArchitectTable.class, new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"));
-        GameRegistry.registerTileEntity(TileEntityTerraformer.class, new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"));
+        this.registerTileEntities();
+        this.initializeContent();
 
-        BlueprintTranslation translation = BlueprintTranslation.pass();
-        try
-        {
-            ResourceLocation res = new ResourceLocation(ImhotepMod.MOD_ID, "btt/test.btt");
-            InputStream in = Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
-            BlueprintTranslationRuleCompiler compiler = new BlueprintTranslationRuleCompiler(in);
-            translation = compiler.compile();
-            in.close();
-        }
-        catch(IOException | MalformedTranslationRuleException exc)
-        {
-            exc.printStackTrace();
-        }
+        BlueprintTranslation translation = this.loadTranslationTables(event);
 
         this.builderBomProvider = new DefaultBOMProvider();
 
@@ -131,17 +123,6 @@ public class ImhotepMod {
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
         this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderDwellUpdate.class, 1, Side.CLIENT);
-
-        BLOCK_ARCHITECT_TABLE = new BlockArchitectTable();
-        BLOCK_BLUEPRINT_LIBRARY = new BlockBlueprintLibrary();
-        ITEM_SCHEMATIC_BLUEPRINT = new ItemSchematicBlueprint();
-        BLOCK_AREA_MARKER = new BlockAreaMarker();
-        ITEM_CONSTRUCTION_TAPE = new ItemConstructionTape();
-        BLOCK_BUILDER = new BlockBuilder();
-        BLOCK_TERRAFORMER = new BlockTerraformer();
-        ITEM_SHAPE_CARD = new ItemShapeCard();
-        BLOCK_MACHINE_HULL = new BlockMachineHull();
-
         this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
 
         CapabilityAreaMarker.register();
@@ -170,6 +151,7 @@ public class ImhotepMod {
     @SideOnly(Side.CLIENT)
     public void onPreInitClient(FMLPreInitializationEvent event)
     {
+        NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArchitectTable.class, new RenderArchitectTable());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBuilder.class, new RenderBuilder());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTerraformer.class, new RenderTerraformer());
@@ -204,6 +186,79 @@ public class ImhotepMod {
     public DefaultBOMProvider getBuilderBomProvider()
     {
         return this.builderBomProvider;
+    }
+
+    public BlueprintTranslation loadTranslationTables(FMLPreInitializationEvent event)
+    {
+        BlueprintTranslationRuleCompiler compiler = new BlueprintTranslationRuleCompiler();
+        try
+        {
+            URL res = ImhotepMod.class.getResource("/external/btt");
+            if(res != null)
+            {
+                URI uri = res.toURI();
+                FileSystem fs = FileSystems.newFileSystem(uri, ImmutableMap.of());
+                Path path = fs.getPath("/external/btt");
+                Files.walk(path).forEach((Path src) -> {
+                    try(InputStream is = Files.newInputStream(src);)
+                    {
+                        LOGGER.info("Loading blueprint translation table " + src.getFileName());
+                        compiler.append(is);
+                    }
+                    catch(IOException | MalformedTranslationRuleException exc)
+                    {
+                        LOGGER.error("Reading table " + src.getFileName() + " failed", exc);
+                    }
+                });
+                fs.close();
+            }
+        }
+        catch(Exception exc)
+        {
+            LOGGER.error("Unable to unpack blueprint translation tables", exc);
+        }
+
+        File configDir = event.getModConfigurationDirectory();
+        File imhotepDir = new File(configDir, "imhotepmc");
+        File bttDir = new File(imhotepDir, "btt");
+        if(bttDir.exists())
+        {
+            for(File file : Objects.requireNonNull(bttDir.listFiles()))
+            {
+                try(FileInputStream fis = new FileInputStream(file))
+                {
+                    LOGGER.info("Loading blueprint translation table " + file.getName());
+                    compiler.append(fis);
+                }
+                catch(Exception exc)
+                {
+                    LOGGER.error("Unable to load blueprint translation table " + file.getName(), exc);
+                }
+            }
+		}
+        return compiler.compile();
+    }
+
+    public void initializeContent()
+    {
+        BLOCK_ARCHITECT_TABLE = new BlockArchitectTable();
+        BLOCK_BLUEPRINT_LIBRARY = new BlockBlueprintLibrary();
+        ITEM_SCHEMATIC_BLUEPRINT = new ItemSchematicBlueprint();
+        BLOCK_AREA_MARKER = new BlockAreaMarker();
+        ITEM_CONSTRUCTION_TAPE = new ItemConstructionTape();
+        BLOCK_BUILDER = new BlockBuilder();
+        BLOCK_TERRAFORMER = new BlockTerraformer();
+        ITEM_SHAPE_CARD = new ItemShapeCard();
+        BLOCK_MACHINE_HULL = new BlockMachineHull();
+    }
+
+    public void registerTileEntities()
+    {
+        GameRegistry.registerTileEntity(TileEntityBlueprintLibrary.class, TileEntityBlueprintLibrary.ID);
+        GameRegistry.registerTileEntity(TileEntityAreaMarker.class, new ResourceLocation(ImhotepMod.MOD_ID, "area_marker"));
+        GameRegistry.registerTileEntity(TileEntityBuilder.class, new ResourceLocation(ImhotepMod.MOD_ID, "builder"));
+        GameRegistry.registerTileEntity(TileEntityArchitectTable.class, new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"));
+        GameRegistry.registerTileEntity(TileEntityTerraformer.class, new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"));
     }
 
     @SubscribeEvent
@@ -253,6 +308,7 @@ public class ImhotepMod {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void registerModels(ModelRegistryEvent event)
     {
         ModelLoader.setCustomModelResourceLocation(ITEM_SCHEMATIC_BLUEPRINT, ItemSchematicBlueprint.META_EMPTY, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_empty"), "inventory"));
