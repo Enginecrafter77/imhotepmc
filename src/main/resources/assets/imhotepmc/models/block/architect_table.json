@@ -6,6 +6,7 @@
     "north": "imhotepmc:blocks/machine_blank",
     "south": "imhotepmc:blocks/machine_blank",
     "east": "imhotepmc:blocks/machine_blank",
-    "west": "imhotepmc:blocks/machine_blank"
+    "west": "imhotepmc:blocks/machine_blank",
+    "particle": "imhotepmc:blocks/architect_table_top"
   }
 }

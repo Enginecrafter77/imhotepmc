@@ -3,6 +3,7 @@
   "textures": {
     "top": "imhotepmc:blocks/machine_blank",
     "front": "imhotepmc:blocks/blueprint_library",
-    "side": "imhotepmc:blocks/machine_blank"
+    "side": "imhotepmc:blocks/machine_blank",
+    "particle": "imhotepmc:blocks/blueprint_library"
   }
 }
