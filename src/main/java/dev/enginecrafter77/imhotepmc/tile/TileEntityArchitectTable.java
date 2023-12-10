@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
@@ -23,7 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
-public class TileEntityArchitectTable extends TileEntity implements ITickable {
+public class TileEntityArchitectTable extends TileEntity {
 	private static final String NBT_KEY_SELECTION = "selection";
 	private static final String NBT_KEY_INITIALIZED = "initialized";
 	private static final String NBT_KEY_INVENTORY = "inventory";
@@ -39,7 +38,6 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 	private Collection<BlockPosEdge> edges;
 
 	private boolean initialized;
-	private int scanDelay;
 
 	public TileEntityArchitectTable()
 	{
@@ -48,7 +46,6 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 		this.edges = ImmutableList.of();
 		this.selection = new BlockSelectionBox();
 		this.initialized = false;
-		this.scanDelay = 10;
 	}
 
 	public void getArea(BlockSelectionBox dest)
@@ -96,12 +93,9 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 	{
 		this.edges = box.edges();
 
-		BlockSelectionBox ths = new BlockSelectionBox();
-		ths.setStartEnd(this.getPos(), this.getPos());
-
 		BlockSelectionBox rb = new BlockSelectionBox();
 		rb.set(box);
-		rb.union(ths);
+		rb.include(this.getPos());
 		this.renderBox = rb.toAABB();
 	}
 
@@ -111,13 +105,9 @@ public class TileEntityArchitectTable extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public void update()
+	public void onLoad()
 	{
-		if(this.scanDelay > 0)
-		{
-			--this.scanDelay;
-			return;
-		}
+		super.onLoad();
 
 		if(this.initialized)
 			return;
