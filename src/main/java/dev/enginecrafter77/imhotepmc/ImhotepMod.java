@@ -7,6 +7,8 @@ import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.MalformedTranslationRuleException;
+import dev.enginecrafter77.imhotepmc.cap.AreaMarkJob;
+import dev.enginecrafter77.imhotepmc.cap.AreaMarkJobImpl;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
@@ -16,10 +18,7 @@ import dev.enginecrafter77.imhotepmc.net.*;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamWrapper;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
-import dev.enginecrafter77.imhotepmc.render.RenderArchitectTable;
-import dev.enginecrafter77.imhotepmc.render.RenderBuilder;
-import dev.enginecrafter77.imhotepmc.render.RenderTerraformer;
-import dev.enginecrafter77.imhotepmc.render.RenderWorldAreaMarkers;
+import dev.enginecrafter77.imhotepmc.render.*;
 import dev.enginecrafter77.imhotepmc.tile.*;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
 import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
@@ -36,6 +35,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -117,15 +117,17 @@ public class ImhotepMod {
         this.builderBomProvider = new DefaultBOMProvider();
 
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID + ":main");
-        this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "world_data_sync"));
-        this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "packet_stream"), 8192);
+        this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "worldsync"));
+        this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "pktstream"), 4096);
         this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(translation)));
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
         this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderDwellUpdate.class, 1, Side.CLIENT);
         this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
 
-        CapabilityAreaMarker.register();
+        NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
+
+        CapabilityManager.INSTANCE.register(AreaMarkJob.class, CapabilityAreaMarker.AreaMarkJobStorage.INSTANCE, AreaMarkJobImpl::new);
         MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
 
         File configDir = event.getModConfigurationDirectory();
@@ -151,11 +153,11 @@ public class ImhotepMod {
     @SideOnly(Side.CLIENT)
     public void onPreInitClient(FMLPreInitializationEvent event)
     {
-        NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArchitectTable.class, new RenderArchitectTable());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBuilder.class, new RenderBuilder());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTerraformer.class, new RenderTerraformer());
         RenderWorldAreaMarkers.register();
+        TapeLinkingRenderHandler.register();
     }
 
     public File getSchematicsDir()

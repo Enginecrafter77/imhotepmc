@@ -1,7 +1,6 @@
 package dev.enginecrafter77.imhotepmc.cap;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.render.RenderPlayerTapeLinking;
 import dev.enginecrafter77.imhotepmc.tile.IAreaMarker;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
 import net.minecraft.entity.Entity;
@@ -16,7 +15,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -24,8 +22,6 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -35,9 +31,6 @@ public class CapabilityAreaMarker {
 
 	@CapabilityInject(AreaMarkJob.class)
 	public static Capability<AreaMarkJob> AREA_MARKER = null;
-
-	@SideOnly(Side.CLIENT)
-	private static RenderPlayerTapeLinking render = null;
 
 	public static void register()
 	{
@@ -106,20 +99,11 @@ public class CapabilityAreaMarker {
 		}
 	}
 
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public static void onRenderWorldLast(RenderWorldLastEvent event)
-	{
-		if(render == null)
-			render = new RenderPlayerTapeLinking();
-		render.render(event);
-	}
-
 	public static class AreaMarkJobStorage implements Capability.IStorage<AreaMarkJob>
 	{
 		private static final String NBT_KEY_POS = "linking_to";
 
-		private static final AreaMarkJobStorage INSTANCE = new AreaMarkJobStorage();
+		public static final AreaMarkJobStorage INSTANCE = new AreaMarkJobStorage();
 
 		@Nullable
 		@Override

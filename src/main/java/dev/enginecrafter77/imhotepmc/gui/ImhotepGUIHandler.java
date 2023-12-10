@@ -4,7 +4,6 @@ import dev.enginecrafter77.imhotepmc.container.ContainerArchitectTable;
 import dev.enginecrafter77.imhotepmc.container.ContainerBlueprintLibrary;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
@@ -22,7 +21,7 @@ public class ImhotepGUIHandler implements IGuiHandler {
 
 	@Nullable
 	@Override
-	public Container getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
 		BlockPos pos = new BlockPos(x, y, z);
 
@@ -39,19 +38,18 @@ public class ImhotepGUIHandler implements IGuiHandler {
 
 	@Nullable
 	@Override
-	public Gui getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
+		Container container = (Container)this.getServerGuiElement(ID, player, world, x, y, z);
 		BlockPos pos = new BlockPos(x, y, z);
 		switch(ID)
 		{
 		case GUI_ID_BLUEPRINT_LIBRARY:
 			TileEntityBlueprintLibrary libraryTile = this.obtainTileEntity(TileEntityBlueprintLibrary.class, world, pos);
-			ContainerBlueprintLibrary containerBlueprintLibrary = new ContainerBlueprintLibrary(player.inventory, libraryTile);
-			return new GUIBlueprintLibrary(player.inventory, libraryTile, containerBlueprintLibrary);
+			return new GUIBlueprintLibrary(player.inventory, libraryTile, (ContainerBlueprintLibrary)container);
 		case GUI_ID_ARCHITECT_TABLE:
 			TileEntityArchitectTable architectTable = this.obtainTileEntity(TileEntityArchitectTable.class, world, pos);
-			ContainerArchitectTable container = new ContainerArchitectTable(player.inventory, architectTable);
-			return new GUIArchitectTable(player.inventory, container, architectTable);
+			return new GUIArchitectTable(player.inventory, (ContainerArchitectTable)container, architectTable);
 		default:
 			return null;
 		}

@@ -94,6 +94,7 @@ public class WorldDataSyncHandler {
 		return this.getDataSyncMessage(ctx.getServerHandler().player.world, true);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public IMessage onDataSyncReceived(WorldDataSyncMessage message, MessageContext ctx)
 	{
 		World world = Minecraft.getMinecraft().world;
@@ -118,6 +119,7 @@ public class WorldDataSyncHandler {
 		return null;
 	}
 
+	@SideOnly(Side.CLIENT)
 	public IMessage onDataSyncBundleReceived(WorldDataSyncBundleMessage message, MessageContext ctx)
 	{
 		for(WorldDataSyncMessage msg : message.getParts())
