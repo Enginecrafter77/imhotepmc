@@ -1,13 +1,17 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.collect.ImmutableList;
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.*;
+import dev.enginecrafter77.imhotepmc.net.BuilderDwellUpdate;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -17,12 +21,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Optional;
 
 public class TileEntityBuilder extends TileEntity implements ITickable {
 	private static final String NBT_KEY_BLUEPRINT = "blueprint";
@@ -47,6 +54,11 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	@Nullable
 	private SchematicBlueprint blueprint;
 
+	@Nullable
+	private Block missingBlock;
+	private BuilderTask dwellTask;
+	private long dwellingTicks;
+
 	public TileEntityBuilder()
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
@@ -56,6 +68,23 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		this.facing = EnumFacing.NORTH;
 		this.boundingBox = null;
 		this.blueprint = null;
+
+		this.dwellTask = null;
+		this.missingBlock = null;
+		this.dwellingTicks = 0;
+	}
+
+	public BuilderInvoker getInvoker()
+	{
+		return this.builderInvoker;
+	}
+
+	@Nullable
+	public Block getMissingBlock()
+	{
+		if(this.dwellingTicks < 20)
+			return null;
+		return this.missingBlock;
 	}
 
 	@Nullable
@@ -116,6 +145,13 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		return this.boundingBox;
 	}
 
+	@SideOnly(Side.CLIENT)
+	public void onDwellUpdateReceived(BuilderDwellUpdate update)
+	{
+		this.missingBlock = update.getMissingBlock();
+		this.dwellingTicks = update.getDwellingTicks();
+	}
+
 	@Override
 	public void update()
 	{
@@ -123,6 +159,32 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 			return;
 
 		this.builderInvoker.update(this.world);
+
+		StructureBuilder builder = this.builderInvoker.getBuilder();
+		if(builder == null)
+			return;
+		BuilderTask currentTask = builder.getLastTask(this.world);
+
+		if(currentTask == this.dwellTask)
+		{
+			++this.dwellingTicks;
+
+			if(this.dwellingTicks == 20)
+			{
+				BuilderDwellUpdate update = new BuilderDwellUpdate(this.getPos(), this.missingBlock, this.dwellingTicks);
+				ImhotepMod.instance.getNetChannel().sendToAll(update);
+			}
+		}
+		else
+		{
+			this.dwellTask = currentTask;
+			this.dwellingTicks = 0;
+			this.missingBlock = Optional.ofNullable(currentTask)
+					.map(AbstractBuilderPlaceTask.class::cast)
+					.map(AbstractBuilderPlaceTask::getStateForPlacement)
+					.map(IBlockState::getBlock)
+					.orElse(null);
+		}
 	}
 
 	@Override

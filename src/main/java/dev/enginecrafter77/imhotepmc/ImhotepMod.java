@@ -10,9 +10,7 @@ import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
 import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.item.ItemShapeCard;
-import dev.enginecrafter77.imhotepmc.net.BlueprintSampleMessage;
-import dev.enginecrafter77.imhotepmc.net.BlueprintSampleMessageHandler;
-import dev.enginecrafter77.imhotepmc.net.BlueprintTransferHandler;
+import dev.enginecrafter77.imhotepmc.net.*;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamWrapper;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
@@ -124,6 +122,7 @@ public class ImhotepMod {
         this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(translation)));
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
+        this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderDwellUpdate.class, 1, Side.CLIENT);
 
         BLOCK_ARCHITECT_TABLE = new BlockArchitectTable();
         BLOCK_BLUEPRINT_LIBRARY = new BlockBlueprintLibrary();
