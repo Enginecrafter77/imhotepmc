@@ -44,6 +44,7 @@ dependencies {
     runtime "cofh:ThermalExpansion:1.12.2-5.5.4.+:universal"
     runtime "cofh:ThermalDynamics:1.12.2-2.5.5.+:universal"
     runtime "cofh:RedstoneFlux:1.12-2.1.0.7:universal"
+    runtime "mezz.jei:jei_1.12.2:4.9.2.196"
     runtime "curse.maven:Hwyla-253449:2568751"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'

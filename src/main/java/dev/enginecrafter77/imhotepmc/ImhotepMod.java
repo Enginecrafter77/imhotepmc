@@ -79,6 +79,7 @@ public class ImhotepMod {
     public static BlockArchitectTable BLOCK_ARCHITECT_TABLE;
     public static BlockAreaMarker BLOCK_AREA_MARKER;
     public static BlockBlueprintLibrary BLOCK_BLUEPRINT_LIBRARY;
+    public static BlockMachineHull BLOCK_MACHINE_HULL;
     public static BlockBuilder BLOCK_BUILDER;
     public static BlockTerraformer BLOCK_TERRAFORMER;
     public static ItemSchematicBlueprint ITEM_SCHEMATIC_BLUEPRINT;
@@ -132,6 +133,7 @@ public class ImhotepMod {
         BLOCK_BUILDER = new BlockBuilder();
         BLOCK_TERRAFORMER = new BlockTerraformer();
         ITEM_SHAPE_CARD = new ItemShapeCard();
+        BLOCK_MACHINE_HULL = new BlockMachineHull();
 
         this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
 
@@ -198,6 +200,7 @@ public class ImhotepMod {
         this.registerItemBlock(reg, BLOCK_BUILDER);
         this.registerItemBlock(reg, BLOCK_ARCHITECT_TABLE);
         this.registerItemBlock(reg, BLOCK_TERRAFORMER);
+        this.registerItemBlock(reg, BLOCK_MACHINE_HULL);
     }
 
     @SubscribeEvent
@@ -209,6 +212,7 @@ public class ImhotepMod {
         reg.register(BLOCK_BUILDER);
         reg.register(BLOCK_ARCHITECT_TABLE);
         reg.register(BLOCK_TERRAFORMER);
+        reg.register(BLOCK_MACHINE_HULL);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
@@ -238,5 +242,6 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_BUILDER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "builder"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_ARCHITECT_TABLE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_TERRAFORMER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_MACHINE_HULL), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "machine_hull"), "inventory"));
     }
 }

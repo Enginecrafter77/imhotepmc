@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "BCB",
+    " B "
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:brick"
+    },
+    "C": {
+      "item": "imhotepmc:shape_card",
+      "data": 1
+    }
+  },
+  "result": {
+    "item": "imhotepmc:shape_card",
+    "data": 2
+  }
+}

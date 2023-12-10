@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " M ",
+    "THT",
+    "RCR"
+  ],
+  "key": {
+    "M": {
+      "item": "imhotepmc:area_marker"
+    },
+    "T": {
+      "item": "imhotepmc:construction_tape"
+    },
+    "H": {
+      "item": "imhotepmc:machine_hull"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "imhotepmc:shape_card",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "imhotepmc:terraformer"
+  }
+}

@@ -5,6 +5,7 @@ tile.blueprint_library.name=Blueprint Library
 tile.area_marker.name=Area Marker
 tile.builder.name=Builder
 tile.terraformer.name=Terraformer
+tile.machine_hull.name=Machine Hull
 
 item.schematic_blueprint.name=Schematic Blueprint
 item.construction_tape.name=Construction Tape
@@ -14,3 +15,6 @@ label.terraformer.mode=Mode
 
 shape.fill.name=Fill
 shape.clear.name=Clear
+shape.ellipsoid.name=Sphere
+shape.pyramid.name=Pyramid
+shape.dome.name=Dome

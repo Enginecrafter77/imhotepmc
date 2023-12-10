@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "imhotepmc:shape_card",
+      "data": 1
+    },
+    {
+      "item": "minecraft:flint"
+    }
+  ],
+  "result": {
+    "item": "imhotepmc:shape_card",
+    "data": 0
+  }
+}
