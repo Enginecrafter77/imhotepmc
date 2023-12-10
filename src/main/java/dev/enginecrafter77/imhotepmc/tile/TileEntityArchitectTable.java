@@ -8,6 +8,8 @@ import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -192,5 +194,18 @@ public class TileEntityArchitectTable extends TileEntity {
 	public void handleUpdateTag(NBTTagCompound tag)
 	{
 		this.deserializeNBT(tag);
+	}
+
+	@Nullable
+	@Override
+	public SPacketUpdateTileEntity getUpdatePacket()
+	{
+		return new SPacketUpdateTileEntity(this.getPos(), 0, this.serializeNBT());
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
+	{
+		this.deserializeNBT(pkt.getNbtCompound());
 	}
 }
