@@ -1,16 +1,17 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class MaterializedBuilderClearTask extends BaseBuilderClearTask {
 	private final BuilderMaterialProvider storageProvider;
+	private final BuilderBOMProvider bomProvider;
 
-	public MaterializedBuilderClearTask(World world, BlockPos pos, BuilderMaterialProvider storageProvider)
+	public MaterializedBuilderClearTask(World world, BlockPos pos, BuilderMaterialProvider storageProvider, BuilderBOMProvider bomProvider)
 	{
 		super(world, pos);
 		this.storageProvider = storageProvider;
+		this.bomProvider = bomProvider;
 	}
 
 	@Override
@@ -19,8 +20,7 @@ public class MaterializedBuilderClearTask extends BaseBuilderClearTask {
 		BuilderMaterialStorage storage = this.storageProvider.getBuilderMaterialStorage();
 		if(storage == null)
 			return false;
-		IBlockState state = this.world.getBlockState(this.pos);
-		return storage.canReclaim(state.getBlock());
+		return storage.canReclaim(this.bomProvider.getBlockClearReclaimedItems(this.world, this.pos));
 	}
 
 	@Override
@@ -29,8 +29,7 @@ public class MaterializedBuilderClearTask extends BaseBuilderClearTask {
 		BuilderMaterialStorage storage = this.storageProvider.getBuilderMaterialStorage();
 		if(storage == null)
 			return;
-		IBlockState state = this.world.getBlockState(this.pos);
-		storage.reclaim(state.getBlock());
+		storage.reclaim(this.bomProvider.getBlockClearReclaimedItems(this.world, this.pos));
 		super.executeTask();
 	}
 }

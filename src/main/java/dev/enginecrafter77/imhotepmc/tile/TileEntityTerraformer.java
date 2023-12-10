@@ -46,7 +46,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
 		this.selectionBox = new BlockSelectionBox();
-		this.builderHandler = new PoweredBuilderHandler(this::getBlockSource, this.energyStorage);
+		this.builderHandler = new PoweredBuilderHandler(this::getBlockSource, ImhotepMod.instance.getBuilderBomProvider(), this.energyStorage);
 		this.builderInvoker = new TickedBuilderInvoker();
 
 		this.mode = TerraformMode.CLEAR;
@@ -77,7 +77,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 		if(handler == null)
 			return null;
-		return new InventoryMaterialStorage(handler, ImhotepMod.instance.getBuilderBomProvider());
+		return new InventoryMaterialStorage(handler);
 	}
 
 	protected void onSettingsChanged(BlockSelectionBox box, TerraformMode mode)

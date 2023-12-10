@@ -24,6 +24,24 @@ public abstract class AbstractBuilderPlaceTask extends AbstractBuilderTask {
 	@Nullable
 	public abstract NBTTagCompound getTileEntityData();
 
+	@Nullable
+	public TileEntity createTileEntity()
+	{
+		IBlockState state = this.getStateForPlacement();
+		if(state == null)
+			return null;
+		Block block = state.getBlock();
+
+		if(!block.hasTileEntity(state))
+			return null;
+
+		TileEntity tileEntity = block.createTileEntity(this.world, state);
+		NBTTagCompound tileSavedData = this.getTileEntityData();
+		if(tileEntity != null && tileSavedData != null)
+			tileEntity.deserializeNBT(tileSavedData);
+		return tileEntity;
+	}
+
 	@Override
 	public boolean canBeExecuted()
 	{
@@ -37,15 +55,9 @@ public abstract class AbstractBuilderPlaceTask extends AbstractBuilderTask {
 		if(state == null)
 			return;
 
-		Block block = state.getBlock();
 		this.world.setBlockState(this.pos, state, this.updateFlags);
-		if(block.hasTileEntity(state))
-		{
-			TileEntity tileEntity = block.createTileEntity(this.world, state);
-			NBTTagCompound tileSavedData = this.getTileEntityData();
-			if(tileEntity != null && tileSavedData != null)
-				tileEntity.deserializeNBT(tileSavedData);
+		TileEntity tileEntity = this.createTileEntity();
+		if(tileEntity != null)
 			this.world.setTileEntity(this.pos, tileEntity);
-		}
 	}
 }

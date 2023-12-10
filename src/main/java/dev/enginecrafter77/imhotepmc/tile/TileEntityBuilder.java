@@ -62,7 +62,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	public TileEntityBuilder()
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
-		this.builderHandler = new PoweredBuilderHandler(this::getBlockSource, this.energyStorage);
+		this.builderHandler = new PoweredBuilderHandler(this::getBlockSource, ImhotepMod.instance.getBuilderBomProvider(), this.energyStorage);
 		this.builderInvoker = new TickedBuilderInvoker();
 		this.buildAreaEdges = ImmutableList.of();
 		this.facing = EnumFacing.NORTH;
@@ -99,7 +99,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 		if(handler == null)
 			return null;
-		return new InventoryMaterialStorage(handler, ImhotepMod.instance.getBuilderBomProvider());
+		return new InventoryMaterialStorage(handler);
 	}
 
 	public void setFacing(EnumFacing facing)

@@ -1,6 +1,5 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
-import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderMaterialStorage;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
@@ -13,12 +12,10 @@ import java.util.function.Predicate;
 
 public class InventoryMaterialStorage implements BuilderMaterialStorage {
 	private final IItemHandler storage;
-	private final BuilderBOMProvider bom;
 
-	public InventoryMaterialStorage(IItemHandler storage, BuilderBOMProvider bom)
+	public InventoryMaterialStorage(IItemHandler storage)
 	{
 		this.storage = storage;
-		this.bom = bom;
 	}
 
 	@Nullable
@@ -39,9 +36,8 @@ public class InventoryMaterialStorage implements BuilderMaterialStorage {
 	}
 
 	@Override
-	public boolean canProvide(Block block)
+	public boolean canProvide(Collection<ItemStack> req)
 	{
-		Collection<ItemStack> req = this.bom.getBlockPlaceRequiredItems(block);
 		for(ItemStack stack : req)
 		{
 			int slot = this.findSlotForExtract(stack);
@@ -52,9 +48,8 @@ public class InventoryMaterialStorage implements BuilderMaterialStorage {
 	}
 
 	@Override
-	public boolean canReclaim(Block block)
+	public boolean canReclaim(Collection<ItemStack> req)
 	{
-		Collection<ItemStack> req = this.bom.getBlockClearReclaimedItems(block);
 		for(ItemStack stack : req)
 		{
 			int slot = this.findSlotForInsert(stack);
@@ -65,9 +60,8 @@ public class InventoryMaterialStorage implements BuilderMaterialStorage {
 	}
 
 	@Override
-	public void provide(Block block)
+	public void provide(Collection<ItemStack> req)
 	{
-		Collection<ItemStack> req = this.bom.getBlockClearReclaimedItems(block);
 		for(ItemStack stack : req)
 		{
 			int slot = this.findSlotForExtract(stack);
@@ -78,9 +72,8 @@ public class InventoryMaterialStorage implements BuilderMaterialStorage {
 	}
 
 	@Override
-	public void reclaim(Block block)
+	public void reclaim(Collection<ItemStack> req)
 	{
-		Collection<ItemStack> req = this.bom.getBlockClearReclaimedItems(block);
 		for(ItemStack stack : req)
 		{
 			int slot = this.findSlotForInsert(stack);

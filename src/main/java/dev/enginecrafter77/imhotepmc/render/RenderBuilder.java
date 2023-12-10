@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Point3d;
@@ -46,7 +47,7 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		Block block = te.getMissingBlock();
 		if(block == null)
 			return;
-		ItemStack stack = ImhotepMod.instance.getBuilderBomProvider().getBlockPlaceRequiredItems(block).stream().findAny().orElse(null);
+		ItemStack stack = ImhotepMod.instance.getBuilderBomProvider().getBlockPlaceRequiredItems(te.getWorld(), BlockPos.ORIGIN, block.getDefaultState(), null).stream().findAny().orElse(null);
 		if(stack == null)
 			return;
 

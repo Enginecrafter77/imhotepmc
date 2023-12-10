@@ -9,11 +9,13 @@ import net.minecraftforge.energy.IEnergyStorage;
 public class PoweredBuilderHandler implements BuilderHandler {
 	private final BuilderMaterialProvider materialStorage;
 	private final IEnergyStorage energyStorage;
+	private final BuilderBOMProvider bomProvider;
 
-	public PoweredBuilderHandler(BuilderMaterialProvider storage, IEnergyStorage energyStorage)
+	public PoweredBuilderHandler(BuilderMaterialProvider storage, BuilderBOMProvider bomProvider, IEnergyStorage energyStorage)
 	{
 		this.materialStorage = storage;
 		this.energyStorage = energyStorage;
+		this.bomProvider = bomProvider;
 	}
 
 	public int getEnergyForPlace(World world, BlockPos pos, IBlockState blockState)
@@ -48,7 +50,7 @@ public class PoweredBuilderHandler implements BuilderHandler {
 	{
 		public PoweredPlaceTask(World world, BlockPos pos, BuilderBlockPlacementDetails details)
 		{
-			super(world, pos, details, PoweredBuilderHandler.this.materialStorage);
+			super(world, pos, details, PoweredBuilderHandler.this.materialStorage, PoweredBuilderHandler.this.bomProvider);
 		}
 
 		protected int getEnergyCost()
@@ -83,7 +85,7 @@ public class PoweredBuilderHandler implements BuilderHandler {
 	{
 		public PoweredTemplateTask(World world, BlockPos pos)
 		{
-			super(world, pos, PoweredBuilderHandler.this.materialStorage);
+			super(world, pos, PoweredBuilderHandler.this.materialStorage, PoweredBuilderHandler.this.bomProvider);
 		}
 
 		protected int getEnergyCost()
@@ -126,7 +128,7 @@ public class PoweredBuilderHandler implements BuilderHandler {
 	{
 		public PoweredClearTask(World world, BlockPos pos)
 		{
-			super(world, pos, PoweredBuilderHandler.this.materialStorage);
+			super(world, pos, PoweredBuilderHandler.this.materialStorage, PoweredBuilderHandler.this.bomProvider);
 		}
 
 		protected int getEnergyCost()
