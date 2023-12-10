@@ -49,7 +49,6 @@ public class MaterializedBuilderClearTask extends BaseBuilderClearTask {
 		if(storage == null)
 			return;
 		super.executeTask();
-		this.reloadDrops();
 		this.drops.forEach(storage::addBlockDrops);
 	}
 }
