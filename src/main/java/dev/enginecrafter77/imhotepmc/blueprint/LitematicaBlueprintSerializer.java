@@ -13,6 +13,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
+	private static final int GAME_DATA_VERSION = 1343;
+
 	private final BlueprintTranslation blueprintTranslation;
 
 	private static final String NBT_KEY_MCDATAVERSION = "MinecraftDataVersion";
@@ -150,7 +152,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	{
 		NBTTagCompound root = new NBTTagCompound();
 
-		root.setInteger(NBT_KEY_MCDATAVERSION, 3105);
+		root.setInteger(NBT_KEY_MCDATAVERSION, GAME_DATA_VERSION);
 		root.setInteger(NBT_KEY_VERSION, 5);
 		root.setTag(NBT_KEY_METADATA, this.createMetadataTag(blueprint));
 
