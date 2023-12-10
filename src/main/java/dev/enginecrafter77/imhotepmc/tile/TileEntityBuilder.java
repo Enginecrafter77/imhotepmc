@@ -99,7 +99,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 		if(handler == null)
 			return null;
-		return new InventoryMaterialStorage(handler);
+		return new InventoryMaterialStorage(handler, ImhotepMod.instance.getBuilderBomProvider());
 	}
 
 	public void setFacing(EnumFacing facing)

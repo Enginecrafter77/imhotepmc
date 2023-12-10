@@ -7,10 +7,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public class PoweredBuilderHandler implements BuilderHandler {
-	private final BuilderMaterialStorageProvider materialStorage;
+	private final BuilderMaterialProvider materialStorage;
 	private final IEnergyStorage energyStorage;
 
-	public PoweredBuilderHandler(BuilderMaterialStorageProvider storage, IEnergyStorage energyStorage)
+	public PoweredBuilderHandler(BuilderMaterialProvider storage, IEnergyStorage energyStorage)
 	{
 		this.materialStorage = storage;
 		this.energyStorage = energyStorage;

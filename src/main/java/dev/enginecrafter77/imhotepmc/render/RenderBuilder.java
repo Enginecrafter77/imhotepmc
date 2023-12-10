@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.render;
 
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
 import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
@@ -45,7 +46,9 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		Block block = te.getMissingBlock();
 		if(block == null)
 			return;
-		ItemStack stack = new ItemStack(block);
+		ItemStack stack = ImhotepMod.instance.getBuilderBomProvider().getBlockPlaceRequiredItems(block).stream().findAny().orElse(null);
+		if(stack == null)
+			return;
 
 		IBlockState state = te.getWorld().getBlockState(te.getPos());
 		EnumFacing facing = state.getValue(BlockHorizontal.FACING);

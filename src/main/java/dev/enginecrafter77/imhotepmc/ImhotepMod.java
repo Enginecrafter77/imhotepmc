@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc;
 
 import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.MalformedTranslationRuleException;
@@ -26,6 +27,8 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -36,6 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -84,6 +88,8 @@ public class ImhotepMod {
     public static ItemConstructionTape ITEM_CONSTRUCTION_TAPE;
     public static ItemShapeCard ITEM_SHAPE_CARD;
 
+    private DefaultBOMProvider builderBomProvider;
+
     private File schematicsDir;
     private SimpleNetworkWrapper netChannel;
 
@@ -116,6 +122,8 @@ public class ImhotepMod {
             exc.printStackTrace();
         }
 
+        this.builderBomProvider = new DefaultBOMProvider();
+
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID + ":main");
         this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "world_data_sync"));
         this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "packet_stream"), 8192);
@@ -142,6 +150,20 @@ public class ImhotepMod {
         File configDir = event.getModConfigurationDirectory();
         File gameDirectory = configDir.getParentFile();
         this.schematicsDir = new File(gameDirectory, "schematics");
+    }
+
+    @Mod.EventHandler
+    public void onPostInit(FMLPostInitializationEvent event)
+    {
+        this.builderBomProvider.addOverride(Blocks.STANDING_SIGN, Items.SIGN);
+        this.builderBomProvider.addOverride(Blocks.WALL_SIGN, Items.SIGN);
+        this.builderBomProvider.addOverride(Blocks.OAK_DOOR, Items.OAK_DOOR);
+        this.builderBomProvider.addOverride(Blocks.JUNGLE_DOOR, Items.JUNGLE_DOOR);
+        this.builderBomProvider.addOverride(Blocks.DARK_OAK_DOOR, Items.DARK_OAK_DOOR);
+        this.builderBomProvider.addOverride(Blocks.ACACIA_DOOR, Items.ACACIA_DOOR);
+        this.builderBomProvider.addOverride(Blocks.BIRCH_DOOR, Items.BIRCH_DOOR);
+        this.builderBomProvider.addOverride(Blocks.IRON_DOOR, Items.IRON_DOOR);
+        this.builderBomProvider.addOverride(Blocks.SPRUCE_DOOR, Items.SPRUCE_DOOR);
     }
 
     @Mod.EventHandler
@@ -177,6 +199,11 @@ public class ImhotepMod {
     public WorldDataSyncHandler getWorldDataSyncHandler()
     {
         return this.worldDataSyncHandler;
+    }
+
+    public DefaultBOMProvider getBuilderBomProvider()
+    {
+        return this.builderBomProvider;
     }
 
     @SubscribeEvent

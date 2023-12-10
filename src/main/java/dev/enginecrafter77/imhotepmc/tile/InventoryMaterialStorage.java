@@ -1,21 +1,24 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
+import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderMaterialStorage;
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.function.Predicate;
 
 public class InventoryMaterialStorage implements BuilderMaterialStorage {
 	private final IItemHandler storage;
+	private final BuilderBOMProvider bom;
 
-	public InventoryMaterialStorage(IItemHandler storage)
+	public InventoryMaterialStorage(IItemHandler storage, BuilderBOMProvider bom)
 	{
 		this.storage = storage;
+		this.bom = bom;
 	}
 
 	@Nullable
@@ -36,42 +39,63 @@ public class InventoryMaterialStorage implements BuilderMaterialStorage {
 	}
 
 	@Override
-	public boolean hasBlock(Block block)
+	public boolean canProvide(Block block)
 	{
-		return this.findSlotWithBlock(block) != -1;
+		Collection<ItemStack> req = this.bom.getBlockPlaceRequiredItems(block);
+		for(ItemStack stack : req)
+		{
+			int slot = this.findSlotForExtract(stack);
+			if(slot == -1)
+				return false;
+		}
+		return true;
 	}
 
 	@Override
-	public boolean canInsert(ItemStack stack)
+	public boolean canReclaim(Block block)
 	{
-		return this.findSlotForItemStack(stack) != -1;
+		Collection<ItemStack> req = this.bom.getBlockClearReclaimedItems(block);
+		for(ItemStack stack : req)
+		{
+			int slot = this.findSlotForInsert(stack);
+			if(slot == -1)
+				return false;
+		}
+		return true;
 	}
 
 	@Override
-	public ItemStack consumeBlock(Block block)
+	public void provide(Block block)
 	{
-		int slot = this.findSlotWithBlock(block);
-		if(slot == -1)
-			return ItemStack.EMPTY;
-		return this.storage.extractItem(slot, 1, false);
+		Collection<ItemStack> req = this.bom.getBlockClearReclaimedItems(block);
+		for(ItemStack stack : req)
+		{
+			int slot = this.findSlotForExtract(stack);
+			if(slot == -1)
+				continue;
+			this.storage.extractItem(slot, stack.getCount(), false);
+		}
 	}
 
 	@Override
-	public void addBlockDrops(ItemStack drop)
+	public void reclaim(Block block)
 	{
-		int slot = this.findSlotForItemStack(drop);
-		if(slot == -1)
-			return;
-		this.storage.insertItem(slot, drop, false);
+		Collection<ItemStack> req = this.bom.getBlockClearReclaimedItems(block);
+		for(ItemStack stack : req)
+		{
+			int slot = this.findSlotForInsert(stack);
+			if(slot == -1)
+				continue;
+			this.storage.insertItem(slot, stack, false);
+		}
 	}
 
-	private int findSlotWithBlock(Block block)
+	private int findSlotForExtract(ItemStack stack)
 	{
-		ItemStack stack = new ItemStack(Item.getItemFromBlock(block));
 		return this.findSlot((ItemStack stackInSlot) -> ItemStack.areItemsEqual(stack, stackInSlot));
 	}
 
-	private int findSlotForItemStack(ItemStack stack)
+	private int findSlotForInsert(ItemStack stack)
 	{
 		return this.findSlot((ItemStack stackInSlot) -> stackInSlot.isEmpty() || (ItemStack.areItemsEqual(stack, stackInSlot) && (stackInSlot.getCount() + stack.getCount()) <= stackInSlot.getItem().getItemStackLimit(stackInSlot)));
 	}

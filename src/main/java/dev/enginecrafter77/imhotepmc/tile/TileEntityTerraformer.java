@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.base.Predicates;
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.*;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
@@ -76,7 +77,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 		if(handler == null)
 			return null;
-		return new InventoryMaterialStorage(handler);
+		return new InventoryMaterialStorage(handler, ImhotepMod.instance.getBuilderBomProvider());
 	}
 
 	protected void onSettingsChanged(BlockSelectionBox box, TerraformMode mode)

@@ -1,7 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 
@@ -9,9 +8,9 @@ public interface BuilderMaterialStorage {
 	@Nullable
 	public Block getAnyAvailableBlock();
 
-	public boolean hasBlock(Block block);
-	public boolean canInsert(ItemStack stack);
+	public boolean canProvide(Block block);
+	public boolean canReclaim(Block block);
 
-	public ItemStack consumeBlock(Block block);
-	public void addBlockDrops(ItemStack drop);
+	public void provide(Block block);
+	public void reclaim(Block block);
 }

@@ -4,6 +4,7 @@ import dev.enginecrafter77.imhotepmc.blueprint.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -103,7 +104,7 @@ public class BlueprintBuilder implements StructureBuilder {
 		{
 			BlueprintVoxel voxel = this.reader.next();
 			Block blk = voxel.getBlueprintEntry().getBlock();
-			if(blk == null)
+			if(blk == null || blk == Blocks.AIR)
 				return null;
 
 			IBlockState current = world.getBlockState(voxel.getPosition());

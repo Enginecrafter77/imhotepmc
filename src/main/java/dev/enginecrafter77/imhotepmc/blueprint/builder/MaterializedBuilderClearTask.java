@@ -1,29 +1,16 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class MaterializedBuilderClearTask extends BaseBuilderClearTask {
-	private final BuilderMaterialStorageProvider storageProvider;
+	private final BuilderMaterialProvider storageProvider;
 
-	private final NonNullList<ItemStack> drops;
-
-	public MaterializedBuilderClearTask(World world, BlockPos pos, BuilderMaterialStorageProvider storageProvider)
+	public MaterializedBuilderClearTask(World world, BlockPos pos, BuilderMaterialProvider storageProvider)
 	{
 		super(world, pos);
 		this.storageProvider = storageProvider;
-
-		this.drops = NonNullList.create();
-	}
-
-	protected void reloadDrops()
-	{
-		this.drops.clear();
-		IBlockState state = this.world.getBlockState(this.pos);
-		state.getBlock().getDrops(this.drops, this.world, this.pos, state, 0);
 	}
 
 	@Override
@@ -32,14 +19,8 @@ public class MaterializedBuilderClearTask extends BaseBuilderClearTask {
 		BuilderMaterialStorage storage = this.storageProvider.getBuilderMaterialStorage();
 		if(storage == null)
 			return false;
-
-		this.reloadDrops();
-		for(ItemStack drop : this.drops)
-		{
-			if(!storage.canInsert(drop))
-				return false;
-		}
-		return true;
+		IBlockState state = this.world.getBlockState(this.pos);
+		return storage.canReclaim(state.getBlock());
 	}
 
 	@Override
@@ -48,7 +29,8 @@ public class MaterializedBuilderClearTask extends BaseBuilderClearTask {
 		BuilderMaterialStorage storage = this.storageProvider.getBuilderMaterialStorage();
 		if(storage == null)
 			return;
+		IBlockState state = this.world.getBlockState(this.pos);
+		storage.reclaim(state.getBlock());
 		super.executeTask();
-		this.drops.forEach(storage::addBlockDrops);
 	}
 }
