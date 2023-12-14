@@ -904,7 +904,7 @@ minecraft:yellow_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecr
 minecraft:lime_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=lime,north=%1,south=%2,east=%3,west=%4]
 minecraft:pink_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=pink,north=%1,south=%2,east=%3,west=%4]
 minecraft:gray_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=gray,north=%1,south=%2,east=%3,west=%4]
-minecraft:silver_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=silver,north=%1,south=%2,east=%3,west=%4]
+minecraft:light_gray_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=silver,north=%1,south=%2,east=%3,west=%4]
 minecraft:cyan_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=cyan,north=%1,south=%2,east=%3,west=%4]
 minecraft:purple_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=purple,north=%1,south=%2,east=%3,west=%4]
 minecraft:blue_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=blue,north=%1,south=%2,east=%3,west=%4]
@@ -933,7 +933,7 @@ minecraft:yellow_banner[rotation=%1] => minecraft:banner[rotation=%1]
 minecraft:lime_banner[rotation=%1] => minecraft:banner[rotation=%1]
 minecraft:pink_banner[rotation=%1] => minecraft:banner[rotation=%1]
 minecraft:gray_banner[rotation=%1] => minecraft:banner[rotation=%1]
-minecraft:silver_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:light_gray_banner[rotation=%1] => minecraft:banner[rotation=%1]
 minecraft:cyan_banner[rotation=%1] => minecraft:banner[rotation=%1]
 minecraft:purple_banner[rotation=%1] => minecraft:banner[rotation=%1]
 minecraft:blue_banner[rotation=%1] => minecraft:banner[rotation=%1]
@@ -996,7 +996,7 @@ minecraft:yellow_candle => minecraft:air
 minecraft:lime_candle => minecraft:air
 minecraft:pink_candle => minecraft:air
 minecraft:gray_candle => minecraft:air
-minecraft:silver_candle => minecraft:air
+minecraft:light_gray_candle => minecraft:air
 minecraft:cyan_candle => minecraft:air
 minecraft:purple_candle => minecraft:air
 minecraft:blue_candle => minecraft:air
@@ -1013,7 +1013,7 @@ minecraft:yellow_cake_candle => minecraft:air
 minecraft:lime_cake_candle => minecraft:air
 minecraft:pink_cake_candle => minecraft:air
 minecraft:gray_cake_candle => minecraft:air
-minecraft:silver_cake_candle => minecraft:air
+minecraft:light_gray_cake_candle => minecraft:air
 minecraft:cyan_cake_candle => minecraft:air
 minecraft:purple_cake_candle => minecraft:air
 minecraft:blue_cake_candle => minecraft:air
@@ -1030,7 +1030,7 @@ minecraft:yellow_carpet => minecraft:carpet[color=yellow]
 minecraft:lime_carpet => minecraft:carpet[color=lime]
 minecraft:pink_carpet => minecraft:carpet[color=pink]
 minecraft:gray_carpet => minecraft:carpet[color=gray]
-minecraft:silver_carpet => minecraft:carpet[color=silver]
+minecraft:light_gray_carpet => minecraft:carpet[color=silver]
 minecraft:cyan_carpet => minecraft:carpet[color=cyan]
 minecraft:purple_carpet => minecraft:carpet[color=purple]
 minecraft:blue_carpet => minecraft:carpet[color=blue]
@@ -1047,7 +1047,7 @@ minecraft:yellow_concrete => minecraft:concrete[color=yellow]
 minecraft:lime_concrete => minecraft:concrete[color=lime]
 minecraft:pink_concrete => minecraft:concrete[color=pink]
 minecraft:gray_concrete => minecraft:concrete[color=gray]
-minecraft:silver_concrete => minecraft:concrete[color=silver]
+minecraft:light_gray_concrete => minecraft:concrete[color=silver]
 minecraft:cyan_concrete => minecraft:concrete[color=cyan]
 minecraft:purple_concrete => minecraft:concrete[color=purple]
 minecraft:blue_concrete => minecraft:concrete[color=blue]
@@ -1064,7 +1064,7 @@ minecraft:yellow_concrete_powder => minecraft:concrete_powder[color=yellow]
 minecraft:lime_concrete_powder => minecraft:concrete_powder[color=lime]
 minecraft:pink_concrete_powder => minecraft:concrete_powder[color=pink]
 minecraft:gray_concrete_powder => minecraft:concrete_powder[color=gray]
-minecraft:silver_concrete_powder => minecraft:concrete_powder[color=silver]
+minecraft:light_gray_concrete_powder => minecraft:concrete_powder[color=silver]
 minecraft:cyan_concrete_powder => minecraft:concrete_powder[color=cyan]
 minecraft:purple_concrete_powder => minecraft:concrete_powder[color=purple]
 minecraft:blue_concrete_powder => minecraft:concrete_powder[color=blue]
@@ -1081,7 +1081,7 @@ minecraft:yellow_stained_glass => minecraft:stained_glass[color=yellow]
 minecraft:lime_stained_glass => minecraft:stained_glass[color=lime]
 minecraft:pink_stained_glass => minecraft:stained_glass[color=pink]
 minecraft:gray_stained_glass => minecraft:stained_glass[color=gray]
-minecraft:silver_stained_glass => minecraft:stained_glass[color=silver]
+minecraft:light_gray_stained_glass => minecraft:stained_glass[color=silver]
 minecraft:cyan_stained_glass => minecraft:stained_glass[color=cyan]
 minecraft:purple_stained_glass => minecraft:stained_glass[color=purple]
 minecraft:blue_stained_glass => minecraft:stained_glass[color=blue]
@@ -1098,7 +1098,7 @@ minecraft:yellow_wool => minecraft:wool[color=yellow]
 minecraft:lime_wool => minecraft:wool[color=lime]
 minecraft:pink_wool => minecraft:wool[color=pink]
 minecraft:gray_wool => minecraft:wool[color=gray]
-minecraft:silver_wool => minecraft:wool[color=silver]
+minecraft:light_gray_wool => minecraft:wool[color=silver]
 minecraft:cyan_wool => minecraft:wool[color=cyan]
 minecraft:purple_wool => minecraft:wool[color=purple]
 minecraft:blue_wool => minecraft:wool[color=blue]
@@ -1121,7 +1121,7 @@ minecraft:yellow_terracotta => minecraft:stained_hardened_clay[color=yellow]
 minecraft:lime_terracotta => minecraft:stained_hardened_clay[color=lime]
 minecraft:pink_terracotta => minecraft:stained_hardened_clay[color=pink]
 minecraft:gray_terracotta => minecraft:stained_hardened_clay[color=gray]
-minecraft:silver_terracotta => minecraft:stained_hardened_clay[color=silver]
+minecraft:light_gray_terracotta => minecraft:stained_hardened_clay[color=silver]
 minecraft:cyan_terracotta => minecraft:stained_hardened_clay[color=cyan]
 minecraft:purple_terracotta => minecraft:stained_hardened_clay[color=purple]
 minecraft:blue_terracotta => minecraft:stained_hardened_clay[color=blue]
