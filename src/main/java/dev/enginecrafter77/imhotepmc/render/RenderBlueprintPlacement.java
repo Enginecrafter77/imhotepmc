@@ -4,6 +4,7 @@ import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintReader;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.blueprint.NaturalVoxelIndexer;
+import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -22,10 +24,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Point3d;
 import java.util.stream.Stream;
 
 @SideOnly(Side.CLIENT)
-public class RenderBlueprintPlacement implements IRenderable {
+public class RenderBlueprintPlacement implements IAutoRenderable {
+	private final Point3d originPoint;
+	private final Point3d renderPoint;
+
 	@Nullable
 	private BlueprintPlacement placement;
 
@@ -37,6 +43,8 @@ public class RenderBlueprintPlacement implements IRenderable {
 
 	public RenderBlueprintPlacement()
 	{
+		this.originPoint = new Point3d();
+		this.renderPoint = new Point3d();
 		this.placementWorld = null;
 		this.placement = null;
 		this.buffer = null;
@@ -57,6 +65,7 @@ public class RenderBlueprintPlacement implements IRenderable {
 
 		this.placement = placement;
 		this.placementWorld = new BlueprintPlacementWorld(placement, Minecraft.getMinecraft().world);
+		VecUtil.copyVec3d(placement.getOriginOffset(), this.originPoint);
 		this.buffer = null;
 	}
 
@@ -115,17 +124,23 @@ public class RenderBlueprintPlacement implements IRenderable {
 	}
 
 	@Override
-	public void doRender(double x, double y, double z, float partialTicks)
+	public void doRender(float partialTicks)
 	{
 		if(this.placement == null)
 			return;
+
+		Entity viewer = Minecraft.getMinecraft().getRenderViewEntity();
+		if(viewer == null)
+			return;
+		VecUtil.calculateRenderPoint(viewer, this.originPoint, this.renderPoint, partialTicks);
+
 		if(this.buffer == null)
 			this.buffer = this.compileBuffer();
+
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y, z);
+		GlStateManager.translate(this.renderPoint.x, this.renderPoint.y, this.renderPoint.z);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		this.buffer.draw();
-		this.invalidate();
 		GlStateManager.popMatrix();
 	}
 }

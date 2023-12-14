@@ -34,8 +34,6 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 	private final Point3d itemDrawPos;
 
 	private final RenderBlueprintPlacement renderBlueprintPlacement;
-	private final Point3d placementOriginPoint;
-	private final Point3d placementRenderPoint;
 
 	public RenderBuilder()
 	{
@@ -47,8 +45,6 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.renderPoint = new Point3d();
 		this.faceOffset = new Vector3d();
 		this.itemDrawPos = new Point3d();
-		this.placementRenderPoint = new Point3d();
-		this.placementOriginPoint = new Point3d();
 	}
 
 	private void renderMissingItem(@Nonnull TileEntityBuilder te, double x, double y, double z, float partialTicks)
@@ -86,14 +82,8 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.setLightmapDisabled(true);
 		this.renderMissingItem(te, x, y, z, partialTicks);
 
-		BlueprintPlacement placement = te.getPlacement();
 		this.renderBlueprintPlacement.setPlacement(te.getPlacement());
-		if(placement != null)
-		{
-			VecUtil.copyVec3d(placement.getOriginOffset(), this.placementOriginPoint);
-			VecUtil.calculateRenderPoint(viewer, this.placementOriginPoint, this.placementRenderPoint, partialTicks);
-			this.renderBlueprintPlacement.doRender(this.placementRenderPoint, partialTicks);
-		}
+		this.renderBlueprintPlacement.doRender(partialTicks);
 
 		this.renderTape.setTexture(RenderTape.TEXTURE);
 		this.renderTape.setRadius(0.0625D);
