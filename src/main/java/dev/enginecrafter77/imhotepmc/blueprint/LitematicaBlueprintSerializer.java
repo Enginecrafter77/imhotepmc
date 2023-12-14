@@ -1,5 +1,7 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTable;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,6 +10,7 @@ import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
+import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +18,8 @@ import java.util.stream.Collectors;
 public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	private static final int GAME_DATA_VERSION = 1343;
 
-	private final BlueprintTranslation blueprintTranslation;
+	@Nullable
+	private final BlueprintCrossVersionTable compatTable;
 
 	private static final String NBT_KEY_MCDATAVERSION = "MinecraftDataVersion";
 	private static final String NBT_KEY_VERSION = "Version";
@@ -41,14 +45,14 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	private static final String NBT_KEY_REGION_PENDING_FLUID_TICKS = "PendingFluidTicks";
 	private static final String NBT_KEY_REGION_ENTITIES = "Entities";
 
-	public LitematicaBlueprintSerializer(BlueprintTranslation mapper)
+	public LitematicaBlueprintSerializer(@Nullable BlueprintCrossVersionTable compatTable)
 	{
-		this.blueprintTranslation = mapper;
+		this.compatTable = compatTable;
 	}
 
 	public LitematicaBlueprintSerializer()
 	{
-		this(BlueprintTranslation.pass());
+		this(null);
 	}
 
 	protected void serializeVectorInto(Vec3i vector, NBTTagCompound tag)
@@ -173,11 +177,13 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
 		builder.setMetadata(this.deserializeBlueprintMetadata(source));
 
+		int dataVersion = source.getInteger(NBT_KEY_MCDATAVERSION);
+
 		NBTTagCompound regions = source.getCompoundTag(NBT_KEY_REGIONS);
 		for(String name : regions.getKeySet())
 		{
 			NBTTagCompound regionTag = regions.getCompoundTag(name);
-			StructureBlueprint region = deserializeRegionBlueprint(regionTag);
+			StructureBlueprint region = deserializeRegionBlueprint(regionTag, dataVersion);
 			BlockPos offset = new BlockPos(readVector(regionTag.getCompoundTag(NBT_KEY_REGION_OFFSET)));
 			builder.addRegion(name, region, offset);
 		}
@@ -203,7 +209,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		return metadata;
 	}
 
-	public StructureBlueprint deserializeRegionBlueprint(NBTTagCompound regionTag)
+	public StructureBlueprint deserializeRegionBlueprint(NBTTagCompound regionTag, int version)
 	{
 		Vec3i size = absolutizeVector(readVector(regionTag.getCompoundTag(NBT_KEY_REGION_SIZE)));
 
@@ -244,7 +250,12 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 			blueprintEditor.addTileEntity(pos, tileTag);
 		}
 
-		blueprintEditor.translate(this.blueprintTranslation);
+		if(this.compatTable != null)
+		{
+			BlueprintCrossVersionTranslation translation = this.compatTable.getTranslationFor(version);
+			if(translation != null)
+				blueprintEditor.translate(translation);
+		}
 
 		return blueprintEditor.build();
 	}

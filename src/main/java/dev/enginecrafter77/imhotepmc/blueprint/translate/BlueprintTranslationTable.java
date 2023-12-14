@@ -18,6 +18,11 @@ public class BlueprintTranslationTable implements BlueprintTranslation {
 		this.rules = rules;
 	}
 
+	public Collection<BlueprintTranslationRule> getRules()
+	{
+		return this.rules;
+	}
+
 	@Nullable
 	@Override
 	public BlueprintEntry translate(BlueprintTranslationContext context, BlockPos position, BlueprintEntry old)

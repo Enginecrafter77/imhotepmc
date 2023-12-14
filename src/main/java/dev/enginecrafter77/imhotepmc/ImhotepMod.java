@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.MalformedTranslationRuleException;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
 import dev.enginecrafter77.imhotepmc.cap.AreaMarkJob;
 import dev.enginecrafter77.imhotepmc.cap.AreaMarkJobImpl;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
@@ -64,11 +62,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(modid = ImhotepMod.MOD_ID)
 public class ImhotepMod {
     private static final Logger LOGGER = LogManager.getLogger();
+
+    public static final int GAME_DATA_VERSION = 1343;
 
     // Basic mod constants.
     public static final String MOD_ID = "imhotepmc";
@@ -97,7 +99,9 @@ public class ImhotepMod {
     public static ItemShapeCard ITEM_SHAPE_CARD;
 
     private DefaultBOMProvider builderBomProvider;
+    private BlueprintGameVersionTranslator versionTranslator;
 
+    private File modConfigDir;
     private File schematicsDir;
     private SimpleNetworkWrapper netChannel;
 
@@ -107,19 +111,26 @@ public class ImhotepMod {
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
+        File configDir = event.getModConfigurationDirectory();
+        File gameDirectory = configDir.getParentFile();
+        this.modConfigDir = new File(configDir, ImhotepMod.MOD_ID);
+        this.schematicsDir = new File(gameDirectory, "schematics");
+
         MinecraftForge.EVENT_BUS.register(this);
 
         this.registerTileEntities();
         this.initializeContent();
 
-        BlueprintTranslation translation = this.loadTranslationTables(event);
-
         this.builderBomProvider = new DefaultBOMProvider();
+
+        BlueprintTranslationBuildEvent translationBuildEvent = new BlueprintTranslationBuildEvent(GAME_DATA_VERSION);
+        MinecraftForge.EVENT_BUS.post(translationBuildEvent);
+        this.versionTranslator = translationBuildEvent.getBuilder().build();
 
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID + ":main");
         this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "worldsync"));
         this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "pktstream"), 4096);
-        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(translation)));
+        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(this.versionTranslator)));
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
         this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderDwellUpdate.class, 1, Side.CLIENT);
@@ -129,10 +140,6 @@ public class ImhotepMod {
 
         CapabilityManager.INSTANCE.register(AreaMarkJob.class, CapabilityAreaMarker.AreaMarkJobStorage.INSTANCE, AreaMarkJobImpl::new);
         MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
-
-        File configDir = event.getModConfigurationDirectory();
-        File gameDirectory = configDir.getParentFile();
-        this.schematicsDir = new File(gameDirectory, "schematics");
     }
 
     @Mod.EventHandler
@@ -190,9 +197,16 @@ public class ImhotepMod {
         return this.builderBomProvider;
     }
 
-    public BlueprintTranslation loadTranslationTables(FMLPreInitializationEvent event)
+    public BlueprintGameVersionTranslator getVersionTranslator()
     {
-        BlueprintTranslationRuleCompiler compiler = new BlueprintTranslationRuleCompiler();
+        return this.versionTranslator;
+    }
+
+    private static final Pattern BTT_FILENAME_PATTERN = Pattern.compile("D([0-9]+).btt");
+
+    @SubscribeEvent
+    public void loadTranslationTables(BlueprintTranslationBuildEvent event)
+    {
         try
         {
             URL res = ImhotepMod.class.getResource("/external/btt");
@@ -202,14 +216,13 @@ public class ImhotepMod {
                 FileSystem fs = FileSystems.newFileSystem(uri, ImmutableMap.of());
                 Path path = fs.getPath("/external/btt");
                 Files.walk(path).forEach((Path src) -> {
-                    try(InputStream is = Files.newInputStream(src);)
+                    try
                     {
-                        LOGGER.info("Loading blueprint translation table " + src.getFileName());
-                        compiler.append(is);
+                        this.tryLoadTable(event, src);
                     }
-                    catch(IOException | MalformedTranslationRuleException exc)
+                    catch(Exception exc)
                     {
-                        LOGGER.error("Reading table " + src.getFileName() + " failed", exc);
+                        LOGGER.error("Error loading translation table from " + src, exc);
                     }
                 });
                 fs.close();
@@ -217,20 +230,19 @@ public class ImhotepMod {
         }
         catch(Exception exc)
         {
-            LOGGER.error("Unable to unpack blueprint translation tables", exc);
+            LOGGER.error("Unable to list blueprint translation tables", exc);
         }
 
-        File configDir = event.getModConfigurationDirectory();
-        File imhotepDir = new File(configDir, "imhotepmc");
-        File bttDir = new File(imhotepDir, "btt");
+        File bttDir = new File(this.modConfigDir, "btt");
         if(bttDir.exists())
         {
             for(File file : Objects.requireNonNull(bttDir.listFiles()))
             {
-                try(FileInputStream fis = new FileInputStream(file))
+                Path path = file.toPath();
+
+                try
                 {
-                    LOGGER.info("Loading blueprint translation table " + file.getName());
-                    compiler.append(fis);
+                    this.tryLoadTable(event, path);
                 }
                 catch(Exception exc)
                 {
@@ -238,7 +250,22 @@ public class ImhotepMod {
                 }
             }
 		}
-        return compiler.compile();
+    }
+
+    private void tryLoadTable(BlueprintTranslationBuildEvent event, Path path) throws IOException, MalformedTranslationRuleException
+    {
+        Matcher matcher = BTT_FILENAME_PATTERN.matcher(path.getFileName().toString());
+        if(!matcher.matches())
+            return;
+        int versionFrom = Integer.parseInt(matcher.group(1));
+
+        try(InputStream is = Files.newInputStream(path))
+        {
+            BlueprintTranslationRuleCompiler compiler = new BlueprintTranslationRuleCompiler();
+            LOGGER.info("Loading blueprint translation table " + path.getFileName());
+            compiler.append(is);
+            event.getBuilder().setTable(versionFrom, compiler.compile());
+        }
     }
 
     public void initializeContent()

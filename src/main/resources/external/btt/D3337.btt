@@ -1,0 +1,1586 @@
+minecraft:oak_leaves[persistent=true] => minecraft:leaves[variant=oak,check_decay=false,decayable=false]
+minecraft:oak_leaves[persistent=false] => minecraft:leaves[variant=oak,check_decay=true,decayable=true]
+minecraft:spruce_leaves[persistent=true] => minecraft:leaves[variant=spruce,check_decay=false,decayable=false]
+minecraft:spruce_leaves[persistent=false] => minecraft:leaves[variant=spruce,check_decay=true,decayable=true]
+minecraft:birch_leaves[persistent=true] => minecraft:leaves[variant=birch,check_decay=false,decayable=false]
+minecraft:birch_leaves[persistent=false] => minecraft:leaves[variant=birch,check_decay=true,decayable=true]
+minecraft:jungle_leaves[persistent=true] => minecraft:leaves[variant=jungle,check_decay=false,decayable=false]
+minecraft:jungle_leaves[persistent=false] => minecraft:leaves[variant=jungle,check_decay=true,decayable=true]
+minecraft:acacia_leaves[persistent=true] => minecraft:leaves2[variant=acacia,check_decay=false,decayable=false]
+minecraft:acacia_leaves[persistent=false] => minecraft:leaves2[variant=acacia,check_decay=true,decayable=true]
+minecraft:dark_oak_leaves[persistent=true] => minecraft:leaves2[variant=dark_oak,check_decay=false,decayable=false]
+minecraft:dark_oak_leaves[persistent=false] => minecraft:leaves2[variant=dark_oak,check_decay=true,decayable=true]
+minecraft:mangrove_leaves[persistent=true] => minecraft:leaves[variant=oak,check_decay=false,decayable=false]
+minecraft:mangrove_leaves[persistent=false] => minecraft:leaves[variant=oak,check_decay=true,decayable=true]
+minecraft:cherry_leaves[persistent=true] => minecraft:leaves[variant=oak,check_decay=false,decayable=false]
+minecraft:cherry_leaves[persistent=false] => minecraft:leaves[variant=oak,check_decay=true,decayable=true]
+minecraft:azalea_leaves[persistent=true] => minecraft:leaves[variant=oak,check_decay=false,decayable=false]
+minecraft:azalea_leaves[persistent=false] => minecraft:leaves[variant=oak,check_decay=true,decayable=true]
+minecraft:flowering_azalea_leaves[persistent=true] => minecraft:leaves[variant=oak,check_decay=false,decayable=false]
+minecraft:flowering_azalea_leaves[persistent=false] => minecraft:leaves[variant=oak,check_decay=true,decayable=true]
+
+minecraft:muddy_mangrove_roots[waterlogged=false] => minecraft:air
+minecraft:muddy_mangrove_roots[waterlogged=true] => minecraft:water
+minecraft:mangrove_roots[waterlogged=true] => minecraft:water
+minecraft:mangrove_roots[waterlogged=false] => minecraft:air
+
+minecraft:note_block => minecraft:noteblock
+
+minecraft:orange_bed[occupied=%1,part=%2,facing=%3] => minecraft:bed[occupied=%1,part=%2,facing=%3]
+minecraft:purple_bed[occupied=%1,part=%2,facing=%3] => minecraft:bed[occupied=%1,part=%2,facing=%3]
+minecraft:white_bed[occupied=%1,part=%2,facing=%3] => minecraft:bed[occupied=%1,part=%2,facing=%3]
+minecraft:black_bed[occupied=%1,part=%2,facing=%3] => minecraft:bed[occupied=%1,part=%2,facing=%3]
+minecraft:green_bed[occupied=%1,part=%2,facing=%3] => minecraft:bed[occupied=%1,part=%2,facing=%3]
+minecraft:cyan_bed[occupied=%1,part=%2,facing=%3] => minecraft:bed[occupied=%1,part=%2,facing=%3]
+
+minecraft:chiseled_bookshelf => minecraft:bookshelf
+
+minecraft:oak_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:spruce_wood[axis=%1] => minecraft:planks[variant=spruce,axis=%1]
+minecraft:birch_wood[axis=%1] => minecraft:planks[variant=birch,axis=%1]
+minecraft:jungle_wood[axis=%1] => minecraft:planks[variant=jungle,axis=%1]
+minecraft:acacia_wood[axis=%1] => minecraft:planks[variant=acacia,axis=%1]
+minecraft:dark_oak_wood[axis=%1] => minecraft:planks[variant=dark_oak,axis=%1]
+minecraft:mangrove_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:cherry_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:bamboo_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:crimson_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:warped_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+
+minecraft:stripped_oak_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:stripped_spruce_wood[axis=%1] => minecraft:planks[variant=spruce,axis=%1]
+minecraft:stripped_birch_wood[axis=%1] => minecraft:planks[variant=birch,axis=%1]
+minecraft:stripped_jungle_wood[axis=%1] => minecraft:planks[variant=jungle,axis=%1]
+minecraft:stripped_acacia_wood[axis=%1] => minecraft:planks[variant=acacia,axis=%1]
+minecraft:stripped_dark_oak_wood[axis=%1] => minecraft:planks[variant=dark_oak,axis=%1]
+minecraft:stripped_mangrove_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:stripped_cherry_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:stripped_bamboo_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:stripped_crimson_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+minecraft:stripped_warped_wood[axis=%1] => minecraft:planks[variant=oak,axis=%1]
+
+minecraft:cherry_wood[axis=%1] => minecraft:log[variant=oak,axis=%1]
+
+minecraft:seagrass => minecraft:water
+minecraft:tall_seagrass => minecraft:water
+minecraft:lily_pad => minecraft:waterlily
+minecraft:cobweb => minecraft:web
+
+minecraft:grass => minecraft:tallgrass[type=tall_grass]
+minecraft:fern => minecraft:tallgrass[type=fern]
+minecraft:dead_bush => minecraft:tallgrass[type=dead_bush]
+
+minecraft:oak_planks => minecraft:planks[variant=oak]
+minecraft:spruce_planks => minecraft:planks[variant=spruce]
+minecraft:birch_planks => minecraft:planks[variant=birch]
+minecraft:jungle_planks => minecraft:planks[variant=jungle]
+minecraft:acacia_planks => minecraft:planks[variant=acacia]
+minecraft:dark_oak_planks => minecraft:planks[variant=dark_oak]
+minecraft:mangrove_planks => minecraft:planks[variant=oak]
+minecraft:cherry_planks => minecraft:planks[variant=oak]
+minecraft:bamboo_planks => minecraft:planks[variant=oak]
+minecraft:crimson_planks => minecraft:planks[variant=oak]
+minecraft:warped_planks => minecraft:planks[variant=oak]
+
+minecraft:oak_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:spruce_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:birch_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:jungle_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:acacia_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:dark_oak_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:mangrove_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:cherry_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:bamboo_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:crimson_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:warped_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+minecraft:nether_brick_fence[east=%1,north=%2,south=%3,west=%4] => minecraft:fence[east=%1,north=%2,south=%3,west=%4]
+
+minecraft:oak_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:spruce_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:birch_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:jungle_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:acacia_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:dark_oak_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:mangrove_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:cherry_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:bamboo_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:crimson_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+minecraft:warped_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
+
+minecraft:oak_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:spruce_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:birch_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:jungle_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:acacia_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:dark_oak_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:mangrove_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:cherry_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:bamboo_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:crimson_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:warped_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+
+minecraft:oak_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:spruce_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:birch_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:jungle_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:acacia_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:dark_oak_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:mangrove_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:cherry_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:bamboo_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:crimson_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+minecraft:warped_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
+
+minecraft:oak_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:spruce_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:birch_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:jungle_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:acacia_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:dark_oak_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:mangrove_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:cherry_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:bamboo_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:crimson_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+minecraft:warped_trapdoor[facing=%1,half=%2,open=%3] => minecraft:trapdoor[facing=%1,half=%2,open=%3]
+
+minecraft:deepslate_redstone_ore => minecraft:redstone_ore
+minecraft:redstone_ore => minecraft:redstone_ore
+minecraft:deepslate_gold_ore => minecraft:gold_ore
+minecraft:deepslate_iron_ore => minecraft:iron_ore
+minecraft:deepslate_coal_ore => minecraft:coal_ore
+minecraft:nether_gold_ore => minecraft:netherrack
+
+minecraft:repeater[powered=false,delay=%1,facing=%2,locked=%3] => minecraft:unpowered_repeater[delay=%1,facing=%2,locked=%3]
+minecraft:repeater[powered=true,delay=%1,facing=%2,locked=%3] => minecraft:powered_repeater[delay=%1,facing=%2,locked=%3]
+
+minecraft:redstone_torch[lit=true] => minecraft:redstone_torch
+minecraft:redstone_torch[lit=false] => minecraft:unlit_redstone_torch
+
+minecraft:oak_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:spruce_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:birch_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:jungle_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:acacia_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:dark_oak_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:mangrove_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:cherry_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:bamboo_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:crimson_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:warped_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+
+minecraft:oak_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:spruce_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:birch_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:jungle_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:acacia_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:dark_oak_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:mangrove_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:cherry_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:bamboo_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:crimson_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:warped_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+
+minecraft:oak_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:spruce_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:birch_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:jungle_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:acacia_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:dark_oak_button[facing=%1,powered=%2] => minecraft:wooden_button[facing=%1,powered=%2]
+minecraft:mangrove_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:cherry_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:bamboo_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:crimson_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+minecraft:warped_fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4] => minecraft:fence_gate[in_wall=%1,powered=%2,open=%3,facing=%4]
+
+minecraft:detector_rail[powered=%1,shape=%2] => minecraft:detector_rail[powered=%1,shape=%2]
+minecraft:powered_rail[powered=%1,shape=%2] => minecraft:golden_rail[powered=%1,shape=%2]
+
+minecraft:pumpkin_stem[age=%1] => minecraft:pumpkin_stem[age=%1,facing=up]
+minecraft:attached_pumpkin_stem[facing=%1] => minecraft:pumpkin_stem[age=7,facing=%1]
+minecraft:melon_stem[age=%1] => minecraft:melon_stem[age=%1,facing=up]
+minecraft:attached_melon_stem[facing=%1] => minecraft:melon_stem[age=7,facing=%1]
+
+minecraft:carved_pumpkin[facing=%1] => minecraft:pumpkin[facing=%1]
+minecraft:jack_o_lantern[facing=%1] => minecraft:pumpkin[facing=%1]
+minecraft:melon => minecraft:melon_block
+
+minecraft:glow_lichen[waterlogged=false] => minecraft:air
+minecraft:glow_lichen[waterlogged=true] => minecraft:water
+
+minecraft:stone_brick_stairs[facing=%1,half=%2,shape=%3] => minecraft:stone_brick_stairs[facing=%1,half=%2,shape=%3]
+minecraft:sandstone_stairs[facing=%1,half=%2,shape=%3] => minecraft:sandstone_stairs[facing=%1,half=%2,shape=%3]
+minecraft:brick_stairs[facing=%1,half=%2,shape=%3] => minecraft:brick_stairs[facing=%1,half=%2,shape=%3]
+minecraft:mud_brick_stairs[facing=%1,half=%2,shape=%3] => minecraft:brick_stairs[facing=%1,half=%2,shape=%3]
+minecraft:dark_prismarine_stairs[waterlogged=true,half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[facing=%1,half=%2,shape=%3]
+minecraft:bamboo_mosaic_stairs[waterlogged=true,half=%1,facing=%2,shape=%3] => minecraft:oak_stairs[facing=%1,half=%2,shape=%3]
+
+minecraft:sand => minecraft:sand[variant=sand]
+minecraft:red_sand => minecraft:sand[variant=red_sand]
+minecraft:suspicious_sand[dusted=%1] => minecraft:sand[variant=sand]
+
+minecraft:nether_bricks => minecraft:nether_brick
+minecraft:nether_portal[axis=%1] => minecraft:portal[axis=%1]
+
+minecraft:soul_torch => minecraft:torch[facing=up]
+minecraft:soul_wall_torch[facing=%1] => minecraft:torch[facing=%1]
+
+minecraft:redstone_lamp[lit=false] => minecraft:redstone_lamp
+minecraft:redstone_lamp[lit=true] => minecraft:lit_redstone_lamp
+
+minecraft:cobblestone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobblestone_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:mossy_cobblestone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=mossy_cobblestone]
+minecraft:mossy_cobblestone_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=mossy_cobblestone]
+
+minecraft:andesite_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:andesite_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:andesite_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:andesite_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:andesite_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:andesite_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:andesite_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:andesite_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:andesite_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:andesite_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:andesite_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:andesite_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:andesite_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:andesite_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:andesite_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:andesite_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:andesite_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:andesite_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:andesite_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:andesite_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:andesite_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:andesite_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:andesite_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:andesite_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:andesite_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:andesite_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:andesite_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:andesite_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:andesite_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:andesite_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:andesite_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:andesite_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:andesite_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:andesite_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:mossy_stone_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:mossy_stone_brick_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mossy_stone_brick_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:mossy_stone_brick_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:stone_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:stone_brick_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:stone_brick_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:stone_brick_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:stone_brick_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:stone_brick_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:stone_brick_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:stone_brick_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:stone_brick_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:stone_brick_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:stone_brick_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:stone_brick_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:stone_brick_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:stone_brick_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:stone_brick_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:stone_brick_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:stone_brick_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:stone_brick_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:stone_brick_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:stone_brick_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:stone_brick_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:stone_brick_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:stone_brick_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:stone_brick_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:stone_brick_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:stone_brick_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:stone_brick_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:stone_brick_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:stone_brick_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:stone_brick_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:stone_brick_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:stone_brick_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:stone_brick_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:stone_brick_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:blackstone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:blackstone_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:polished_blackstone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_blackstone_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:brick_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:cobbled_deepslate_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:cobbled_deepslate_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:polished_deepslate_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:polished_deepslate_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:deepslate_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_brick_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:deepslate_tile_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:deepslate_tile_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:diorite_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:diorite_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:granite_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:granite_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:end_stone_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:end_stone_brick_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:mud_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:mud_brick_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:nether_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:nether_brick_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:prismarine_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:prismarine_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:sandstone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:sandstone_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:red_sandstone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=low,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=low,east=none,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=low,east=none,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=low,east=none,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=low,east=low,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=low,east=low,south=none,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=low,east=low,south=low,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=low,east=low,south=low,north=low,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=none,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=false,east=true,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=tall,east=none,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=tall,east=none,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=tall,east=none,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=tall,east=none,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=false,south=true,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=tall,east=tall,south=none,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=tall,east=tall,south=none,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=false,north=true,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=tall,east=tall,south=tall,north=none,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=false,up=%1,variant=cobblestone]
+minecraft:red_sandstone_wall[west=tall,east=tall,south=tall,north=tall,up=%1] => minecraft:cobblestone_wall[west=true,east=true,south=true,north=true,up=%1,variant=cobblestone]
+
+minecraft:furnace[facing=%1,lit=false] => minecraft:furnace[facing=%1]
+minecraft:furnace[facing=%1,lit=true] => minecraft:lit_furnace[facing=%1]
+
+minecraft:soul_soil => minecraft:soul_sand
+minecraft:basalt => minecraft:stone
+minecraft:polished_basalt => minecraft:stone
+
+minecraft:skull[rotation=9] => minecraft:skull
+
+minecraft:white_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=white,north=%1,south=%2,east=%3,west=%4]
+minecraft:orange_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=orange,north=%1,south=%2,east=%3,west=%4]
+minecraft:magenta_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=magenta,north=%1,south=%2,east=%3,west=%4]
+minecraft:light_blue_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=light_blue,north=%1,south=%2,east=%3,west=%4]
+minecraft:yellow_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=yellow,north=%1,south=%2,east=%3,west=%4]
+minecraft:lime_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=lime,north=%1,south=%2,east=%3,west=%4]
+minecraft:pink_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=pink,north=%1,south=%2,east=%3,west=%4]
+minecraft:gray_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=gray,north=%1,south=%2,east=%3,west=%4]
+minecraft:silver_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=silver,north=%1,south=%2,east=%3,west=%4]
+minecraft:cyan_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=cyan,north=%1,south=%2,east=%3,west=%4]
+minecraft:purple_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=purple,north=%1,south=%2,east=%3,west=%4]
+minecraft:blue_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=blue,north=%1,south=%2,east=%3,west=%4]
+minecraft:brown_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=brown,north=%1,south=%2,east=%3,west=%4]
+minecraft:green_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=green,north=%1,south=%2,east=%3,west=%4]
+minecraft:red_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=red,north=%1,south=%2,east=%3,west=%4]
+minecraft:black_stained_glass_pane[north=%1,south=%2,east=%3,west=%4] => minecraft:stained_glass_pane[color=black,north=%1,south=%2,east=%3,west=%4]
+
+minecraft:cauldron => minecraft:cauldron[level=0]
+minecraft:water_cauldron[level=%1] => minecraft:cauldron[level=%1]
+minecraft:lava_cauldron => minecraft:cauldron[level=0]
+minecraft:powder_snow_cauldron[level=%1] => minecraft:cauldron[level=%1]
+
+minecraft:anvil[facing=%1] => minecraft:anvil[damage=0,facing=%1]
+minecraft:chipped_anvil[facing=%1] => minecraft:anvil[damage=1,facing=%1]
+minecraft:damaged_anvil[facing=%1] => minecraft:anvil[damage=2,facing=%1]
+
+minecraft:light[waterlogged=false] => minecraft:air
+minecraft:light[waterlogged=true] => minecraft:water
+
+minecraft:white_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:orange_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:magenta_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:light_blue_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:yellow_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:lime_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:pink_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:gray_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:silver_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:cyan_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:purple_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:blue_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:brown_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:green_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:red_banner[rotation=%1] => minecraft:banner[rotation=%1]
+minecraft:black_banner[rotation=%1] => minecraft:banner[rotation=%1]
+
+minecraft:purpur_slab[type=%1] => minecraft:stone_slab[half=%1,variant=stone]
+
+minecraft:chain[waterlogged=true] => minecraft:water
+minecraft:chain[waterlogged=false] => minecraft:air
+
+minecraft:oak_sapling[stage=%1] => minecraft:sapling[stage=%1,type=oak]
+minecraft:spruce_sapling[stage=%1] => minecraft:sapling[stage=%1,type=spruce]
+minecraft:birch_sapling[stage=%1] => minecraft:sapling[stage=%1,type=birch]
+minecraft:jungle_sapling[stage=%1] => minecraft:sapling[stage=%1,type=jungle]
+minecraft:acacia_sapling[stage=%1] => minecraft:sapling[stage=%1,type=acacia]
+minecraft:dark_oak_sapling[stage=%1] => minecraft:sapling[stage=%1,type=dark_oak]
+
+minecraft:oak_slab[type=%1] => minecraft:wooden_slab[type=%1,variant=oak]
+minecraft:spruce_sapling[stage=%1] => minecraft:sapling[stage=%1,type=spruce]
+minecraft:birch_sapling[stage=%1] => minecraft:sapling[stage=%1,type=birch]
+minecraft:jungle_sapling[stage=%1] => minecraft:sapling[stage=%1,type=jungle]
+minecraft:acacia_sapling[stage=%1] => minecraft:sapling[stage=%1,type=acacia]
+minecraft:dark_oak_sapling[stage=%1] => minecraft:sapling[stage=%1,type=dark_oak]
+
+minecraft:acacia_wood[axis=%1] => minecraft:log2[axis=%1,variant=acacia]
+
+minecraft:allium => minecraft:red_flower[type=allium]
+minecraft:amethyst_block => minecraft:stone
+minecraft:amethyst_cluster[waterlogged=false] => minecraft:air
+minecraft:amethyst_cluster[waterlogged=true] => minecraft:water
+minecraft:ancient_debris => minecraft:netherrack
+minecraft:andesite => minecraft:stone[variant=andesite]
+minecraft:andesite_slab[type=%1,waterlogged=false] => minecraft:stone_slab[half=%1,variant=stone]
+minecraft:andesite_slab[type=double,waterlogged=false] => minecraft:double_stone_slab[variant=stone]
+
+minecraft:azalea => minecraft:air
+minecraft:azure_bluet => minecraft:air
+minecraft:bamboo_block => minecraft:air
+minecraft:bamboo => minecraft:air
+minecraft:bamboo_mosaic => minecraft:planks[variant=oak]
+minecraft:bamboo_planks => minecraft:planks[variant=oak]
+minecraft:barrel => minecraft:planks[variant=oak]
+minecraft:beehive => minecraft:air
+minecraft:bee_nest => minecraft:air
+minecraft:bell => minecraft:air
+
+minecraft:big_dripleaf_stem[waterlogged=false] => minecraft:air
+minecraft:big_dripleaf_stem[waterlogged=true] => minecraft:water
+minecraft:big_dripleaf[waterlogged=false] => minecraft:air
+minecraft:big_dripleaf[waterlogged=true] => minecraft:water
+
+minecraft:white_candle => minecraft:air
+minecraft:orange_candle => minecraft:air
+minecraft:magenta_candle => minecraft:air
+minecraft:light_blue_candle => minecraft:air
+minecraft:yellow_candle => minecraft:air
+minecraft:lime_candle => minecraft:air
+minecraft:pink_candle => minecraft:air
+minecraft:gray_candle => minecraft:air
+minecraft:silver_candle => minecraft:air
+minecraft:cyan_candle => minecraft:air
+minecraft:purple_candle => minecraft:air
+minecraft:blue_candle => minecraft:air
+minecraft:brown_candle => minecraft:air
+minecraft:green_candle => minecraft:air
+minecraft:red_candle => minecraft:air
+minecraft:black_candle => minecraft:air
+
+minecraft:white_cake_candle => minecraft:air
+minecraft:orange_cake_candle => minecraft:air
+minecraft:magenta_cake_candle => minecraft:air
+minecraft:light_blue_cake_candle => minecraft:air
+minecraft:yellow_cake_candle => minecraft:air
+minecraft:lime_cake_candle => minecraft:air
+minecraft:pink_cake_candle => minecraft:air
+minecraft:gray_cake_candle => minecraft:air
+minecraft:silver_cake_candle => minecraft:air
+minecraft:cyan_cake_candle => minecraft:air
+minecraft:purple_cake_candle => minecraft:air
+minecraft:blue_cake_candle => minecraft:air
+minecraft:brown_cake_candle => minecraft:air
+minecraft:green_cake_candle => minecraft:air
+minecraft:red_cake_candle => minecraft:air
+minecraft:black_cake_candle => minecraft:air
+
+minecraft:white_carpet => minecraft:carpet[color=white]
+minecraft:orange_carpet => minecraft:carpet[color=orange]
+minecraft:magenta_carpet => minecraft:carpet[color=magenta]
+minecraft:light_blue_carpet => minecraft:carpet[color=light_blue]
+minecraft:yellow_carpet => minecraft:carpet[color=yellow]
+minecraft:lime_carpet => minecraft:carpet[color=lime]
+minecraft:pink_carpet => minecraft:carpet[color=pink]
+minecraft:gray_carpet => minecraft:carpet[color=gray]
+minecraft:silver_carpet => minecraft:carpet[color=silver]
+minecraft:cyan_carpet => minecraft:carpet[color=cyan]
+minecraft:purple_carpet => minecraft:carpet[color=purple]
+minecraft:blue_carpet => minecraft:carpet[color=blue]
+minecraft:brown_carpet => minecraft:carpet[color=brown]
+minecraft:green_carpet => minecraft:carpet[color=green]
+minecraft:red_carpet => minecraft:carpet[color=red]
+minecraft:black_carpet => minecraft:carpet[color=black]
+
+minecraft:white_concrete => minecraft:concrete[color=white]
+minecraft:orange_concrete => minecraft:concrete[color=orange]
+minecraft:magenta_concrete => minecraft:concrete[color=magenta]
+minecraft:light_blue_concrete => minecraft:concrete[color=light_blue]
+minecraft:yellow_concrete => minecraft:concrete[color=yellow]
+minecraft:lime_concrete => minecraft:concrete[color=lime]
+minecraft:pink_concrete => minecraft:concrete[color=pink]
+minecraft:gray_concrete => minecraft:concrete[color=gray]
+minecraft:silver_concrete => minecraft:concrete[color=silver]
+minecraft:cyan_concrete => minecraft:concrete[color=cyan]
+minecraft:purple_concrete => minecraft:concrete[color=purple]
+minecraft:blue_concrete => minecraft:concrete[color=blue]
+minecraft:brown_concrete => minecraft:concrete[color=brown]
+minecraft:green_concrete => minecraft:concrete[color=green]
+minecraft:red_concrete => minecraft:concrete[color=red]
+minecraft:black_concrete => minecraft:concrete[color=black]
+
+minecraft:white_concrete_powder => minecraft:concrete_powder[color=white]
+minecraft:orange_concrete_powder => minecraft:concrete_powder[color=orange]
+minecraft:magenta_concrete_powder => minecraft:concrete_powder[color=magenta]
+minecraft:light_blue_concrete_powder => minecraft:concrete_powder[color=light_blue]
+minecraft:yellow_concrete_powder => minecraft:concrete_powder[color=yellow]
+minecraft:lime_concrete_powder => minecraft:concrete_powder[color=lime]
+minecraft:pink_concrete_powder => minecraft:concrete_powder[color=pink]
+minecraft:gray_concrete_powder => minecraft:concrete_powder[color=gray]
+minecraft:silver_concrete_powder => minecraft:concrete_powder[color=silver]
+minecraft:cyan_concrete_powder => minecraft:concrete_powder[color=cyan]
+minecraft:purple_concrete_powder => minecraft:concrete_powder[color=purple]
+minecraft:blue_concrete_powder => minecraft:concrete_powder[color=blue]
+minecraft:brown_concrete_powder => minecraft:concrete_powder[color=brown]
+minecraft:green_concrete_powder => minecraft:concrete_powder[color=green]
+minecraft:red_concrete_powder => minecraft:concrete_powder[color=red]
+minecraft:black_concrete_powder => minecraft:concrete_powder[color=black]
+
+minecraft:white_stained_glass => minecraft:stained_glass[color=white]
+minecraft:orange_stained_glass => minecraft:stained_glass[color=orange]
+minecraft:magenta_stained_glass => minecraft:stained_glass[color=magenta]
+minecraft:light_blue_stained_glass => minecraft:stained_glass[color=light_blue]
+minecraft:yellow_stained_glass => minecraft:stained_glass[color=yellow]
+minecraft:lime_stained_glass => minecraft:stained_glass[color=lime]
+minecraft:pink_stained_glass => minecraft:stained_glass[color=pink]
+minecraft:gray_stained_glass => minecraft:stained_glass[color=gray]
+minecraft:silver_stained_glass => minecraft:stained_glass[color=silver]
+minecraft:cyan_stained_glass => minecraft:stained_glass[color=cyan]
+minecraft:purple_stained_glass => minecraft:stained_glass[color=purple]
+minecraft:blue_stained_glass => minecraft:stained_glass[color=blue]
+minecraft:brown_stained_glass => minecraft:stained_glass[color=brown]
+minecraft:green_stained_glass => minecraft:stained_glass[color=green]
+minecraft:red_stained_glass => minecraft:stained_glass[color=red]
+minecraft:black_stained_glass => minecraft:stained_glass[color=black]
+
+minecraft:white_wool => minecraft:wool[color=white]
+minecraft:orange_wool => minecraft:wool[color=orange]
+minecraft:magenta_wool => minecraft:wool[color=magenta]
+minecraft:light_blue_wool => minecraft:wool[color=light_blue]
+minecraft:yellow_wool => minecraft:wool[color=yellow]
+minecraft:lime_wool => minecraft:wool[color=lime]
+minecraft:pink_wool => minecraft:wool[color=pink]
+minecraft:gray_wool => minecraft:wool[color=gray]
+minecraft:silver_wool => minecraft:wool[color=silver]
+minecraft:cyan_wool => minecraft:wool[color=cyan]
+minecraft:purple_wool => minecraft:wool[color=purple]
+minecraft:blue_wool => minecraft:wool[color=blue]
+minecraft:brown_wool => minecraft:wool[color=brown]
+minecraft:green_wool => minecraft:wool[color=green]
+minecraft:red_wool => minecraft:wool[color=red]
+minecraft:black_wool => minecraft:wool[color=black]
+
+minecraft:blast_furnace[facing=%1,lit=false] => minecraft:furnace[facing=%1]
+minecraft:blast_furnace[facing=%1,lit=true] => minecraft:lit_furnace[facing=%1]
+
+minecraft:blackstone => minecraft:stone
+
+minecraft:terracotta => minecraft:hardened_clay
+minecraft:white_terracotta => minecraft:stained_hardened_clay[color=white]
+minecraft:orange_terracotta => minecraft:stained_hardened_clay[color=orange]
+minecraft:magenta_terracotta => minecraft:stained_hardened_clay[color=magenta]
+minecraft:light_blue_terracotta => minecraft:stained_hardened_clay[color=light_blue]
+minecraft:yellow_terracotta => minecraft:stained_hardened_clay[color=yellow]
+minecraft:lime_terracotta => minecraft:stained_hardened_clay[color=lime]
+minecraft:pink_terracotta => minecraft:stained_hardened_clay[color=pink]
+minecraft:gray_terracotta => minecraft:stained_hardened_clay[color=gray]
+minecraft:silver_terracotta => minecraft:stained_hardened_clay[color=silver]
+minecraft:cyan_terracotta => minecraft:stained_hardened_clay[color=cyan]
+minecraft:purple_terracotta => minecraft:stained_hardened_clay[color=purple]
+minecraft:blue_terracotta => minecraft:stained_hardened_clay[color=blue]
+minecraft:brown_terracotta => minecraft:stained_hardened_clay[color=brown]
+minecraft:green_terracotta => minecraft:stained_hardened_clay[color=green]
+minecraft:red_terracotta => minecraft:stained_hardened_clay[color=red]
+minecraft:black_terracotta => minecraft:stained_hardened_clay[color=black]
+
+minecraft:blue_ice => minecraft:ice
+minecraft:blue_orchid => minecraft:red_flower[type=blue_orchid]
+
+minecraft:bricks => minecraft:brick_block
+minecraft:bubble_column[drag=false] => minecraft:water
+minecraft:bubble_column[drag=true] => minecraft:water
+
+minecraft:brain_coral_block => minecraft:water
+minecraft:brain_coral_fan[waterlogged=false] => minecraft:air
+minecraft:brain_coral_fan[waterlogged=true] => minecraft:water
+minecraft:brain_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:brain_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:bubble_coral_block => minecraft:water
+minecraft:bubble_coral_fan[waterlogged=false] => minecraft:air
+minecraft:bubble_coral_fan[waterlogged=true] => minecraft:water
+minecraft:bubble_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:bubble_coral_wall_fan[waterlogged=true] => minecraft:water
+
+minecraft:budding_amethyst => minecraft:stone
+minecraft:calcite => minecraft:stone
+
+minecraft:campfire[waterlogged=false] => minecraft:air
+minecraft:campfire[waterlogged=true] => minecraft:water
+
+minecraft:cartography_table => minecraft:crafting_table
+minecraft:cave_air => minecraft:air
+minecraft:cave_vines => minecraft:vine[east=true,north=true,south=true,up=true,west=true]
+minecraft:cave_vines_plant => minecraft:vine[east=true,north=true,south=true,up=true,west=true]
+
+minecraft:chiseled_deepslate => minecraft:stone
+minecraft:chiseled_nether_bricks => minecraft:nether_brick
+minecraft:chiseled_quartz_block => minecraft:quartz_block[variant=chiseled]
+minecraft:chiseled_red_sandstone => minecraft:red_sandstone[type=chiseled_red_sandstone]
+minecraft:chiseled_sandstone => minecraft:sandstone[type=chiseled_sandstone]
+minecraft:chiseled_stone_bricks => minecraft:stonebrick[variant=chiseled_stonebrick]
+minecraft:cracked_stone_bricks => minecraft:stonebrick[variant=cracked_stonebrick]
+minecraft:cracked_deepslate_bricks => minecraft:stonebrick[variant=cracked_stonebrick]
+minecraft:cracked_deepslate_tiles => minecraft:stonebrick[variant=cracked_stonebrick]
+minecraft:cracked_nether_bricks => minecraft:nether_brick
+minecraft:cobbled_deepslate => minecraft:cobblestone
+minecraft:coarse_dirt => minecraft:dirt
+
+minecraft:chiseled_polished_blackstone => minecraft:stone
+minecraft:cracked_polished_blackstone_bricks => minecraft:air
+
+minecraft:cobbled_deepslate_stairs[facing=%1,half=%2,shape=%3] => minecraft:stone_stairs[facing=%1,half=%2,shape=%3]
+
+minecraft:comparator[powered=false,facing=%1,mode=%2] => minecraft:unpowered_comparator[powered=false,facing=%1,mode=%2]
+minecraft:comparator[powered=true,facing=%1,mode=%2] => minecraft:powered_comparator[powered=true,facing=%1,mode=%2]
+
+minecraft:composter => minecraft:planks[variant=oak]
+
+minecraft:conduit[waterlogged=false] => minecraft:air
+minecraft:conduit[waterlogged=true] => minecraft:water
+
+minecraft:copper_block => minecraft:air
+minecraft:copper_ore => minecraft:stone
+minecraft:cornflower => minecraft:air
+
+minecraft:creeper_head[rotation=%1] => minecraft:air
+minecraft:creeper_wall_head[facing=%1] => minecraft:air
+
+minecraft:crimson_fungus => minecraft:brown_mushroom
+minecraft:crimson_hyphae => minecraft:brown_mushroom_block[variant=center]
+minecraft:crimson_nylium => minecraft:netherrack
+minecraft:crimson_planks => minecraft:planks[variant=oak]
+minecraft:crimson_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:crimson_roots => minecraft:netherrack
+minecraft:crimson_stem[axis=x] => minecraft:brown_mushroom_block[variant=north]
+minecraft:crimson_stem[axis=y] => minecraft:brown_mushroom_block[variant=stem]
+minecraft:crimson_stem[axis=z] => minecraft:brown_mushroom_block[variant=east]
+minecraft:crying_obsidian => minecraft:obsidian
+
+minecraft:cut_copper => minecraft:air
+minecraft:cut_copper_stairs[waterlogged=false] => minecraft:air
+minecraft:cut_copper_stairs[waterlogged=true] => minecraft:water
+
+minecraft:cut_red_sandstone => minecraft:red_sandstone[type=smooth_red_sandstone]
+minecraft:cut_sandstone => minecraft:sandstone[type=smooth_sandstone]
+minecraft:dandelion => minecraft:yellow_flower[type=dandelion]
+
+minecraft:dark_prismarine => minecraft:stone
+minecraft:dark_prismarine_stairs[facing=%1,half=%2,shape=%3] => minecraft:stone_stairs[facing=%1,half=%2,shape=%3]
+minecraft:daylight_detector[power=0,inverted=%1] => minecraft:daylight_detector[power=15]
+
+minecraft:brain_coral_block => minecraft:air
+minecraft:brain_coral_fan[waterlogged=false] => minecraft:air
+minecraft:brain_coral_fan[waterlogged=true] => minecraft:water
+minecraft:brain_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:brain_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:brain_coral[waterlogged=false] => minecraft:air
+minecraft:brain_coral[waterlogged=true] => minecraft:water
+
+minecraft:dead_brain_coral_block => minecraft:air
+minecraft:dead_brain_coral_fan[waterlogged=false] => minecraft:air
+minecraft:dead_brain_coral_fan[waterlogged=true] => minecraft:water
+minecraft:dead_brain_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:dead_brain_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:dead_brain_coral[waterlogged=false] => minecraft:air
+minecraft:dead_brain_coral[waterlogged=true] => minecraft:water
+
+minecraft:bubble_coral_block => minecraft:air
+minecraft:bubble_coral_fan[waterlogged=false] => minecraft:air
+minecraft:bubble_coral_fan[waterlogged=true] => minecraft:water
+minecraft:bubble_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:bubble_coral_wall_fan[waterlogged=true] => minecraft:water
+
+minecraft:dead_bubble_coral_block => minecraft:air
+minecraft:dead_bubble_coral_fan[waterlogged=false] => minecraft:air
+minecraft:dead_bubble_coral_fan[waterlogged=true] => minecraft:water
+minecraft:dead_bubble_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:dead_bubble_coral_wall_fan[waterlogged=true] => minecraft:water
+
+minecraft:fire_coral_block => minecraft:air
+minecraft:fire_coral_fan[waterlogged=false] => minecraft:air
+minecraft:fire_coral_fan[waterlogged=true] => minecraft:water
+minecraft:fire_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:fire_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:fire_coral[waterlogged=false] => minecraft:air
+minecraft:fire_coral[waterlogged=true] => minecraft:water
+
+minecraft:dead_fire_coral_block => minecraft:air
+minecraft:dead_fire_coral_fan[waterlogged=false] => minecraft:air
+minecraft:dead_fire_coral_fan[waterlogged=true] => minecraft:water
+minecraft:dead_fire_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:dead_fire_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:dead_fire_coral[waterlogged=false] => minecraft:air
+minecraft:dead_fire_coral[waterlogged=true] => minecraft:water
+
+minecraft:horn_coral_block => minecraft:air
+minecraft:horn_coral_fan[waterlogged=false] => minecraft:air
+minecraft:horn_coral_fan[waterlogged=true] => minecraft:water
+minecraft:horn_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:horn_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:horn_coral[waterlogged=false] => minecraft:air
+minecraft:horn_coral[waterlogged=true] => minecraft:water
+
+minecraft:dead_horn_coral_block => minecraft:air
+minecraft:dead_horn_coral_fan[waterlogged=false] => minecraft:air
+minecraft:dead_horn_coral_fan[waterlogged=true] => minecraft:water
+minecraft:dead_horn_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:dead_horn_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:dead_horn_coral[waterlogged=false] => minecraft:air
+minecraft:dead_horn_coral[waterlogged=true] => minecraft:water
+
+minecraft:tube_coral_block => minecraft:air
+minecraft:tube_coral_fan[waterlogged=false] => minecraft:air
+minecraft:tube_coral_fan[waterlogged=true] => minecraft:water
+minecraft:tube_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:tube_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:tube_coral[waterlogged=false] => minecraft:air
+minecraft:tube_coral[waterlogged=true] => minecraft:water
+
+minecraft:dead_tube_coral_block => minecraft:air
+minecraft:dead_tube_coral_fan[waterlogged=false] => minecraft:air
+minecraft:dead_tube_coral_fan[waterlogged=true] => minecraft:water
+minecraft:dead_tube_coral_wall_fan[waterlogged=false] => minecraft:air
+minecraft:dead_tube_coral_wall_fan[waterlogged=true] => minecraft:water
+minecraft:dead_tube_coral[waterlogged=false] => minecraft:air
+minecraft:dead_tube_coral[waterlogged=true] => minecraft:water
+
+minecraft:decorated_pot[waterlogged=false] => minecraft:flower_pot[contents=empty,legacy_data=0]
+
+minecraft:deepslate => minecraft:stone
+minecraft:deepslate_bricks => minecraft:stonebrick[variant=stonebrick]
+minecraft:deepslate_brick_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+minecraft:deepslate_copper_ore => minecraft:stone[variant=stone]
+minecraft:deepslate_diamond_ore => minecraft:diamond_ore
+minecraft:deepslate_emerald_ore => minecraft:emerald_ore
+minecraft:deepslate_lapis_ore => minecraft:lapis_ore
+minecraft:deepslate_tiles => minecraft:stonebrick[variant=stonebrick]
+minecraft:deepslate_tile_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+minecraft:diorite => minecraft:stone[variant=diorite]
+minecraft:dirt_path => minecraft:grass_path
+
+minecraft:dragon_head => minecraft:air
+minecraft:dragon_wall_head => minecraft:air
+
+minecraft:dried_kelp_block => minecraft:air
+minecraft:dripstone_block => minecraft:air
+
+minecraft:end_stone_bricks => minecraft:stonebrick[variant=stonebrick]
+minecraft:end_stone_brick_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+
+minecraft:exposed_copper => minecraft:air
+minecraft:exposed_cut_copper => minecraft:air
+minecraft:exposed_cut_copper_stairs => minecraft:air
+minecraft:fletching_table => minecraft:crafting_table
+minecraft:flowering_azalea => minecraft:air
+minecraft:frogspawn => minecraft:air
+minecraft:gilded_blackstone => minecraft:stone[variant=stone]
+minecraft:granite => minecraft:stone[variant=granite]
+minecraft:grass_block[snowy=%1] => minecraft:grass[snowy=%1]
+
+minecraft:grindstone => minecraft:air
+
+minecraft:hanging_roots[waterlogged=false] => minecraft:air
+minecraft:hanging_roots[waterlogged=true] => minecraft:water
+
+minecraft:honey_block => minecraft:air
+minecraft:honeycomb_block => minecraft:air
+
+minecraft:infested_chiseled_stone_bricks => minecraft:monster_egg[variant=chiseled_brick]
+minecraft:infested_cobblestone => minecraft:monster_egg[variant=cobblestone]
+minecraft:infested_cracked_stone_bricks => minecraft:monster_egg[variant=cracked_brick]
+minecraft:infested_deepslate => minecraft:monster_egg[variant=stone]
+minecraft:infested_mossy_stone_bricks => minecraft:monster_egg[variant=mossy_brick]
+minecraft:infested_stone_bricks => minecraft:monster_egg[variant=stone_brick]
+minecraft:infested_stone => minecraft:monster_egg[variant=stone]
+minecraft:jigsaw => minecraft:air
+
+minecraft:kelp => minecraft:water
+minecraft:kelp_plant => minecraft:water
+minecraft:lantern => minecraft:air
+minecraft:large_amethyst_bud => minecraft:air
+minecraft:large_fern[half=%1] => minecraft:double_plant[facing=north,half=%1,variant=double_fern]
+minecraft:lectern => minecraft:air
+
+minecraft:lightning_rod[waterlogged=false] => minecraft:air
+minecraft:lightning_rod[waterlogged=true] => minecraft:water
+
+minecraft:light[waterlogged=false] => minecraft:air
+minecraft:light[waterlogged=true] => minecraft:water
+
+minecraft:lily_of_the_valley => minecraft:red_flower[type=allium]
+
+minecraft:lilac => minecraft:air
+minecraft:lodestone => minecraft:stone
+
+minecraft:loom => minecraft:crafting_table
+
+minecraft:magma_block => minecraft:netherrack
+minecraft:medium_amethyst_bud => minecraft:air
+minecraft:moss_block => minecraft:mossy_cobblestone
+minecraft:moss_carpet => minecraft:air
+minecraft:mossy_cobblestone_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_stairs[half=%1,facing=%2,shape=%3]
+minecraft:mossy_stone_bricks => minecraft:stonebrick[variant=mossy_stonebrick]
+minecraft:mossy_stone_brick_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+minecraft:mud_bricks => minecraft:brick_block
+minecraft:mud => minecraft:dirt
+minecraft:mushroom_stem => minecraft:brown_mushroom_block[variant=stem]
+minecraft:netherite_block => minecraft:gold_block
+minecraft:nether_quartz_ore => minecraft:quartz_ore
+minecraft:nether_sprouts => minecraft:air
+minecraft:oxeye_daisy => minecraft:red_flower[type=oxeye_daisy]
+minecraft:oxidized_copper => minecraft:air
+minecraft:oxidized_cut_copper => minecraft:air
+minecraft:oxidized_cut_copper_stairs => minecraft:air
+minecraft:packed_mud => minecraft:dirt
+minecraft:peony[half=%1] => minecraft:double_plant[facing=north,half=%1,variant=paeonia]
+
+minecraft:podzol[snowy=%1] => minecraft:dirt[snowy=%1,variant=podzol]
+minecraft:pointed_dripstone => minecraft:air
+minecraft:polished_andesite => minecraft:stone[variant=smooth_andesite]
+minecraft:polished_andesite_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_stairs[half=%1,facing=%2,shape=%3]
+minecraft:polished_blackstone_bricks => minecraft:stonebrick[variant=stonebrick]
+minecraft:polished_blackstone_brick_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+
+minecraft:polished_blackstone_button[face=ceiling,powered=%1] => minecraft:stone_button[facing=down,powered=%1]
+minecraft:polished_blackstone_button[face=floor,powered=%1] => minecraft:stone_button[facing=up,powered=%1]
+minecraft:polished_blackstone_button[face=wall,facing=%1,powered=%2] => minecraft:stone_button[facing=%1,powered=%2]
+minecraft:polished_blackstone => minecraft:stone
+minecraft:polished_blackstone_pressure_plate[powered=%1] => minecraft:stone_pressure_plate[powered=%1]
+minecraft:polished_blackstone_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+minecraft:polished_deepslate => minecraft:stone
+minecraft:polished_deepslate_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+minecraft:polished_diorite => minecraft:stone[variant=smooth_diorite]
+minecraft:polished_diorite_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+minecraft:polished_granite => minecraft:stone[variant=smooth_granite]
+minecraft:polished_granite_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_brick_stairs[half=%1,facing=%2,shape=%3]
+minecraft:poppy => minecraft:red_flower[type=poppy]
+
+minecraft:potted_acacia_sapling => minecraft:flower_pot[contents=acacia_sapling]
+minecraft:potted_allium => minecraft:flower_pot[contents=allium]
+minecraft:potted_azalea_bush => minecraft:flower_pot[contents=empty]
+minecraft:potted_azure_bluet => minecraft:flower_pot[contents=empty]
+minecraft:potted_bamboo => minecraft:flower_pot[contents=empty]
+minecraft:potted_birch_sapling => minecraft:flower_pot[contents=birch_sapling]
+minecraft:potted_blue_orchid => minecraft:flower_pot[contents=blue_orchid]
+minecraft:potted_brown_mushroom => minecraft:flower_pot[contents=mushroom_brown]
+minecraft:potted_cactus => minecraft:flower_pot[contents=cactus]
+minecraft:potted_cherry_sapling => minecraft:flower_pot[contents=oak_sapling]
+minecraft:potted_cornflower => minecraft:flower_pot[contents=empty]
+minecraft:potted_crimson_fungus => minecraft:flower_pot[contents=mushroom_brown]
+minecraft:potted_crimson_roots => minecraft:flower_pot[contents=empty]
+minecraft:potted_dandelion => minecraft:flower_pot[contents=dandelion]
+minecraft:potted_dark_oak_sapling => minecraft:flower_pot[contents=dark_oak_sapling]
+minecraft:potted_dead_bush => minecraft:flower_pot[contents=dead_bush]
+minecraft:potted_fern => minecraft:flower_pot[contents=fern]
+minecraft:potted_flowering_azalea_bush => minecraft:flower_pot[contents=empty]
+minecraft:potted_jungle_sapling => minecraft:flower_pot[contents=jungle_sapling]
+minecraft:potted_lily_of_the_valley => minecraft:flower_pot[contents=allium]
+minecraft:potted_mangrove_propagule => minecraft:flower_pot[contents=empty]
+minecraft:potted_oak_sapling => minecraft:flower_pot[contents=oak_sapling]
+minecraft:potted_orange_tulip => minecraft:flower_pot[contents=orange_tulip]
+minecraft:potted_oxeye_daisy => minecraft:flower_pot[contents=oxeye_daisy]
+minecraft:potted_pink_tulip => minecraft:flower_pot[contents=pink_tulip]
+minecraft:potted_poppy => minecraft:flower_pot[contents=poppy]
+minecraft:potted_red_mushroom => minecraft:flower_pot[contents=mushroom_red]
+minecraft:potted_red_tulip => minecraft:flower_pot[contents=red_tulip]
+minecraft:potted_spruce_sapling => minecraft:flower_pot[contents=spruce_sapling]
+minecraft:potted_torchflower => minecraft:flower_pot[contents=empty]
+minecraft:potted_warped_fungus => minecraft:flower_pot[contents=mushroom_brown]
+minecraft:potted_warped_roots => minecraft:flower_pot[contents=empty]
+minecraft:potted_white_tulip => minecraft:flower_pot[contents=white_tulip]
+minecraft:potted_wither_rose => minecraft:flower_pot[contents=rose]
+
+minecraft:powder_snow => minecraft:snow
+minecraft:prismarine_bricks => minecraft:stone
+minecraft:prismarine_brick_stairs[half=%1,facing=%2,shape=%3] => minecraft:stone_stairs[half=%1,facing=%2,shape=%3]
+minecraft:prismarine => minecraft:cobblestone
+
+minecraft:quartz_block => minecraft:quartz_block[variant=default]
+minecraft:quartz_bricks => minecraft:quartz_block[variant=chiseled]
+minecraft:quartz_pillar[axis=x] => minecraft:quartz_block[variant=lines_x]
+minecraft:quartz_pillar[axis=y] => minecraft:quartz_block[variant=lines_y]
+minecraft:quartz_pillar[axis=z] => minecraft:quartz_block[variant=lines_z]
+
+minecraft:raw_copper_block => minecraft:air
+minecraft:raw_gold_block => minecraft:gold_block
+minecraft:raw_iron_block => minecraft:iron_block
+
+minecraft:redstone_torch[lit=false] => minecraft:unlit_redstone_torch[facing=up]
+minecraft:redstone_torch[lit=true] => minecraft:redstone_torch[facing=up]
+
+minecraft:redstone_wall_torch[lit=false,facing=%1] => minecraft:unlit_redstone_torch[facing=%1]
+minecraft:redstone_wall_torch[lit=true,facing=%1] => minecraft:redstone_torch[facing=%1]
+
+minecraft:reinforced_deepslate => minecraft:obsidian
+minecraft:respawn_anchor => minecraft:obsidian
+minecraft:rooted_dirt => minecraft:dirt
+
+minecraft:rose_bush[half=%1] => minecraft:double_plant[facing=north,half=%1,variant=double_rose]
+
+minecraft:sandstone => minecraft:sandstone[type=sandstone]
+
+minecraft:scaffolding[waterlogged=false] => minecraft:air
+minecraft:scaffolding[waterlogged=true] => minecraft:water
+minecraft:sculk_catalyst => minecraft:air
+minecraft:sculk => minecraft:stone
+minecraft:sculk_sensor[power=%1] => minecraft:daylight_detector[power=%1]
+minecraft:sculk_shrieker[waterlogged=false] => minecraft:air
+minecraft:sculk_vein[waterlogged=false] => minecraft:air
+minecraft:sculk_vein[waterlogged=true] => minecraft:water
+minecraft:sea_pickle[waterlogged=false] => minecraft:air
+minecraft:sea_pickle[waterlogged=true] => minecraft:water
+minecraft:shroomlight => minecraft:brown_mushroom_block[variant=center]
+minecraft:shulker_box => minecraft:chest
+minecraft:slime_block => minecraft:slime
+minecraft:small_amethyst_bud => minecraft:air
+minecraft:small_dripleaf[waterlogged=false] => minecraft:air
+minecraft:small_dripleaf[waterlogged=true] => minecraft:water
+minecraft:smithing_table => minecraft:crafting_table
+
+minecraft:smoker[lit=false,facing=%1] => minecraft:furnace[facing=%1]
+minecraft:smoker[lit=true,facing=%1] => minecraft:lit_furnace[facing=%1]
+
+minecraft:smooth_basalt => minecraft:stone
+minecraft:smooth_quartz => minecraft:quartz_block[variant=default]
+
+minecraft:smooth_quartz_stairs[half=%1,facing=%2,shape=%3] => minecraft:quartz_stairs[half=%1,facing=%2,shape=%3]
+minecraft:smooth_red_sandstone => minecraft:red_sandstone[type=smooth_red_sandstone]
+minecraft:smooth_red_sandstone_stairs[half=%1,facing=%2,shape=%3] => minecraft:red_sandstone_stairs[half=%1,facing=%2,shape=%3]
+
+minecraft:smooth_sandstone => minecraft:sandstone[type=smooth_sandstone]
+minecraft:smooth_sandstone_stairs[half=%1,facing=%2,shape=%3] => minecraft:sandstone_stairs[half=%1,facing=%2,shape=%3]
+minecraft:smooth_stone => minecraft:double_stone_slab[seamless=true,variant=stone]
+minecraft:snow_block => minecraft:snow
+minecraft:snow[layers=%1] => minecraft:snow_layer[layers=%1]
+
+minecraft:soul_campfire[waterlogged=false] => minecraft:air
+minecraft:soul_campfire[waterlogged=true] => minecraft:water
+minecraft:soul_fire => minecraft:fire
+
+minecraft:soul_lantern[waterlogged=false] => minecraft:air
+minecraft:soul_lantern[waterlogged=true] => minecraft:water
+
+minecraft:spawner{*} => minecraft:mob_spawner{*}
+
+minecraft:sponge => minecraft:sponge[wet=false]
+minecraft:wet_sponge => minecraft:sponge[wet=true]
+
+minecraft:spore_blossom => minecraft:air
+minecraft:stone_bricks => minecraft:stonebrick[variant=stonebrick]
+minecraft:stonecutter => minecraft:stone_slab[half=bottom,variant=stone]
+minecraft:stone => minecraft:stone[variant=stone]
+minecraft:sugar_cane[age=%1] => minecraft:reeds[age=%1]
+minecraft:sunflower[half=%1] => minecraft:double_plant[facing=north,half=%1,variant=sunflower]
+
+# I'm sorry :(
+minecraft:sweet_berry_bush => minecraft:air
+
+minecraft:tall_grass[half=%1] => minecraft:double_plant[facing=north,half=%1,variant=double_grass]
+minecraft:target => minecraft:planks[variant=oak]
+
+# ==========================================
+
+minecraft:tinted_glass => minecraft:stained_glass[color=black]
+minecraft:tnt[unstable=%1] => minecraft:tnt[explode=%1]
+minecraft:torchflower_crop => minecraft:air
+minecraft:torchflower => minecraft:air
+
+minecraft:tuff => minecraft:stone
+minecraft:turtle_egg => minecraft:air
+
+minecraft:twisting_vines => minecraft:vine[east=true,north=true,south=true,up=true,west=true]
+minecraft:twisting_vines_plant => minecraft:vine[east=true,north=true,south=true,up=true,west=true]
+minecraft:verdant_froglight => minecraft:air
+minecraft:void_air => minecraft:air
+
+minecraft:torch => minecraft:torch[facing=up]
+minecraft:wall_torch[facing=%1] => minecraft:torch[facing=%1]
+
+minecraft:warped_fungus => minecraft:brown_mushroom
+minecraft:warped_hyphae => minecraft:air
+minecraft:warped_nylium => minecraft:air
+minecraft:warped_planks => minecraft:planks[variant=oak]
+
+minecraft:warped_pressure_plate[powered=%1] => minecraft:wooden_pressure_plate[powered=%1]
+minecraft:warped_roots => minecraft:air
+minecraft:warped_stem => minecraft:air
+minecraft:warped_wart_block => minecraft:air
+
+minecraft:waxed_copper_block => minecraft:air
+minecraft:waxed_cut_copper => minecraft:air
+minecraft:waxed_cut_copper_stairs[waterlogged=false] => minecraft:air
+minecraft:waxed_cut_copper_stairs[waterlogged=true] => minecraft:water
+minecraft:waxed_exposed_copper => minecraft:air
+minecraft:waxed_exposed_cut_copper => minecraft:air
+
+minecraft:waxed_exposed_cut_copper_stairs[waterlogged=false] => minecraft:air
+minecraft:waxed_exposed_cut_copper_stairs[waterlogged=true] => minecraft:water
+
+minecraft:waxed_oxidized_copper => minecraft:air
+minecraft:waxed_oxidized_cut_copper => minecraft:air
+
+minecraft:waxed_oxidized_cut_copper_stairs[waterlogged=false] => minecraft:air
+minecraft:waxed_oxidized_cut_copper_stairs[waterlogged=true] => minecraft:water
+
+minecraft:waxed_weathered_copper => minecraft:air
+minecraft:waxed_weathered_cut_copper => minecraft:air
+
+minecraft:waxed_weathered_cut_copper_stairs[waterlogged=false] => minecraft:air
+minecraft:waxed_weathered_cut_copper_stairs[waterlogged=true] => minecraft:water
+
+minecraft:weathered_copper => minecraft:air
+minecraft:weathered_cut_copper => minecraft:air
+minecraft:weathered_cut_copper_stairs[waterlogged=false] => minecraft:air
+minecraft:weathered_cut_copper_stairs[waterlogged=true] => minecraft:water
+
+minecraft:weeping_vines => minecraft:vine[east=true,north=true,south=true,up=true,west=true]
+minecraft:weeping_vines_plant => minecraft:vine[east=true,north=true,south=true,up=true,west=true]
+
+minecraft:wither_rose => minecraft:red_flower[type=poppy]
