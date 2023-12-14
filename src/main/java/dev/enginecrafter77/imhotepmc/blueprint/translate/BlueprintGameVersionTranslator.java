@@ -13,10 +13,13 @@ import java.util.function.Predicate;
 
 public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTable {
 	private final Map<Integer, BlueprintVersionTranslationEntry> tables;
+	@Nullable
+	private final BlueprintTranslationTable fallback;
 	private final int producedVersion;
 
-	public BlueprintGameVersionTranslator(Map<Integer, BlueprintVersionTranslationEntry> tables, int producedVersion)
+	public BlueprintGameVersionTranslator(Map<Integer, BlueprintVersionTranslationEntry> tables, int producedVersion, @Nullable BlueprintTranslationTable fallback)
 	{
+		this.fallback = fallback;
 		this.producedVersion = producedVersion;
 		this.tables = tables;
 	}
@@ -37,7 +40,10 @@ public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTabl
 	@Override
 	public BlueprintCrossVersionTranslation getTranslationFor(int version)
 	{
-		return this.tables.get(version);
+		BlueprintCrossVersionTranslation translation = this.tables.get(version);
+		if(translation == null && this.fallback != null)
+			translation = new BlueprintVersionTranslationEntry(this.fallback, version, this.producedVersion);
+		return translation;
 	}
 
 	public static class BlueprintVersionTranslationEntry implements BlueprintCrossVersionTranslation
@@ -51,6 +57,11 @@ public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTabl
 			this.table = table;
 			this.acceptedVersion = acceptedVersion;
 			this.producedVersion = producedVersion;
+		}
+
+		public BlueprintTranslationTable getTable()
+		{
+			return this.table;
 		}
 
 		@Override
@@ -79,16 +90,29 @@ public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTabl
 		private final Multimap<Integer, BlueprintTranslationRule> ruleMultimap;
 		private final int versionTo;
 
+		private int defaultVersionFrom;
+
 		public VersionTranslatorBuilder(int versionTo)
 		{
 			this.ruleListMap = Maps.newHashMap();
 			this.ruleMultimap = Multimaps.newListMultimap(this.ruleListMap, Lists::newArrayList);
+			this.defaultVersionFrom = -1;
 			this.versionTo = versionTo;
 		}
 
 		public int getVersionTo()
 		{
 			return this.versionTo;
+		}
+
+		public int getDefaultVersionFrom()
+		{
+			return this.defaultVersionFrom;
+		}
+
+		public void setDefaultVersionFrom(int defaultVersionFrom)
+		{
+			this.defaultVersionFrom = defaultVersionFrom;
 		}
 
 		public void addRule(int versionFrom, BlueprintTranslationRule rule)
@@ -131,7 +155,11 @@ public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTabl
 
 		public BlueprintGameVersionTranslator build()
 		{
-			return new BlueprintGameVersionTranslator(Maps.transformEntries(this.ruleListMap, this::createEntry), this.versionTo);
+			Map<Integer, BlueprintVersionTranslationEntry> entry = Maps.transformEntries(this.ruleListMap, this::createEntry);
+			@Nullable BlueprintTranslationTable fallback = null;
+			if(this.defaultVersionFrom != -1)
+				fallback = entry.get(this.defaultVersionFrom).getTable();
+			return new BlueprintGameVersionTranslator(entry, this.versionTo, fallback);
 		}
 	}
 }

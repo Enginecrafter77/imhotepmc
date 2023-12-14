@@ -251,6 +251,8 @@ public class ImhotepMod {
                 }
             }
 		}
+
+        event.getBuilder().setDefaultVersionFrom(3337);
     }
 
     private void tryLoadTable(BlueprintTranslationBuildEvent event, Path path) throws IOException, MalformedTranslationRuleException
