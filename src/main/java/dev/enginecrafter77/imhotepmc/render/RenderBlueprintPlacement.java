@@ -117,6 +117,8 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 		Stream<BakedQuad> quadStream = model.getQuads(state, null, 0L).stream();
 		for(EnumFacing face : EnumFacing.VALUES)
 		{
+			if(!state.shouldSideBeRendered(this.placementWorld, pos, face))
+				continue;
 			Stream<BakedQuad> sideQuads = model.getQuads(state, face, 0L).stream();
 			quadStream = Stream.concat(quadStream, sideQuads);
 		}
