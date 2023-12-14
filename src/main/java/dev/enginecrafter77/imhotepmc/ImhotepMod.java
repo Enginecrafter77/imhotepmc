@@ -97,6 +97,7 @@ public class ImhotepMod {
     public static ItemSchematicBlueprint ITEM_SCHEMATIC_BLUEPRINT;
     public static ItemConstructionTape ITEM_CONSTRUCTION_TAPE;
     public static ItemShapeCard ITEM_SHAPE_CARD;
+    public static BlockCreativeBuildCache BLOCK_CREATIVE_BUILD_CACHE;
 
     private DefaultBOMProvider builderBomProvider;
     private BlueprintGameVersionTranslator versionTranslator;
@@ -279,6 +280,7 @@ public class ImhotepMod {
         BLOCK_TERRAFORMER = new BlockTerraformer();
         ITEM_SHAPE_CARD = new ItemShapeCard();
         BLOCK_MACHINE_HULL = new BlockMachineHull();
+        BLOCK_CREATIVE_BUILD_CACHE = new BlockCreativeBuildCache();
     }
 
     public void registerTileEntities()
@@ -311,6 +313,7 @@ public class ImhotepMod {
         this.registerItemBlock(reg, BLOCK_ARCHITECT_TABLE);
         this.registerItemBlock(reg, BLOCK_TERRAFORMER);
         this.registerItemBlock(reg, BLOCK_MACHINE_HULL);
+        this.registerItemBlock(reg, BLOCK_CREATIVE_BUILD_CACHE);
     }
 
     @SubscribeEvent
@@ -323,6 +326,7 @@ public class ImhotepMod {
         reg.register(BLOCK_ARCHITECT_TABLE);
         reg.register(BLOCK_TERRAFORMER);
         reg.register(BLOCK_MACHINE_HULL);
+        reg.register(BLOCK_CREATIVE_BUILD_CACHE);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
@@ -354,5 +358,6 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_ARCHITECT_TABLE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_TERRAFORMER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_MACHINE_HULL), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "machine_hull"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_CREATIVE_BUILD_CACHE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "creative_build_cache"), "inventory"));
     }
 }

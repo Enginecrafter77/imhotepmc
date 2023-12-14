@@ -6,6 +6,7 @@ tile.area_marker.name=Area Marker
 tile.builder.name=Builder
 tile.terraformer.name=Terraformer
 tile.machine_hull.name=Machine Hull
+tile.creative_build_cache.name=Creative Builder Cache
 
 item.schematic_blueprint.name=Schematic Blueprint
 item.construction_tape.name=Construction Tape

@@ -98,24 +98,6 @@ public class ItemSchematicBlueprint extends Item {
 		tooltip.add("Region count: " + meta.getRegionCount());
 	}
 
-	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-	{
-		ItemStack stack = player.getHeldItem(hand);
-		SchematicBlueprint blueprint = this.getSchematic(stack);
-		if(blueprint == null)
-			return EnumActionResult.PASS;
-
-		EnumFacing playerFacing = player.getHorizontalFacing();
-
-		BlueprintPlacement placement = BlueprintPlacement.facing(blueprint, pos.up(), playerFacing);
-		CreativeBuilderHandler handler = new CreativeBuilderHandler(Blocks.STONE);
-		BlueprintBuilder builder = new BlueprintBuilder(placement, handler);
-		SynchronousBuilderInvoker invoker = new SynchronousBuilderInvoker(builder);
-		invoker.run(worldIn);
-		return EnumActionResult.SUCCESS;
-	}
-
 	private static String sizeVectorToString(Vec3i vector)
 	{
 		return String.format("%dx%dx%d", vector.getX(), vector.getY(), vector.getZ());

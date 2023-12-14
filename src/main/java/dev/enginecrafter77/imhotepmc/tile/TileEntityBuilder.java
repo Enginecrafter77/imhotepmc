@@ -12,6 +12,7 @@ import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -87,10 +88,19 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		return this.missingBlock;
 	}
 
+	private CreativeMaterialStorage creativeMaterialStorage;
 	@Nullable
 	protected BuilderMaterialStorage getBlockSource()
 	{
 		BlockPos blockSourcePos = this.pos.up();
+		IBlockState state = this.world.getBlockState(blockSourcePos);
+		if(state.getBlock() == ImhotepMod.BLOCK_CREATIVE_BUILD_CACHE)
+		{
+			if(this.creativeMaterialStorage == null)
+				this.creativeMaterialStorage = new CreativeMaterialStorage(Blocks.STONE);
+			return this.creativeMaterialStorage;
+		}
+
 		TileEntity tile = this.world.getTileEntity(blockSourcePos);
 		if(tile == null)
 			return null;
