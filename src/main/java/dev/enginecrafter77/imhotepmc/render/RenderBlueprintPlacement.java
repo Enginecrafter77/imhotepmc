@@ -77,11 +77,11 @@ public class RenderBlueprintPlacement implements IRenderable {
 		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		VertexBufferConsumer consumer = new VertexBufferConsumer(builder);
 
-		//TODO fix blueprint reader...
-		NaturalVoxelIndexer indexer = new NaturalVoxelIndexer(this.placement.getOriginOffset(), this.placement.getSize());
-		for(int index = 0; index < indexer.getVolume(); ++index)
+		BlueprintReader reader = this.placement.reader();
+		while(reader.hasNext())
 		{
-			BlockPos pos = indexer.fromIndex(index);
+			BlueprintVoxel voxel = reader.next();
+			BlockPos pos = voxel.getPosition().toImmutable(); // !!IMPORTANT!!
 			BlockPos offset = pos.subtract(this.placement.getOriginOffset());
 			this.collectQuads(pos).forEach((BakedQuad quad) -> {
 				consumer.setOffset(offset);
@@ -125,6 +125,7 @@ public class RenderBlueprintPlacement implements IRenderable {
 		GlStateManager.translate(x, y, z);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		this.buffer.draw();
+		this.invalidate();
 		GlStateManager.popMatrix();
 	}
 }
