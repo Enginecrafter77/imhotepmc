@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.render;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
+import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
 import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
@@ -17,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
@@ -31,8 +33,13 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 	private final Vector3d faceOffset;
 	private final Point3d itemDrawPos;
 
+	private final RenderBlueprintPlacement renderBlueprintPlacement;
+	private final Point3d placementOriginPoint;
+	private final Point3d placementRenderPoint;
+
 	public RenderBuilder()
 	{
+		this.renderBlueprintPlacement = new RenderBlueprintPlacement();
 		this.itemRenderer = new ItemRenderHelper();
 		this.renderTape = new RenderTape();
 		this.edge3d = new Edge3d();
@@ -40,6 +47,8 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.renderPoint = new Point3d();
 		this.faceOffset = new Vector3d();
 		this.itemDrawPos = new Point3d();
+		this.placementRenderPoint = new Point3d();
+		this.placementOriginPoint = new Point3d();
 	}
 
 	private void renderMissingItem(@Nonnull TileEntityBuilder te, double x, double y, double z, float partialTicks)
@@ -76,6 +85,15 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 
 		this.setLightmapDisabled(true);
 		this.renderMissingItem(te, x, y, z, partialTicks);
+
+		BlueprintPlacement placement = te.getPlacement();
+		this.renderBlueprintPlacement.setPlacement(te.getPlacement());
+		if(placement != null)
+		{
+			VecUtil.copyVec3d(placement.getOriginOffset(), this.placementOriginPoint);
+			VecUtil.calculateRenderPoint(viewer, this.placementOriginPoint, this.placementRenderPoint, partialTicks);
+			this.renderBlueprintPlacement.doRender(this.placementRenderPoint, partialTicks);
+		}
 
 		this.renderTape.setTexture(RenderTape.TEXTURE);
 		this.renderTape.setRadius(0.0625D);

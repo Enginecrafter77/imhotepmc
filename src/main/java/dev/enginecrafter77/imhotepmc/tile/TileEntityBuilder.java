@@ -56,6 +56,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	private SchematicBlueprint blueprint;
 
 	@Nullable
+	private BlueprintPlacement placement;
+
+	@Nullable
 	private Block missingBlock;
 	private BuilderTask dwellTask;
 	private long dwellingTicks;
@@ -69,6 +72,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		this.facing = EnumFacing.NORTH;
 		this.boundingBox = null;
 		this.blueprint = null;
+		this.placement = null;
 
 		this.dwellTask = null;
 		this.missingBlock = null;
@@ -129,11 +133,17 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 		return BlueprintPlacement.facing(blueprint, origin, facing);
 	}
 
+	@Nullable
+	public BlueprintPlacement getPlacement()
+	{
+		return this.placement;
+	}
+
 	public void setBlueprint(SchematicBlueprint blueprint)
 	{
 		this.blueprint = blueprint;
-		BlueprintPlacement placement = this.createPlacement(blueprint, this.pos, this.facing);
-		BlueprintBuilder builder = new BlueprintBuilder(placement, this.builderHandler);
+		this.placement = this.createPlacement(blueprint, this.pos, this.facing);
+		BlueprintBuilder builder = new BlueprintBuilder(this.placement, this.builderHandler);
 		this.onBuilderCreated(builder);
 		this.builderInvoker.setBuilder(builder);
 	}
@@ -207,8 +217,8 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 
 		if(this.blueprint != null)
 		{
-			BlueprintPlacement placement = this.createPlacement(blueprint, this.pos, this.facing);
-			BlueprintBuilder builder = new BlueprintBuilder(placement, this.builderHandler);
+			this.placement = this.createPlacement(this.blueprint, this.pos, this.facing);
+			BlueprintBuilder builder = new BlueprintBuilder(this.placement, this.builderHandler);
 			if(compound.hasKey(NBT_KEY_BUILDER))
 				builder.restoreState(compound.getCompoundTag(NBT_KEY_BUILDER));
 			this.onBuilderCreated(builder);

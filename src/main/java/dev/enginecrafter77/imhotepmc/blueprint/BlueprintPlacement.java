@@ -51,6 +51,11 @@ public class BlueprintPlacement implements Blueprint {
 		return this.withRotation(getRotationFromFacing(facing));
 	}
 
+	public BlockPos getPlacementOrigin()
+	{
+		return this.placementOrigin;
+	}
+
 	public Rotation getRotation()
 	{
 		return this.rotation;
