@@ -85,6 +85,7 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 
 		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		VertexBufferConsumer consumer = new VertexBufferConsumer(builder);
+		RecolorVertexTransformer recolor = new RecolorVertexTransformer(consumer);
 
 		BlueprintReader reader = this.placement.reader();
 		while(reader.hasNext())
@@ -94,7 +95,8 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 			BlockPos offset = pos.subtract(this.placement.getOriginOffset());
 			this.collectQuads(pos).forEach((BakedQuad quad) -> {
 				consumer.setOffset(offset);
-				quad.pipe(consumer);
+				recolor.setTint(1F, 1F, 1F, 0.75F);
+				quad.pipe(recolor);
 			});
 		}
 
@@ -143,6 +145,7 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 		GlStateManager.translate(this.renderPoint.x, this.renderPoint.y, this.renderPoint.z);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		this.buffer.draw();
+		this.invalidate();
 		GlStateManager.popMatrix();
 	}
 }

@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.render;
 
 import com.google.common.collect.Maps;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -38,6 +39,9 @@ public class RenderBlueprintPlacements {
 	{
 		// Cull inactive providers
 		this.registry.values().removeIf(PlacementRenderHolder::shouldBeCulled);
+		GlStateManager.enableAlpha();
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		for(PlacementRenderHolder holder : this.registry.values())
 			holder.doRender(event.getPartialTicks());
 	}
