@@ -10,8 +10,7 @@ import javax.annotation.Nullable;
 import javax.vecmath.*;
 
 public class TextureSliceRender implements IRenderable {
-	private static final Vector3d RENDER_FACING_VECTOR = new Vector3d(0D, 0D, -1D);
-	private static final Vector3d NULL_VECTOR = new Vector3d(0D, 0D, 0D);
+	private static final Vector3d RENDER_FACING_VECTOR = new Vector3d(0D, 0D, 1D);
 	private static final double EPSILON = 0.0001D;
 
 	private final Matrix4d rotationMatrix;
@@ -52,25 +51,26 @@ public class TextureSliceRender implements IRenderable {
 
 	public void setRotation(Vector3d axis, double angle)
 	{
-		this.axis.set(axis);
-		this.angle.set(axis, angle);
-		this.rotationMatrix.setIdentity();
-		if(axis.epsilonEquals(NULL_VECTOR, EPSILON) || Math.abs(angle % (2*Math.PI)) < EPSILON)
-			return;
-		this.rotationMatrix.setRotation(this.angle);
+		this.setRotation(axis.x, axis.y, axis.z, angle);
 	}
 
 	public void setRotationVector(Vector3d vec)
 	{
 		this.axis.cross(RENDER_FACING_VECTOR, vec);
+
+		if(this.axis.length() < EPSILON) // The vectors are parallel
+			this.axis.set(0D, 1D, 0D);
+
 		double angle = RENDER_FACING_VECTOR.angle(vec);
-		this.angle.set(this.axis, angle);
 		this.setRotation(this.axis, angle);
 	}
 
 	public void setRotation(double x, double y, double z, double angle)
 	{
+		this.axis.set(x, y, z);
 		this.angle.set(x, y, z, angle);
+		this.rotationMatrix.setIdentity();
+		this.rotationMatrix.setRotation(this.angle);
 	}
 
 	public void setSize(Tuple2d size)
@@ -115,16 +115,16 @@ public class TextureSliceRender implements IRenderable {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder builder = tessellator.getBuffer();
 		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		this.putTransformedPos(builder, 0.5D, 0.5D, 0D).tex(minU, minV).endVertex();
-		this.putTransformedPos(builder, -0.5D, 0.5D, 0D).tex(maxU, minV).endVertex();
-		this.putTransformedPos(builder, -0.5D, -0.5D, 0D).tex(maxU, maxV).endVertex();
-		this.putTransformedPos(builder, 0.5D, -0.5D, 0D).tex(minU, maxV).endVertex();
+		this.putTransformedPos(builder, -0.5D, 0.5D).tex(minU, minV).endVertex(); // top left
+		this.putTransformedPos(builder, -0.5D, -0.5D).tex(minU, maxV).endVertex(); // bottom left
+		this.putTransformedPos(builder, 0.5D, -0.5D).tex(maxU, maxV).endVertex(); // bottom right
+		this.putTransformedPos(builder, 0.5D, 0.5D).tex(maxU, minV).endVertex(); // top right
 		tessellator.draw();
 	}
 
-	private BufferBuilder putTransformedPos(BufferBuilder builder, double x, double y, double z)
+	private BufferBuilder putTransformedPos(BufferBuilder builder, double x, double y)
 	{
-		this.drawPoint.set(x, y, z);
+		this.drawPoint.set(x, y, 0D);
 		this.scaleMatrix.transform(this.drawPoint);
 		this.rotationMatrix.transform(this.drawPoint);
 		this.translateMatrix.transform(this.drawPoint);

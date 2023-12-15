@@ -103,7 +103,6 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		EnumFacing facing = state.getValue(BlockHorizontal.FACING);
 		VecUtil.facePosition(this.renderOrigin, facing, this.switchOffset, this.switchRenderPoint);
 		VecUtil.copyVec3d(facing.getDirectionVec(), this.faceOffset);
-		this.faceOffset.negate();
 
 		this.renderSwitch.setActive(te.isProjectionActive());
 		this.renderSwitch.setSize(this.switchSize);

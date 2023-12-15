@@ -75,12 +75,10 @@ public class RenderTerraformer extends TileEntitySpecialRenderer<TileEntityTerra
 		GlStateManager.disableTexture2D();
 		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 
-		GlStateManager.disableCull();
 		GlStateManager.enableColorLogic();
 		GlStateManager.colorLogicOp(GlStateManager.LogicOp.COPY_INVERTED);
-		this.render.doRender(this.faceCenterPosition.x, this.faceCenterPosition.y, this.faceCenterPosition.z, partialTicks);
+		this.render.doRender(this.faceCenterPosition, partialTicks);
 		GlStateManager.colorLogicOp(GlStateManager.LogicOp.COPY);
 		GlStateManager.disableColorLogic();
-		GlStateManager.enableCull();
 	}
 }
