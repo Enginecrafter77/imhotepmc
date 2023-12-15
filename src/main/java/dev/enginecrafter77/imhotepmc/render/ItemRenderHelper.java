@@ -2,21 +2,16 @@ package dev.enginecrafter77.imhotepmc.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Vector3d;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ItemRenderHelper implements IRenderable {
 	private static final Vector3d RENDER_FACING_VECTOR = new Vector3d(0D, 0D, 1D);
 	private static final Vector3d NULL_VECTOR = new Vector3d(0D, 0D, 0D);
 	private static final double EPSILON = 0.001D;
-
-	private final List<BakedQuad> quads;
 
 	private final Vector3d rotationAxis;
 	private final AxisAngle4d angle;
@@ -28,9 +23,7 @@ public class ItemRenderHelper implements IRenderable {
 
 	public ItemRenderHelper()
 	{
-		this.quads = new ArrayList<BakedQuad>(64);
 		this.stack = ItemStack.EMPTY;
-
 		this.rotationAxis = new Vector3d();
 		this.angle = new AxisAngle4d();
 		this.scale = new Vector3d();
