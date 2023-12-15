@@ -19,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
+import net.minecraftforge.client.model.pipeline.VertexTransformer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -84,8 +85,7 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 		BufferBuilder builder = new BufferBuilder(volume * 36);
 
 		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-		VertexBufferConsumer consumer = new VertexBufferConsumer(builder);
-		RecolorVertexTransformer recolor = new RecolorVertexTransformer(consumer);
+		ComplexVertexTransformer transformer = new ComplexVertexTransformer(new VertexBufferConsumer(builder));
 
 		BlueprintReader reader = this.placement.reader();
 		while(reader.hasNext())
@@ -94,9 +94,9 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 			BlockPos pos = voxel.getPosition().toImmutable(); // !!IMPORTANT!!
 			BlockPos offset = pos.subtract(this.placement.getOriginOffset());
 			this.collectQuads(pos).forEach((BakedQuad quad) -> {
-				consumer.setOffset(offset);
-				recolor.setTint(1F, 1F, 1F, 0.75F);
-				quad.pipe(recolor);
+				transformer.setOffset(offset);
+				transformer.setTint(1F, 1F, 1F, 0.75F);
+				quad.pipe(transformer);
 			});
 		}
 
@@ -145,7 +145,6 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 		GlStateManager.translate(this.renderPoint.x, this.renderPoint.y, this.renderPoint.z);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		this.buffer.draw();
-		this.invalidate();
 		GlStateManager.popMatrix();
 	}
 }
