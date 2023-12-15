@@ -1,7 +1,6 @@
 package dev.enginecrafter77.imhotepmc.render;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
 import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
@@ -16,18 +15,30 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import org.lwjgl.util.Dimension;
+import org.lwjgl.util.Rectangle;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.vecmath.Point3d;
+import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> {
+	private static final Rectangle SWITCH_RECT = new Rectangle(12, 10, 2, 3);
+	private static final Dimension FACE_DIM = new Dimension(16, 16);
+
 	private final RenderTape renderTape;
 
 	private final Edge3d edge3d;
 	private final Point3d renderPoint;
 	private final Point3d midpoint;
+
+	private final Point3d renderOrigin;
+
+	private final RenderSwitch renderSwitch;
+	private final Point3d switchRenderPoint;
+	private final Point3d switchOffset;
+	private final Vector2d switchSize;
 
 	private final ItemRenderHelper itemRenderer;
 	private final Vector3d faceOffset;
@@ -35,6 +46,11 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 
 	public RenderBuilder()
 	{
+		this.renderSwitch = new RenderSwitch();
+		this.switchRenderPoint = new Point3d();
+		this.renderOrigin = new Point3d();
+		this.switchOffset = new Point3d();
+		this.switchSize = new Vector2d();
 		this.itemRenderer = new ItemRenderHelper();
 		this.renderTape = new RenderTape();
 		this.edge3d = new Edge3d();
@@ -42,6 +58,9 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.renderPoint = new Point3d();
 		this.faceOffset = new Vector3d();
 		this.itemDrawPos = new Point3d();
+
+		VecUtil.spriteRect(FACE_DIM, SWITCH_RECT, this.switchOffset, this.switchSize);
+		this.switchOffset.z = 0.0078125D;
 	}
 
 	private void renderMissingItem(@Nonnull TileEntityBuilder te, double x, double y, double z, float partialTicks)
@@ -78,6 +97,18 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 
 		this.setLightmapDisabled(true);
 		this.renderMissingItem(te, x, y, z, partialTicks);
+
+		this.renderOrigin.set(x, y, z);
+		IBlockState state = te.getWorld().getBlockState(te.getPos());
+		EnumFacing facing = state.getValue(BlockHorizontal.FACING);
+		VecUtil.facePosition(this.renderOrigin, facing, this.switchOffset, this.switchRenderPoint);
+		VecUtil.copyVec3d(facing.getDirectionVec(), this.faceOffset);
+		this.faceOffset.negate();
+
+		this.renderSwitch.setActive(te.isProjectionActive());
+		this.renderSwitch.setSize(this.switchSize);
+		this.renderSwitch.setRotationVector(this.faceOffset);
+		this.renderSwitch.doRender(this.switchRenderPoint, partialTicks);
 
 		this.renderTape.setTexture(RenderTape.TEXTURE);
 		this.renderTape.setRadius(0.0625D);

@@ -7,10 +7,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
-import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
+import javax.vecmath.*;
 
 public class TextureSliceRender implements IRenderable {
 	private static final Vector3d RENDER_FACING_VECTOR = new Vector3d(0D, 0D, -1D);
@@ -46,8 +43,16 @@ public class TextureSliceRender implements IRenderable {
 		this.scaleMatrix.setIdentity();
 	}
 
+	public void setRotation(AxisAngle4d angle)
+	{
+		this.axis.set(angle.x, angle.y, angle.z);
+		this.angle.set(angle);
+		this.rotationMatrix.setRotation(angle);
+	}
+
 	public void setRotation(Vector3d axis, double angle)
 	{
+		this.axis.set(axis);
 		this.angle.set(axis, angle);
 		this.rotationMatrix.setIdentity();
 		if(axis.epsilonEquals(NULL_VECTOR, EPSILON) || Math.abs(angle % (2*Math.PI)) < EPSILON)
@@ -68,10 +73,16 @@ public class TextureSliceRender implements IRenderable {
 		this.angle.set(x, y, z, angle);
 	}
 
-	public void setScale(double scale)
+	public void setSize(Tuple2d size)
+	{
+		this.setSize(size.x, size.y);
+	}
+
+	public void setSize(double x, double y)
 	{
 		this.scaleMatrix.setIdentity();
-		this.scaleMatrix.setScale(scale);
+		this.scaleMatrix.m00 = x;
+		this.scaleMatrix.m11 = y;
 	}
 	
 	public void setTexture(@Nullable TextureSlice texture)

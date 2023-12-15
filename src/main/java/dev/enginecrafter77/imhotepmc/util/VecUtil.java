@@ -1,15 +1,17 @@
 package dev.enginecrafter77.imhotepmc.util;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.util.ReadableDimension;
+import org.lwjgl.util.ReadableRectangle;
 
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Tuple3d;
-import javax.vecmath.Vector3d;
+import javax.vecmath.*;
 
 public class VecUtil {
 	public static void copyVec3d(Vec3d src, Tuple3d dest)
@@ -30,6 +32,66 @@ public class VecUtil {
 	public static Vec3i difference(Vec3i first, Vec3i second)
 	{
 		return new Vec3i(first.getX() - second.getX(), first.getY() - second.getY(), first.getZ() - second.getZ());
+	}
+
+	public static void spriteRect(ReadableDimension area, ReadableRectangle spriteRect, Tuple3d destPos, Tuple2d destSize)
+	{
+		destPos.x = (double)spriteRect.getX() + (spriteRect.getWidth() / 2D);
+		destPos.y = (double)spriteRect.getY() + (spriteRect.getHeight() / 2D);
+		destSize.x = spriteRect.getWidth();
+		destSize.y = spriteRect.getHeight();
+
+		destPos.x /= area.getWidth();
+		destPos.y /= area.getHeight();
+		destSize.x /= area.getWidth();
+		destSize.y /= area.getHeight();
+	}
+
+	public static void facePosition(Tuple3d renderBase, EnumFacing facing, Tuple3d facePos, Tuple3d faceDest)
+	{
+		faceDest.set(renderBase.x + 0.5D, renderBase.y + 0.5D, renderBase.z + 0.5D);
+
+		Vec3i dir = facing.getDirectionVec();
+		faceDest.x += dir.getX() * 0.5D;
+		faceDest.y += dir.getY() * 0.5D;
+		faceDest.z += dir.getZ() * 0.5D;
+
+		double xoff = facePos.x - 0.5D;
+		double yoff = facePos.y - 0.5D;
+
+		switch(facing)
+		{
+		case UP:
+			faceDest.x += xoff;
+			faceDest.z += yoff;
+			faceDest.y += facePos.z;
+			break;
+		case DOWN:
+			faceDest.x -= xoff;
+			faceDest.z -= yoff;
+			faceDest.y -= facePos.z;
+			break;
+		case SOUTH:
+			faceDest.x += xoff;
+			faceDest.y -= yoff;
+			faceDest.z += facePos.z;
+			break;
+		case NORTH:
+			faceDest.x -= xoff;
+			faceDest.y -= yoff;
+			faceDest.z -= facePos.z;
+			break;
+		case EAST:
+			faceDest.x += facePos.z;
+			faceDest.z -= xoff;
+			faceDest.y -= yoff;
+			break;
+		case WEST:
+			faceDest.x -= facePos.z;
+			faceDest.z += xoff;
+			faceDest.y -= yoff;
+			break;
+		}
 	}
 
 	public static AxisAlignedBB transform(AxisAlignedBB box, Matrix4d matrix)

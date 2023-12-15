@@ -67,7 +67,7 @@ public class RenderTerraformer extends TileEntitySpecialRenderer<TileEntityTerra
 		this.faceCenterPosition.set(x + 0.5D, y + 0.65D, z + 0.5D);
 		this.faceCenterPosition.add(this.faceOffset);
 
-		this.render.setScale(0.25D);
+		this.render.setSize(0.25D, 0.25D);
 		this.render.setRotationVector(this.faceOffset);
 		this.render.setTexture(this.getTextureForMode(te.getMode()));
 
