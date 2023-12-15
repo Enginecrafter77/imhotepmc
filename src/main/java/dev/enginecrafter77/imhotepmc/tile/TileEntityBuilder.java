@@ -8,12 +8,15 @@ import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.*;
 import dev.enginecrafter77.imhotepmc.net.BuilderDwellUpdate;
+import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
+import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementProvider;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -31,8 +34,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
-public class TileEntityBuilder extends TileEntity implements ITickable {
+public class TileEntityBuilder extends TileEntity implements ITickable, BlueprintPlacementProvider {
 	private static final String NBT_KEY_BLUEPRINT = "blueprint";
 	private static final String NBT_KEY_BUILDER = "builder_state";
 	private static final String NBT_KEY_FACING = "facing";
@@ -134,9 +138,22 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	}
 
 	@Nullable
+	@Override
 	public BlueprintPlacement getPlacement()
 	{
 		return this.placement;
+	}
+
+	@Override
+	public long getPlacementProviderUniqueId()
+	{
+		long sum = 0;
+		sum += this.pos.getX();
+		sum <<= 21;
+		sum += this.pos.getY();
+		sum <<= 21;
+		sum += this.pos.getZ();
+		return sum;
 	}
 
 	public void setBlueprint(SchematicBlueprint blueprint)
@@ -170,6 +187,13 @@ public class TileEntityBuilder extends TileEntity implements ITickable {
 	{
 		this.missingBlock = update.getMissingBlock();
 		this.dwellingTicks = update.getDwellingTicks();
+	}
+
+	@Override
+	public void onLoad()
+	{
+		super.onLoad();
+		BlueprintPlacementRegistry.proxy.registerProvider(this);
 	}
 
 	@Override

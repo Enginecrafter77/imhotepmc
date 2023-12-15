@@ -7,6 +7,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class BlueprintPlacement implements Blueprint {
@@ -120,6 +121,23 @@ public class BlueprintPlacement implements Blueprint {
 	public BlueprintReader reader()
 	{
 		return new BlueprintPlacementReader();
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(this.blueprint, this.rotation, this.placementOrigin);
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(this == obj)
+			return true;
+		if(!(obj instanceof BlueprintPlacement))
+			return false;
+		BlueprintPlacement other = (BlueprintPlacement)obj;
+		return Objects.equals(this.blueprint, other.blueprint) && Objects.equals(this.rotation, other.rotation) && Objects.equals(this.placementOrigin, other.placementOrigin);
 	}
 
 	public static BlueprintPlacement facing(Blueprint blueprint, BlockPos origin, EnumFacing facing)

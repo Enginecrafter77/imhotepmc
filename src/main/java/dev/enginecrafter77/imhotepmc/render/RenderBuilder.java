@@ -33,11 +33,8 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 	private final Vector3d faceOffset;
 	private final Point3d itemDrawPos;
 
-	private final RenderBlueprintPlacement renderBlueprintPlacement;
-
 	public RenderBuilder()
 	{
-		this.renderBlueprintPlacement = new RenderBlueprintPlacement();
 		this.itemRenderer = new ItemRenderHelper();
 		this.renderTape = new RenderTape();
 		this.edge3d = new Edge3d();
@@ -81,9 +78,6 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 
 		this.setLightmapDisabled(true);
 		this.renderMissingItem(te, x, y, z, partialTicks);
-
-		this.renderBlueprintPlacement.setPlacement(te.getPlacement());
-		this.renderBlueprintPlacement.doRender(partialTicks);
 
 		this.renderTape.setTexture(RenderTape.TEXTURE);
 		this.renderTape.setRadius(0.0625D);
