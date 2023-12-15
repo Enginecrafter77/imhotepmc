@@ -16,7 +16,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -34,12 +33,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 
 public class TileEntityBuilder extends TileEntity implements ITickable, BlueprintPlacementProvider {
 	private static final String NBT_KEY_BLUEPRINT = "blueprint";
 	private static final String NBT_KEY_BUILDER = "builder_state";
 	private static final String NBT_KEY_FACING = "facing";
+	private static final String NBT_KEY_PROJECTION = "projection";
 
 	private static final NBTBlueprintSerializer SERIALIZER = new LitematicaBlueprintSerializer();
 
@@ -62,6 +61,8 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	@Nullable
 	private BlueprintPlacement placement;
 
+	private boolean projectionActive;
+
 	@Nullable
 	private Block missingBlock;
 	private BuilderTask dwellTask;
@@ -74,6 +75,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		this.builderInvoker = new TickedBuilderInvoker();
 		this.buildAreaEdges = ImmutableList.of();
 		this.facing = EnumFacing.NORTH;
+		this.projectionActive = false;
 		this.boundingBox = null;
 		this.blueprint = null;
 		this.placement = null;
@@ -86,6 +88,22 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	public BuilderInvoker getInvoker()
 	{
 		return this.builderInvoker;
+	}
+
+	public boolean isProjectionActive()
+	{
+		return this.projectionActive;
+	}
+
+	public void setProjectionActive(boolean projectionActive)
+	{
+		this.projectionActive = projectionActive;
+	}
+
+	@Override
+	public boolean isPlacementVisible()
+	{
+		return this.projectionActive;
 	}
 
 	@Nullable
@@ -236,6 +254,8 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	{
 		super.readFromNBT(compound);
 		this.facing = EnumFacing.byHorizontalIndex(compound.getByte(NBT_KEY_FACING));
+		this.projectionActive = compound.getBoolean(NBT_KEY_PROJECTION);
+
 		if(compound.hasKey(NBT_KEY_BLUEPRINT))
 			this.blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag(NBT_KEY_BLUEPRINT));
 
@@ -255,6 +275,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	{
 		compound = super.writeToNBT(compound);
 		compound.setByte(NBT_KEY_FACING, (byte)this.facing.getHorizontalIndex());
+		compound.setBoolean(NBT_KEY_PROJECTION, this.projectionActive);
 
 		if(this.blueprint != null)
 			compound.setTag(NBT_KEY_BLUEPRINT, SERIALIZER.serializeBlueprint(this.blueprint));

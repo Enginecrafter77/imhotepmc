@@ -9,5 +9,6 @@ public interface BlueprintPlacementProvider {
 	@Nullable
 	public BlueprintPlacement getPlacement();
 	public boolean isInvalid();
+	public boolean isPlacementVisible();
 	public long getPlacementProviderUniqueId();
 }

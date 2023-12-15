@@ -43,7 +43,8 @@ public class DefaultBOMProvider implements BuilderBOMProvider {
 
 		ItemStack stack = this.overrides.get(block);
 		if(stack == null)
-			stack = new ItemStack(block);
+			//noinspection deprecation
+			stack = block.getItem(world, placeAt, blockStateToPlace);
 		return Collections.singleton(stack);
 	}
 

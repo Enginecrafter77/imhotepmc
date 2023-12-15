@@ -109,6 +109,7 @@ public class BlockBuilder extends Block {
 			return true;
 		}
 
-		return false;
+		tile.setProjectionActive(!tile.isProjectionActive());
+		return true;
 	}
 }

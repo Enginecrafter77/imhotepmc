@@ -66,6 +66,9 @@ public class RenderBlueprintPlacements {
 		@Override
 		public void doRender(float partialTicks)
 		{
+			if(!this.provider.isPlacementVisible())
+				return;
+
 			this.render.setPlacement(this.provider.getPlacement());
 			this.render.doRender(partialTicks);
 		}
