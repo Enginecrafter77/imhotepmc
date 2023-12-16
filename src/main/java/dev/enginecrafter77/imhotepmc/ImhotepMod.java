@@ -4,9 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
-import dev.enginecrafter77.imhotepmc.cap.AreaMarkJob;
-import dev.enginecrafter77.imhotepmc.cap.AreaMarkJobImpl;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintGameVersionTranslator;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationBuildEvent;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.MalformedTranslationRuleException;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
@@ -33,11 +34,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -53,7 +52,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -140,7 +138,7 @@ public class ImhotepMod {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
 
-        CapabilityManager.INSTANCE.register(AreaMarkJob.class, CapabilityAreaMarker.AreaMarkJobStorage.INSTANCE, AreaMarkJobImpl::new);
+        CapabilityAreaMarker.register();
         MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
     }
 
