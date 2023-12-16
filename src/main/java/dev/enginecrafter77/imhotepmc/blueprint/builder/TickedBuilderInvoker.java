@@ -14,6 +14,7 @@ public class TickedBuilderInvoker extends BuilderInvoker {
 	public void setBuilder(@Nullable StructureBuilder builder)
 	{
 		this.builder = builder;
+		this.done = false;
 	}
 
 	@Nullable
