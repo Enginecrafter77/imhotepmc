@@ -16,7 +16,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.lwjgl.util.Point;
 import org.lwjgl.util.ReadableRectangle;
 import org.lwjgl.util.Rectangle;
 
@@ -37,11 +36,7 @@ public class GUIArchitectTable extends GuiContainer {
 	private static final ReadableRectangle DESC_LABEL_RECT = new Rectangle(7, 62, 112, 10);
 
 	private final TileEntityArchitectTable tile;
-	private final InventoryPlayer inventoryPlayer;
 	private final IItemHandler tileInventory;
-
-	private final Rectangle drawRect;
-	private final Point guiOffset;
 
 	private GuiButton saveButton;
 	private GuiTextField nameField;
@@ -51,9 +46,6 @@ public class GUIArchitectTable extends GuiContainer {
 	{
 		super(container);
 		this.tileInventory = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-		this.drawRect = new Rectangle();
-		this.guiOffset = new Point();
-		this.inventoryPlayer = inventoryPlayer;
 		this.tile = tile;
 
 		this.xSize = 176;
