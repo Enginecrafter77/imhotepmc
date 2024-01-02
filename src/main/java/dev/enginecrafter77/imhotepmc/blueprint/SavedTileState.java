@@ -139,7 +139,9 @@ public class SavedTileState implements BlueprintEntry {
 	@Override
 	public String toString()
 	{
-		return String.format("%s{%s}", this.state, this.tileEntity);
+		if(this.tileEntity == null)
+			return this.state.toString();
+		return this.state + this.tileEntity.toString();
 	}
 
 	public static SavedTileState ofBlock(Block block)

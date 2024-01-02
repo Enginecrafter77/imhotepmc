@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -18,6 +19,8 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SavedBlockState implements BlueprintEntry {
 	private final ResourceLocation name;
@@ -152,7 +155,9 @@ public class SavedBlockState implements BlueprintEntry {
 	@Override
 	public String toString()
 	{
-		return String.format("%s[%s]", this.name.toString(), this.blockProps);
+		if(this.blockProps.isEmpty())
+			return this.name.toString();
+		return String.format("%s[%s]", this.name, Joiner.on(',').withKeyValueSeparator('=').join(this.blockProps));
 	}
 
 	public NBTTagCompound serialize()
@@ -208,6 +213,34 @@ public class SavedBlockState implements BlueprintEntry {
 		if(entry instanceof SavedTileState)
 			return ((SavedTileState)entry).getSavedBlockState();
 		return new SavedBlockState(entry.getBlockName(), entry.getBlockProperties());
+	}
+
+	private static final Pattern NOTATION_PATTERN = Pattern.compile("([a-zA-Z_]+:[a-zA-Z_]+)(?:\\[([^]]+)])?");
+	public static SavedBlockState parse(String notation)
+	{
+		Matcher matcher = NOTATION_PATTERN.matcher(notation);
+		if(!matcher.matches())
+			throw new IllegalArgumentException();
+
+		String name = matcher.group(1);
+		String propBundle = matcher.group(2);
+
+		Map<String, String> props = ImmutableMap.of();
+		if(propBundle != null)
+		{
+			ImmutableMap.Builder<String, String> propBuilder = ImmutableMap.builder();
+			String[] propArray = propBundle.split(",");
+			for(String propNotation : propArray)
+			{
+				String[] propParts = propNotation.split("=");
+				String propKey = propParts[0];
+				String propVal = propParts[1];
+				propBuilder.put(propKey, propVal);
+			}
+			props = propBuilder.build();
+		}
+
+		return new SavedBlockState(new ResourceLocation(name), props);
 	}
 
 	private static <T extends Comparable<T>> Map.Entry<String, String> serializeProperty(IProperty<T> prop, IBlockState state)
