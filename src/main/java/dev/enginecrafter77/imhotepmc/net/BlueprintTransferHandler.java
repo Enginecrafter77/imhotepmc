@@ -3,6 +3,8 @@ package dev.enginecrafter77.imhotepmc.net;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.SchematicFileFormat;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTable;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamChunk;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamTopicHandler;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamServerChannel;
@@ -22,16 +24,21 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 public class BlueprintTransferHandler implements PacketStreamTopicHandler {
 	private static final Log LOGGER = LogFactory.getLog(BlueprintTransferHandler.class);
 
-	private final NBTBlueprintSerializer serializer;
+	public static final String NBT_ARG_TILEPOS = "TileEntityPosition";
+	public static final String NBT_ARG_FORMAT = "Format";
 
-	public BlueprintTransferHandler(NBTBlueprintSerializer serializer)
+	@Nullable
+	private final BlueprintCrossVersionTable table;
+
+	public BlueprintTransferHandler(@Nullable BlueprintCrossVersionTable table)
 	{
-		this.serializer = serializer;
+		this.table = table;
 	}
 
 	@Override
@@ -84,12 +91,15 @@ public class BlueprintTransferHandler implements PacketStreamTopicHandler {
 				ByteBufInputStream bis = new ByteBufInputStream(this.buffer);
 				NBTTagCompound tag = CompressedStreamTools.readCompressed(bis);
 
-				BlockPos pos = NBTUtil.getPosFromTag(tag.getCompoundTag("TileEntityPosition"));
-				SchematicBlueprint blueprint = BlueprintTransferHandler.this.serializer.deserializeBlueprint(tag);
+				SchematicFileFormat format = SchematicFileFormat.valueOf(tag.getString(NBT_ARG_FORMAT).toUpperCase());
+				NBTBlueprintSerializer serializer = format.createSerializer(BlueprintTransferHandler.this.table);
+
+				BlockPos pos = NBTUtil.getPosFromTag(tag.getCompoundTag(NBT_ARG_TILEPOS));
+				SchematicBlueprint blueprint = serializer.deserializeBlueprint(tag);
 
 				BlueprintTransferHandler.this.onBlueprintReceived(ctx, pos, blueprint);
 			}
-			catch(IOException exc)
+			catch(Exception exc)
 			{
 				LOGGER.error("Error publishing result", exc);
 			}

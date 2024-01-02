@@ -2,7 +2,6 @@ package dev.enginecrafter77.imhotepmc;
 
 import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.block.*;
-import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintGameVersionTranslator;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationBuildEvent;
@@ -130,7 +129,7 @@ public class ImhotepMod {
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID + ":main");
         this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "worldsync"));
         this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "pktstream"), 4096);
-        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(new LitematicaBlueprintSerializer(this.versionTranslator)));
+        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(this.versionTranslator));
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
         this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderDwellUpdate.class, 1, Side.CLIENT);

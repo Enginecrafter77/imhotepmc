@@ -3,7 +3,9 @@ package dev.enginecrafter77.imhotepmc.gui;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.SchematicFileFormat;
 import dev.enginecrafter77.imhotepmc.container.ContainerBlueprintLibrary;
+import dev.enginecrafter77.imhotepmc.net.BlueprintTransferHandler;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamClientChannel;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
 import net.minecraft.client.Minecraft;
@@ -31,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 public class GUIBlueprintLibrary extends GuiContainer {
@@ -185,11 +188,16 @@ public class GUIBlueprintLibrary extends GuiContainer {
 			this.setPageStart(this.pageStart - this.itemRectangles.length);
 			return;
 		case BUTTON_ID_LOAD:
+			Path src = this.schematics[this.selected].toPath();
+			SchematicFileFormat format = SchematicFileFormat.fromPath(src);
+			if(format == null)
+				return;
 			ImhotepMod.instance.getPacketStreamClient().connect("blueprint-encode", (PacketStreamClientChannel channel) -> {
-				try(InputStream inputStream = Files.newInputStream(this.schematics[this.selected].toPath()))
+				try(InputStream inputStream = Files.newInputStream(src))
 				{
 					NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
-					tag.setTag("TileEntityPosition", NBTUtil.createPosTag(this.tileEntityBlueprintLibrary.getPos()));
+					tag.setTag(BlueprintTransferHandler.NBT_ARG_TILEPOS, NBTUtil.createPosTag(this.tileEntityBlueprintLibrary.getPos()));
+					tag.setString(BlueprintTransferHandler.NBT_ARG_FORMAT, format.name().toLowerCase());
 					CompressedStreamTools.writeCompressed(tag, channel.getOutputStream());
 					channel.close();
 				}
