@@ -9,7 +9,8 @@ import java.nio.file.Path;
 
 public enum SchematicFileFormat {
 	LITEMATICA(".litematic"),
-	SCHEMATIC(".schematic");
+	SCHEMATIC(".schematic"),
+	SPONGE(".schem");
 
 	private final String extension;
 
@@ -26,6 +27,8 @@ public enum SchematicFileFormat {
 			return new LitematicaBlueprintSerializer(table);
 		case SCHEMATIC:
 			return new SchematicaBlueprintSerializer();
+		case SPONGE:
+			return new SpongeBlueprintSerializer(table);
 		default:
 			throw new UnsupportedOperationException();
 		}
