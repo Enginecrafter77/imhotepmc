@@ -52,6 +52,6 @@ public class TestSpongeSerializer extends BlueprintSerializerTest<NBTTagCompound
 	@Override
 	public BlueprintSerializer<NBTTagCompound> createSerializer()
 	{
-		return new SpongeBlueprintSerializer(null);
+		return new SpongeBlueprintSerializer();
 	}
 }

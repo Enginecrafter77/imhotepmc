@@ -1,8 +1,8 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import com.google.common.collect.ImmutableSet;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationContext;
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,18 +19,26 @@ import java.util.stream.Collectors;
 public class BlueprintEditor {
 	private final Map<BlockPos, SavedTileState> data;
 
+	private int dataVersion;
+
 	@Nullable
 	private Vec3i size;
 
 	public BlueprintEditor()
 	{
 		this.data = new HashMap<BlockPos, SavedTileState>();
+		this.dataVersion = ImhotepMod.GAME_DATA_VERSION;
 		this.size = null;
 	}
 
 	public void importBlueprint(Blueprint other)
 	{
 		other.reader().forEachRemaining(this::addVoxel);
+	}
+
+	public void setDataVersion(int dataVersion)
+	{
+		this.dataVersion = dataVersion;
 	}
 
 	public void addVoxel(BlueprintVoxel voxel)
@@ -78,6 +86,21 @@ public class BlueprintEditor {
 		return this;
 	}
 
+	public BlueprintEditor translateVersion(DataVersionTranslationTable table) throws TranslationNotAvailableException
+	{
+		int desiredVersion = table.getProducedDataVersion();
+		if(this.dataVersion == desiredVersion)
+			return this;
+
+		DataVersionTranslation translation = table.getTranslationFor(this.dataVersion);
+		if(translation == null)
+			throw new TranslationNotAvailableException(this.dataVersion, desiredVersion);
+		BlueprintTranslation translations = BlueprintTranslation.aggregate(translation.getBlueprintTranslations());
+		this.translate(translations);
+		this.dataVersion = desiredVersion;
+		return this;
+	}
+
 	public StructureBlueprint build()
 	{
 		if(this.data.isEmpty())
@@ -106,6 +129,6 @@ public class BlueprintEditor {
 			int index = indexer.toIndex(offset);
 			vector.set(index, entry.getValue());
 		}
-		return new StructureBlueprint(indexer, ImmutableSet.copyOf(palette), vector, size, this.data.size());
+		return new StructureBlueprint(indexer, ImmutableSet.copyOf(palette), vector, size, this.data.size(), this.dataVersion);
 	}
 }

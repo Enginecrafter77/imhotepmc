@@ -17,13 +17,22 @@ public class StructureBlueprint implements Blueprint {
 	private final int definedBlocks;
 	private final Vec3i size;
 
-	protected StructureBlueprint(VoxelIndexer indexer, Set<SavedTileState> palette, CompactPalettedBitVector<SavedTileState> vector, Vec3i size, int definedBlocks)
+	private final int version;
+
+	protected StructureBlueprint(VoxelIndexer indexer, Set<SavedTileState> palette, CompactPalettedBitVector<SavedTileState> vector, Vec3i size, int definedBlocks, int version)
 	{
 		this.definedBlocks = definedBlocks;
 		this.indexer = indexer;
 		this.palette = palette;
 		this.vector = vector;
+		this.version = version;
 		this.size = size;
+	}
+
+	@Override
+	public int getDataVersion()
+	{
+		return this.version;
 	}
 
 	@Override
@@ -91,6 +100,7 @@ public class StructureBlueprint implements Blueprint {
 	{
 		BlueprintEditor blueprintEditor = new BlueprintEditor();
 		blueprintEditor.importBlueprint(this);
+		blueprintEditor.setDataVersion(this.version);
 		return blueprintEditor;
 	}
 

@@ -112,6 +112,12 @@ public class BlueprintPlacement implements Blueprint {
 	}
 
 	@Override
+	public int getDataVersion()
+	{
+		return this.blueprint.getDataVersion();
+	}
+
+	@Override
 	public int getDefinedBlockCount()
 	{
 		return this.blueprint.getDefinedBlockCount();

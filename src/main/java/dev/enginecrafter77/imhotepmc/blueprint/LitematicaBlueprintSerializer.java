@@ -1,8 +1,5 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslation;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,17 +7,11 @@ import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
-import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
-	private static final int GAME_DATA_VERSION = 1343;
-
-	@Nullable
-	private final DataVersionTranslationTable compatTable;
-
 	private static final String NBT_KEY_MCDATAVERSION = "MinecraftDataVersion";
 	private static final String NBT_KEY_VERSION = "Version";
 	private static final String NBT_KEY_METADATA = "Metadata";
@@ -44,16 +35,6 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	private static final String NBT_KEY_REGION_PENDING_TILE_TICKS = "PendingBlockTicks";
 	private static final String NBT_KEY_REGION_PENDING_FLUID_TICKS = "PendingFluidTicks";
 	private static final String NBT_KEY_REGION_ENTITIES = "Entities";
-
-	public LitematicaBlueprintSerializer(@Nullable DataVersionTranslationTable compatTable)
-	{
-		this.compatTable = compatTable;
-	}
-
-	public LitematicaBlueprintSerializer()
-	{
-		this(null);
-	}
 
 	protected void serializeVectorInto(Vec3i vector, NBTTagCompound tag)
 	{
@@ -156,7 +137,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	{
 		NBTTagCompound root = new NBTTagCompound();
 
-		root.setInteger(NBT_KEY_MCDATAVERSION, GAME_DATA_VERSION);
+		root.setInteger(NBT_KEY_MCDATAVERSION, blueprint.getDataVersion());
 		root.setInteger(NBT_KEY_VERSION, 5);
 		root.setTag(NBT_KEY_METADATA, this.createMetadataTag(blueprint));
 
@@ -232,6 +213,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		SavedBlockState air = paletteList.get(0);
 
 		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
+		blueprintEditor.setDataVersion(version);
 		blueprintEditor.setSize(size);
 		for(int index = 0; index < indexer.getVolume(); ++index)
 		{
@@ -248,13 +230,6 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 			NBTTagCompound tileTag = tileEntities.getCompoundTagAt(index);
 			BlockPos pos = new BlockPos(readVector(tileTag));
 			blueprintEditor.addTileEntity(pos, tileTag);
-		}
-
-		if(this.compatTable != null)
-		{
-			DataVersionTranslation translation = this.compatTable.getTranslationFor(version);
-			if(translation != null)
-				blueprintEditor.translate(BlueprintTranslation.aggregate(translation.getBlueprintTranslations()));
 		}
 
 		return blueprintEditor.build();

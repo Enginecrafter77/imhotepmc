@@ -1,6 +1,5 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
 import io.netty.buffer.ByteBuf;
 
 import javax.annotation.Nullable;
@@ -19,16 +18,16 @@ public enum SchematicFileFormat {
 		this.extension = extension;
 	}
 
-	public NBTBlueprintSerializer createSerializer(@Nullable DataVersionTranslationTable table)
+	public NBTBlueprintSerializer createSerializer()
 	{
 		switch(this)
 		{
 		case LITEMATICA:
-			return new LitematicaBlueprintSerializer(table);
+			return new LitematicaBlueprintSerializer();
 		case SCHEMATIC:
 			return new SchematicaBlueprintSerializer();
 		case SPONGE:
-			return new SpongeBlueprintSerializer(table);
+			return new SpongeBlueprintSerializer();
 		default:
 			throw new UnsupportedOperationException();
 		}

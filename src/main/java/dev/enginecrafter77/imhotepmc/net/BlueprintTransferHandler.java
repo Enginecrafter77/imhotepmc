@@ -91,10 +91,13 @@ public class BlueprintTransferHandler implements PacketStreamTopicHandler {
 				NBTTagCompound tag = CompressedStreamTools.readCompressed(bis);
 
 				SchematicFileFormat format = SchematicFileFormat.valueOf(tag.getString(NBT_ARG_FORMAT).toUpperCase());
-				NBTBlueprintSerializer serializer = format.createSerializer(BlueprintTransferHandler.this.table);
+				NBTBlueprintSerializer serializer = format.createSerializer();
 
 				BlockPos pos = NBTUtil.getPosFromTag(tag.getCompoundTag(NBT_ARG_TILEPOS));
 				SchematicBlueprint blueprint = serializer.deserializeBlueprint(tag);
+
+				if(BlueprintTransferHandler.this.table != null)
+					blueprint = blueprint.edit().translateVersion(BlueprintTransferHandler.this.table).build();
 
 				BlueprintTransferHandler.this.onBlueprintReceived(ctx, pos, blueprint);
 			}

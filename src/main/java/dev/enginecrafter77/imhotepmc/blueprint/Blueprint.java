@@ -19,4 +19,6 @@ public interface Blueprint {
 
 	@Nonnull
 	public BlueprintReader reader();
+
+	public int getDataVersion();
 }

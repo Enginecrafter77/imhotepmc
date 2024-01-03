@@ -1,8 +1,5 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslation;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.init.Blocks;
@@ -17,7 +14,9 @@ import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class SpongeBlueprintSerializer implements NBTBlueprintSerializer {
@@ -25,9 +24,9 @@ public class SpongeBlueprintSerializer implements NBTBlueprintSerializer {
 
 	private final Version2 sv2;
 
-	public SpongeBlueprintSerializer(@Nullable DataVersionTranslationTable table)
+	public SpongeBlueprintSerializer()
 	{
-		this.sv2 = new Version2(table);
+		this.sv2 = new Version2();
 	}
 
 	@Override
@@ -118,14 +117,6 @@ public class SpongeBlueprintSerializer implements NBTBlueprintSerializer {
 		private static final String NBT_KEY_METADATA_AUTHOR = "Author";
 		private static final String NBT_KEY_METADATA_DATE = "Date";
 
-		@Nullable
-		private final DataVersionTranslationTable table;
-
-		public Version2(@Nullable DataVersionTranslationTable table)
-		{
-			this.table = table;
-		}
-
 		@Override
 		public NBTTagCompound serializeBlueprint(SchematicBlueprint blueprint)
 		{
@@ -207,6 +198,8 @@ public class SpongeBlueprintSerializer implements NBTBlueprintSerializer {
 			int[] blocks = unpackSpongeVarintArray(source.getByteArray(NBT_KEY_BLOCKS), indexer.getVolume());
 
 			BlueprintEditor editor = new BlueprintEditor();
+			editor.setDataVersion(version);
+			editor.setSize(size);
 			for(int index = 0; index < indexer.getVolume(); ++index)
 			{
 				BlockPos pos = indexer.fromIndex(index);
@@ -223,13 +216,6 @@ public class SpongeBlueprintSerializer implements NBTBlueprintSerializer {
 					BlockPos pos = NBTUtil.getPosFromTag(tileEntryTag);
 					editor.addTileEntity(pos, tileEntryTag);
 				}
-			}
-
-			if(this.table != null)
-			{
-				DataVersionTranslation translation = this.table.getTranslationFor(version);
-				if(translation != null)
-					editor.translate(BlueprintTranslation.aggregate(translation.getBlueprintTranslations()));
 			}
 
 			return SchematicBlueprint.builder().addRegion("Main", editor.build(), BlockPos.ORIGIN).setMetadata(metadata).build();

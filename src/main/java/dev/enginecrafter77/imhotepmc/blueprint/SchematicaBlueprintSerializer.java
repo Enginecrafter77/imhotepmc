@@ -75,6 +75,7 @@ public class SchematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		byte[] meta = source.getByteArray(NBT_KEY_META);
 
 		BlueprintEditor editor = new BlueprintEditor();
+		editor.setSize(size);
 		for(int index = 0; index < indexer.getVolume(); ++index)
 		{
 			BlockPos pos = indexer.fromIndex(index);
