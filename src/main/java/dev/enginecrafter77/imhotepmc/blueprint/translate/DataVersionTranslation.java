@@ -1,6 +1,9 @@
 package dev.enginecrafter77.imhotepmc.blueprint.translate;
 
-public interface BlueprintCrossVersionTranslation extends BlueprintTranslation {
+import java.util.Set;
+
+public interface DataVersionTranslation {
 	public int getAcceptedDataVersion();
 	public int getProducedDataVersion();
+	public Set<BlueprintTranslation> getBlueprintTranslations();
 }

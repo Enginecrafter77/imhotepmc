@@ -1,7 +1,8 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTable;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTranslation;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslation;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.init.Blocks;
@@ -24,7 +25,7 @@ public class SpongeBlueprintSerializer implements NBTBlueprintSerializer {
 
 	private final Version2 sv2;
 
-	public SpongeBlueprintSerializer(@Nullable BlueprintCrossVersionTable table)
+	public SpongeBlueprintSerializer(@Nullable DataVersionTranslationTable table)
 	{
 		this.sv2 = new Version2(table);
 	}
@@ -118,9 +119,9 @@ public class SpongeBlueprintSerializer implements NBTBlueprintSerializer {
 		private static final String NBT_KEY_METADATA_DATE = "Date";
 
 		@Nullable
-		private final BlueprintCrossVersionTable table;
+		private final DataVersionTranslationTable table;
 
-		public Version2(@Nullable BlueprintCrossVersionTable table)
+		public Version2(@Nullable DataVersionTranslationTable table)
 		{
 			this.table = table;
 		}
@@ -226,9 +227,9 @@ public class SpongeBlueprintSerializer implements NBTBlueprintSerializer {
 
 			if(this.table != null)
 			{
-				BlueprintCrossVersionTranslation translation = this.table.getTranslationFor(version);
+				DataVersionTranslation translation = this.table.getTranslationFor(version);
 				if(translation != null)
-					editor.translate(translation);
+					editor.translate(BlueprintTranslation.aggregate(translation.getBlueprintTranslations()));
 			}
 
 			return SchematicBlueprint.builder().addRegion("Main", editor.build(), BlockPos.ORIGIN).setMetadata(metadata).build();

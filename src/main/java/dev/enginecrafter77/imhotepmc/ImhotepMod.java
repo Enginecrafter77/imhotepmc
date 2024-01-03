@@ -3,7 +3,7 @@ package dev.enginecrafter77.imhotepmc;
 import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintGameVersionTranslator;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.DefaultDataVersionTranslator;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationBuildEvent;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.MalformedTranslationRuleException;
@@ -98,7 +98,7 @@ public class ImhotepMod {
     public static BlockCreativeBuildCache BLOCK_CREATIVE_BUILD_CACHE;
 
     private DefaultBOMProvider builderBomProvider;
-    private BlueprintGameVersionTranslator versionTranslator;
+    private DefaultDataVersionTranslator versionTranslator;
 
     private File modConfigDir;
     private File schematicsDir;
@@ -197,7 +197,7 @@ public class ImhotepMod {
         return this.builderBomProvider;
     }
 
-    public BlueprintGameVersionTranslator getVersionTranslator()
+    public DefaultDataVersionTranslator getVersionTranslator()
     {
         return this.versionTranslator;
     }

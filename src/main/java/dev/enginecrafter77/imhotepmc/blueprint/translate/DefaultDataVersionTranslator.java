@@ -1,23 +1,20 @@
 package dev.enginecrafter77.imhotepmc.blueprint.translate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import dev.enginecrafter77.imhotepmc.blueprint.BlueprintEntry;
-import net.minecraft.util.math.BlockPos;
+import com.google.common.collect.*;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
-public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTable {
+public class DefaultDataVersionTranslator implements DataVersionTranslationTable {
 	private final Map<Integer, BlueprintVersionTranslationEntry> tables;
 	@Nullable
 	private final BlueprintTranslationTable fallback;
 	private final int producedVersion;
 
-	public BlueprintGameVersionTranslator(Map<Integer, BlueprintVersionTranslationEntry> tables, int producedVersion, @Nullable BlueprintTranslationTable fallback)
+	public DefaultDataVersionTranslator(Map<Integer, BlueprintVersionTranslationEntry> tables, int producedVersion, @Nullable BlueprintTranslationTable fallback)
 	{
 		this.fallback = fallback;
 		this.producedVersion = producedVersion;
@@ -38,15 +35,15 @@ public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTabl
 
 	@Nullable
 	@Override
-	public BlueprintCrossVersionTranslation getTranslationFor(int version)
+	public DataVersionTranslation getTranslationFor(int version)
 	{
-		BlueprintCrossVersionTranslation translation = this.tables.get(version);
+		DataVersionTranslation translation = this.tables.get(version);
 		if(translation == null && this.fallback != null)
 			translation = new BlueprintVersionTranslationEntry(this.fallback, version, this.producedVersion);
 		return translation;
 	}
 
-	public static class BlueprintVersionTranslationEntry implements BlueprintCrossVersionTranslation
+	public static class BlueprintVersionTranslationEntry implements DataVersionTranslation
 	{
 		private final BlueprintTranslationTable table;
 		private final int acceptedVersion;
@@ -76,11 +73,10 @@ public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTabl
 			return this.producedVersion;
 		}
 
-		@Nullable
 		@Override
-		public BlueprintEntry translate(BlueprintTranslationContext context, BlockPos position, BlueprintEntry old)
+		public Set<BlueprintTranslation> getBlueprintTranslations()
 		{
-			return this.table.translate(context, position, old);
+			return ImmutableSet.of(this.table);
 		}
 	}
 
@@ -153,13 +149,13 @@ public class BlueprintGameVersionTranslator implements BlueprintCrossVersionTabl
 			return new BlueprintVersionTranslationEntry(table, versionFrom, this.versionTo);
 		}
 
-		public BlueprintGameVersionTranslator build()
+		public DefaultDataVersionTranslator build()
 		{
 			Map<Integer, BlueprintVersionTranslationEntry> entry = Maps.transformEntries(this.ruleListMap, this::createEntry);
 			@Nullable BlueprintTranslationTable fallback = null;
 			if(this.defaultVersionFrom != -1)
 				fallback = entry.get(this.defaultVersionFrom).getTable();
-			return new BlueprintGameVersionTranslator(entry, this.versionTo, fallback);
+			return new DefaultDataVersionTranslator(entry, this.versionTo, fallback);
 		}
 	}
 }

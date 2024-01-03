@@ -4,7 +4,7 @@ import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicFileFormat;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTable;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamChunk;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamTopicHandler;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamServerChannel;
@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 
 public class BlueprintTransferHandler implements PacketStreamTopicHandler {
 	private static final Log LOGGER = LogFactory.getLog(BlueprintTransferHandler.class);
@@ -34,9 +33,9 @@ public class BlueprintTransferHandler implements PacketStreamTopicHandler {
 	public static final String NBT_ARG_FORMAT = "Format";
 
 	@Nullable
-	private final BlueprintCrossVersionTable table;
+	private final DataVersionTranslationTable table;
 
-	public BlueprintTransferHandler(@Nullable BlueprintCrossVersionTable table)
+	public BlueprintTransferHandler(@Nullable DataVersionTranslationTable table)
 	{
 		this.table = table;
 	}

@@ -13,4 +13,13 @@ public interface BlueprintTranslation {
 	{
 		return (BlueprintTranslationContext context, BlockPos position, BlueprintEntry old) -> old;
 	}
+
+	public static BlueprintTranslation aggregate(Iterable<? extends BlueprintTranslation> translations)
+	{
+		return (BlueprintTranslationContext context, BlockPos position, BlueprintEntry entry) -> {
+			for(BlueprintTranslation translation : translations)
+				entry = translation.translate(context, position, entry);
+			return entry;
+		};
+	}
 }

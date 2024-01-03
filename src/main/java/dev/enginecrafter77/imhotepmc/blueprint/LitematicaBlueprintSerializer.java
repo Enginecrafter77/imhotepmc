@@ -1,8 +1,8 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTable;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslation;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,7 +19,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	private static final int GAME_DATA_VERSION = 1343;
 
 	@Nullable
-	private final BlueprintCrossVersionTable compatTable;
+	private final DataVersionTranslationTable compatTable;
 
 	private static final String NBT_KEY_MCDATAVERSION = "MinecraftDataVersion";
 	private static final String NBT_KEY_VERSION = "Version";
@@ -45,7 +45,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	private static final String NBT_KEY_REGION_PENDING_FLUID_TICKS = "PendingFluidTicks";
 	private static final String NBT_KEY_REGION_ENTITIES = "Entities";
 
-	public LitematicaBlueprintSerializer(@Nullable BlueprintCrossVersionTable compatTable)
+	public LitematicaBlueprintSerializer(@Nullable DataVersionTranslationTable compatTable)
 	{
 		this.compatTable = compatTable;
 	}
@@ -252,9 +252,9 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 
 		if(this.compatTable != null)
 		{
-			BlueprintCrossVersionTranslation translation = this.compatTable.getTranslationFor(version);
+			DataVersionTranslation translation = this.compatTable.getTranslationFor(version);
 			if(translation != null)
-				blueprintEditor.translate(translation);
+				blueprintEditor.translate(BlueprintTranslation.aggregate(translation.getBlueprintTranslations()));
 		}
 
 		return blueprintEditor.build();

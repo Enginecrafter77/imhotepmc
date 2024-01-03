@@ -1,6 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintCrossVersionTable;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
 import io.netty.buffer.ByteBuf;
 
 import javax.annotation.Nullable;
@@ -19,7 +19,7 @@ public enum SchematicFileFormat {
 		this.extension = extension;
 	}
 
-	public NBTBlueprintSerializer createSerializer(@Nullable BlueprintCrossVersionTable table)
+	public NBTBlueprintSerializer createSerializer(@Nullable DataVersionTranslationTable table)
 	{
 		switch(this)
 		{
