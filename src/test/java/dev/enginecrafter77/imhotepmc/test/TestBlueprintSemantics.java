@@ -171,7 +171,7 @@ public class TestBlueprintSemantics {
 	private SchematicBlueprint createBlueprint()
 	{
 		StructureBlueprint region = this.createRegion();
-		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
+		SchematicEditor builder = SchematicBlueprint.builder();
 		builder.addRegion("Main", region, BlockPos.ORIGIN);
 		return builder.build();
 	}
@@ -179,7 +179,7 @@ public class TestBlueprintSemantics {
 	private SchematicBlueprint createMultiRegionBlueprint()
 	{
 		StructureBlueprint region = this.createRegion();
-		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
+		SchematicEditor builder = SchematicBlueprint.builder();
 		builder.addRegion("Reg1", region, BlockPos.ORIGIN);
 		builder.addRegion("Reg2", region, new BlockPos(5, 5, 5));
 		return builder.build();

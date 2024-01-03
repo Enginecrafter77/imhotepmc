@@ -155,7 +155,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 	@Override
 	public SchematicBlueprint deserializeBlueprint(NBTTagCompound source)
 	{
-		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
+		SchematicEditor builder = SchematicBlueprint.builder();
 		builder.setMetadata(this.deserializeBlueprintMetadata(source));
 
 		int dataVersion = source.getInteger(NBT_KEY_MCDATAVERSION);

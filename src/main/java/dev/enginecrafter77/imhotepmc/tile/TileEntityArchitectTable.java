@@ -70,7 +70,7 @@ public class TileEntityArchitectTable extends TileEntity {
 	{
 		StructureBlueprint blueprint = this.scanStructure();
 
-		SchematicBlueprint.Builder schematicBuilder = SchematicBlueprint.builder();
+		SchematicEditor schematicBuilder = SchematicBlueprint.builder();
 		schematicBuilder.addRegion(metadata.getName(), blueprint, BlockPos.ORIGIN);
 		schematicBuilder.setMetadata(metadata);
 		return schematicBuilder.build();

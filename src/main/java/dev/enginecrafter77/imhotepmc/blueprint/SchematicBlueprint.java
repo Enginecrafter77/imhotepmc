@@ -1,11 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.TranslationNotAvailableException;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,8 +12,8 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public class SchematicBlueprint extends SchematicMetadataWrapper implements Blueprint {
+	protected final Map<String, SchematicRegionBlueprint> regions;
 	private final Set<? extends BlueprintEntry> palette;
-	private final Map<String, SchematicRegionBlueprint> regions;
 	private final SchematicMetadata metadata;
 	private final int dataVersion;
 
@@ -109,14 +104,14 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		return this.palette;
 	}
 
-	public SchematicBlueprint.Builder edit()
+	public SchematicEditor edit()
 	{
-		return new Builder(this);
+		return new SchematicEditor(this);
 	}
 
-	public static SchematicBlueprint.Builder builder()
+	public static SchematicEditor builder()
 	{
-		return new Builder();
+		return new SchematicEditor();
 	}
 
 	private static Set<BlueprintEntry> compilePalette(Iterable<? extends Blueprint> blueprints)
@@ -125,128 +120,6 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		for(Blueprint blueprint : blueprints)
 			sb.addAll(blueprint.palette());
 		return sb.build();
-	}
-
-	public static class Builder
-	{
-		private final Map<String, SchematicRegionBlueprint> regions;
-		private final MutableSchematicMetadata metadata;
-
-		private int blockCount;
-		private Vec3i size;
-		private int dataVersion;
-
-		public Builder()
-		{
-			this.regions = new HashMap<String, SchematicRegionBlueprint>();
-			this.metadata = new MutableSchematicMetadata();
-			this.dataVersion = ImhotepMod.GAME_DATA_VERSION;
-			this.size = Vec3i.NULL_VECTOR;
-			this.blockCount = 0;
-		}
-
-		public Builder(SchematicBlueprint src)
-		{
-			this();
-			this.size = src.getSize();
-			this.regions.putAll(src.regions);
-			this.metadata.set(src);
-			this.dataVersion = src.getDataVersion();
-		}
-
-		public Builder setMetadata(SchematicMetadata metadata)
-		{
-			this.metadata.set(metadata);
-			return this;
-		}
-
-		public Builder addRegion(String name, StructureBlueprint blueprint, BlockPos offset)
-		{
-			if(this.regions.isEmpty())
-			{
-				this.dataVersion = blueprint.getDataVersion();
-			}
-			else if(this.dataVersion != blueprint.getDataVersion())
-			{
-				throw new IllegalArgumentException(String.format("Attempting to add incompatible region with version %d to schematic containing regions with version %d", blueprint.getDataVersion(), this.dataVersion));
-			}
-
-			SchematicRegionBlueprint offsetBlueprint = new SchematicRegionBlueprint(blueprint, offset);
-			BlockSelectionBox newRegionBox = new BlockSelectionBox();
-			offsetBlueprint.computeBoundingBox(newRegionBox);
-
-			BlockSelectionBox totalBox = new BlockSelectionBox();
-
-			BlockSelectionBox regionBox = new BlockSelectionBox();
-			for(SchematicRegionBlueprint region : this.regions.values())
-			{
-				region.computeBoundingBox(regionBox);
-				regionBox.intersect(newRegionBox);
-				if(regionBox.getVolume() > 0)
-					throw new IllegalArgumentException("Regions cannot overlap!");
-				totalBox.union(regionBox);
-			}
-			totalBox.union(newRegionBox);
-
-			this.regions.put(name, offsetBlueprint);
-			this.size = totalBox.getSize();
-			this.blockCount += offsetBlueprint.getDefinedBlockCount();
-
-			return this;
-		}
-
-		public Builder addRegionsFrom(SchematicBlueprint other)
-		{
-			for(String regionName : other.getRegions())
-			{
-				SchematicRegionBlueprint blueprint = other.getRegion(regionName);
-				this.addRegion(regionName, blueprint.getRegionBlueprint(), blueprint.getOriginOffset());
-			}
-			return this;
-		}
-
-		public Builder translate(BlueprintTranslation translation)
-		{
-			for(String regionName : this.regions.keySet())
-			{
-				SchematicRegionBlueprint region = this.regions.get(regionName);
-				BlueprintEditor editor = region.getRegionBlueprint().edit();
-				editor.translate(translation);
-				StructureBlueprint filtered = editor.build();
-				SchematicRegionBlueprint newRegion = new SchematicRegionBlueprint(filtered, region.getOriginOffset());
-				this.regions.put(regionName, newRegion);
-			}
-			return this;
-		}
-
-		public Builder translateVersion(DataVersionTranslationTable table) throws TranslationNotAvailableException
-		{
-			int desiredVersion = table.getProducedDataVersion();
-			if(this.dataVersion == desiredVersion)
-				return this;
-
-			for(String regionName : this.regions.keySet())
-			{
-				SchematicRegionBlueprint region = this.regions.get(regionName);
-				BlueprintEditor editor = region.getRegionBlueprint().edit();
-				editor.translateVersion(table);
-				StructureBlueprint filtered = editor.build();
-				SchematicRegionBlueprint newRegion = new SchematicRegionBlueprint(filtered, region.getOriginOffset());
-				this.regions.put(regionName, newRegion);
-			}
-
-			this.dataVersion = desiredVersion;
-			return this;
-		}
-
-		public SchematicBlueprint build()
-		{
-			MutableSchematicMetadata meta = this.metadata.copy();
-			meta.setSize(this.size);
-			meta.setDefinedBlockCount(this.blockCount);
-			meta.setRegionCount(this.regions.size());
-			return new SchematicBlueprint(meta, ImmutableMap.copyOf(this.regions), this.dataVersion);
-		}
 	}
 
 	public static class SchematicRegionBlueprint implements Blueprint

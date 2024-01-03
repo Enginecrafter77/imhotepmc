@@ -41,7 +41,7 @@ public abstract class BlueprintSerializerTest<T> {
 	private SchematicBlueprint createBlueprint()
 	{
 		StructureBlueprint region = this.createRegion();
-		SchematicBlueprint.Builder builder = SchematicBlueprint.builder();
+		SchematicEditor builder = SchematicBlueprint.builder();
 		builder.addRegion("Main", region, BlockPos.ORIGIN);
 		return builder.build();
 	}
