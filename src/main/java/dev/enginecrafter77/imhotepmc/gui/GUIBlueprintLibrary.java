@@ -90,7 +90,7 @@ public class GUIBlueprintLibrary extends GuiContainer {
 	protected void rescanFiles()
 	{
 		this.schematics = Objects.requireNonNull(ImhotepMod.instance.getSchematicsDir().listFiles());
-		this.setPageStart((this.schematics.length / this.itemRectangles.length) * this.itemRectangles.length);
+		this.setPageStart(0);
 		this.setSelected(-1);
 	}
 
