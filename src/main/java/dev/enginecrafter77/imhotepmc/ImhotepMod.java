@@ -3,10 +3,7 @@ package dev.enginecrafter77.imhotepmc;
 import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.DefaultDataVersionTranslator;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationBuildEvent;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslationRuleCompiler;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.MalformedTranslationRuleException;
+import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
@@ -129,7 +126,7 @@ public class ImhotepMod {
         this.netChannel = NetworkRegistry.INSTANCE.newSimpleChannel(ImhotepMod.MOD_ID + ":main");
         this.worldDataSyncHandler = WorldDataSyncHandler.create(new ResourceLocation(ImhotepMod.MOD_ID, "worldsync"));
         this.packetStreamer = PacketStreamWrapper.create(new ResourceLocation(ImhotepMod.MOD_ID, "pktstream"), 4096);
-        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler(this.versionTranslator));
+        this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler());
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
         this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderDwellUpdate.class, 1, Side.CLIENT);
@@ -252,6 +249,19 @@ public class ImhotepMod {
 		}
 
         event.getBuilder().setDefaultVersionFrom(3337);
+    }
+
+    @SubscribeEvent
+    public void translateReceivedBlueprint(BlueprintTransferHandler.BlueprintUploadEvent event)
+    {
+        try
+        {
+            event.setBlueprint(event.getBlueprint().edit().translateVersion(this.versionTranslator).build());
+        }
+        catch(TranslationNotAvailableException exception)
+        {
+            LOGGER.error(exception);
+        }
     }
 
     private void tryLoadTable(BlueprintTranslationBuildEvent event, Path path) throws IOException, MalformedTranslationRuleException

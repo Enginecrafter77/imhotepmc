@@ -4,10 +4,9 @@ import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicFileFormat;
-import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamChunk;
-import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamTopicHandler;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamServerChannel;
+import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamTopicHandler;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBlueprintLibrary;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
@@ -18,27 +17,19 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.annotation.Nullable;
-
 public class BlueprintTransferHandler implements PacketStreamTopicHandler {
 	private static final Log LOGGER = LogFactory.getLog(BlueprintTransferHandler.class);
 
 	public static final String NBT_ARG_TILEPOS = "TileEntityPosition";
 	public static final String NBT_ARG_FORMAT = "Format";
-
-	@Nullable
-	private final DataVersionTranslationTable table;
-
-	public BlueprintTransferHandler(@Nullable DataVersionTranslationTable table)
-	{
-		this.table = table;
-	}
 
 	@Override
 	public PacketStreamServerChannel openChannel(MessageContext ctx)
@@ -55,6 +46,11 @@ public class BlueprintTransferHandler implements PacketStreamTopicHandler {
 			LOGGER.error("No tile entity for Blueprint Library!");
 			return;
 		}
+
+		BlueprintUploadEvent event = new BlueprintUploadEvent(tile, blueprint);
+		if(MinecraftForge.EVENT_BUS.post(event))
+			return;
+		blueprint = event.getBlueprint();
 
 		IItemHandlerModifiable itemHandler = (IItemHandlerModifiable)tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		if(itemHandler == null)
@@ -96,15 +92,45 @@ public class BlueprintTransferHandler implements PacketStreamTopicHandler {
 				BlockPos pos = NBTUtil.getPosFromTag(tag.getCompoundTag(NBT_ARG_TILEPOS));
 				SchematicBlueprint blueprint = serializer.deserializeBlueprint(tag);
 
-				if(BlueprintTransferHandler.this.table != null)
-					blueprint = blueprint.edit().translateVersion(BlueprintTransferHandler.this.table).build();
-
 				BlueprintTransferHandler.this.onBlueprintReceived(ctx, pos, blueprint);
 			}
 			catch(Exception exc)
 			{
 				LOGGER.error("Error publishing result", exc);
 			}
+		}
+	}
+
+	public static class BlueprintUploadEvent extends Event
+	{
+		private final TileEntityBlueprintLibrary library;
+		private SchematicBlueprint blueprint;
+
+		public BlueprintUploadEvent(TileEntityBlueprintLibrary library, SchematicBlueprint blueprint)
+		{
+			this.library = library;
+			this.blueprint = blueprint;
+		}
+
+		public TileEntityBlueprintLibrary getLibrary()
+		{
+			return this.library;
+		}
+
+		public SchematicBlueprint getBlueprint()
+		{
+			return this.blueprint;
+		}
+
+		public void setBlueprint(SchematicBlueprint blueprint)
+		{
+			this.blueprint = blueprint;
+		}
+
+		@Override
+		public boolean isCancelable()
+		{
+			return true;
 		}
 	}
 }
