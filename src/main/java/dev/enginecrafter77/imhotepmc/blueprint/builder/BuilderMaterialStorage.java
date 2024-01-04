@@ -10,9 +10,6 @@ public interface BuilderMaterialStorage {
 	@Nullable
 	public Block getAnyAvailableBlock();
 
-	public boolean canProvide(Collection<ItemStack> items);
-	public boolean canReclaim(Collection<ItemStack> items);
-
-	public void provide(Collection<ItemStack> items);
-	public void reclaim(Collection<ItemStack> items);
+	public ItemStackTransaction consume(Collection<ItemStack> items);
+	public ItemStackTransaction reclaim(Collection<ItemStack> items);
 }

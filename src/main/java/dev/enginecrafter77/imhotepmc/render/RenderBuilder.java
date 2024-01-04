@@ -1,12 +1,10 @@
 package dev.enginecrafter77.imhotepmc.render;
 
-import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
 import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.Edge3d;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -14,7 +12,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
 
@@ -40,12 +38,14 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 	private final Point3d switchOffset;
 	private final Vector2d switchSize;
 
+	private final RenderNameplate nameplateRender;
 	private final ItemRenderHelper itemRenderer;
 	private final Vector3d faceOffset;
 	private final Point3d itemDrawPos;
 
 	public RenderBuilder()
 	{
+		this.nameplateRender = new RenderNameplate();
 		this.renderSwitch = new RenderSwitch();
 		this.switchRenderPoint = new Point3d();
 		this.renderOrigin = new Point3d();
@@ -65,11 +65,9 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 
 	private void renderMissingItem(@Nonnull TileEntityBuilder te, double x, double y, double z, float partialTicks)
 	{
-		Block block = te.getMissingBlock();
-		if(block == null)
-			return;
-		ItemStack stack = ImhotepMod.instance.getBuilderBomProvider().getBlockPlaceRequiredItems(te.getWorld(), BlockPos.ORIGIN, block.getDefaultState(), null).stream().findAny().orElse(null);
-		if(stack == null)
+		this.nameplateRender.setText(null);
+		ItemStack blocking = te.getSharedState().getMissingItems().stream().findFirst().orElse(null);
+		if(blocking == null)
 			return;
 
 		IBlockState state = te.getWorld().getBlockState(te.getPos());
@@ -80,10 +78,13 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.itemDrawPos.set(x + 0.5D, y + 0.275D, z + 0.5D);
 		this.itemDrawPos.add(this.faceOffset);
 
-		this.itemRenderer.setItem(stack);
+		this.itemRenderer.setItem(blocking);
 		this.itemRenderer.setScale(0.25D);
 		this.itemRenderer.setRotationByVector(this.faceOffset);
 		this.itemRenderer.doRender(this.itemDrawPos, partialTicks);
+
+		this.nameplateRender.setText(new TextComponentTranslation("message.missing_block.text").appendText(": " + blocking.getDisplayName()));
+		this.nameplateRender.doRender(x + 0.5D, y + 2.5D, z + 0.5D, partialTicks);
 	}
 
 	@Override

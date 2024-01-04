@@ -129,7 +129,7 @@ public class ImhotepMod {
         this.packetStreamer.getServerSide().subscribe("blueprint-encode", new BlueprintTransferHandler());
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
-        this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderDwellUpdate.class, 1, Side.CLIENT);
+        this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderSharedStateUpdate.class, 1, Side.CLIENT);
         this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());

@@ -1,6 +1,8 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
+import com.google.common.collect.ImmutableSet;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderMaterialStorage;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.ItemStackTransaction;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
@@ -23,20 +25,45 @@ public class CreativeMaterialStorage implements BuilderMaterialStorage {
 	}
 
 	@Override
-	public boolean canProvide(Collection<ItemStack> items)
+	public ItemStackTransaction consume(Collection<ItemStack> items)
 	{
-		return true;
+		return new CreativeTransaction(items);
 	}
 
 	@Override
-	public boolean canReclaim(Collection<ItemStack> items)
+	public ItemStackTransaction reclaim(Collection<ItemStack> items)
 	{
-		return true;
+		return new CreativeTransaction(items);
 	}
 
-	@Override
-	public void provide(Collection<ItemStack> items) {}
+	public static class CreativeTransaction implements ItemStackTransaction
+	{
+		private final Collection<ItemStack> items;
 
-	@Override
-	public void reclaim(Collection<ItemStack> items) {}
+		public CreativeTransaction(Collection<ItemStack> items)
+		{
+			this.items = items;
+		}
+
+		@Override
+		public Collection<ItemStack> getTransactionStacks()
+		{
+			return this.items;
+		}
+
+		@Override
+		public Collection<ItemStack> getBlockingStacks()
+		{
+			return ImmutableSet.of();
+		}
+
+		@Override
+		public boolean isCommitable()
+		{
+			return true;
+		}
+
+		@Override
+		public void commit() {}
+	}
 }

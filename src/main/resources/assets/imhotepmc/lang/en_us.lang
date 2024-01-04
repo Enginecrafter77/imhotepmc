@@ -14,6 +14,8 @@ item.shape_card.name=Shape Card
 
 label.terraformer.mode=Mode
 
+message.missing_block.text=Missing Block
+
 shape.fill.name=Fill
 shape.clear.name=Clear
 shape.ellipsoid.name=Sphere

@@ -7,14 +7,14 @@ import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.*;
-import dev.enginecrafter77.imhotepmc.net.BuilderDwellUpdate;
-import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
+import dev.enginecrafter77.imhotepmc.net.BuilderSharedStateUpdate;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementProvider;
+import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -63,10 +63,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 
 	private boolean projectionActive;
 
-	@Nullable
-	private Block missingBlock;
-	private BuilderTask dwellTask;
-	private long dwellingTicks;
+	@Nonnull
+	private final SharedBuilderState sharedState;
+	private int lastSyncedStateHash;
 
 	public TileEntityBuilder()
 	{
@@ -79,10 +78,8 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		this.boundingBox = null;
 		this.blueprint = null;
 		this.placement = null;
-
-		this.dwellTask = null;
-		this.missingBlock = null;
-		this.dwellingTicks = 0;
+		this.sharedState = new SharedBuilderState();
+		this.lastSyncedStateHash = this.sharedState.hashCode();
 	}
 
 	public BuilderInvoker getInvoker()
@@ -106,12 +103,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		return this.projectionActive;
 	}
 
-	@Nullable
-	public Block getMissingBlock()
+	public SharedBuilderState getSharedState()
 	{
-		if(this.dwellingTicks < 20)
-			return null;
-		return this.missingBlock;
+		return this.sharedState;
 	}
 
 	private CreativeMaterialStorage creativeMaterialStorage;
@@ -201,10 +195,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void onDwellUpdateReceived(BuilderDwellUpdate update)
+	public void onStateUpdateReceived(BuilderSharedStateUpdate update)
 	{
-		this.missingBlock = update.getMissingBlock();
-		this.dwellingTicks = update.getDwellingTicks();
+		update.exportState(this.sharedState);
 	}
 
 	@Override
@@ -227,25 +220,19 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 			return;
 		BuilderTask currentTask = builder.getLastTask(this.world);
 
-		if(currentTask == this.dwellTask)
-		{
-			++this.dwellingTicks;
+		Collection<ItemStack> missingItems = Optional.ofNullable(currentTask)
+				.map(MaterializedBuilderPlaceTask.class::cast)
+				.map(MaterializedBuilderPlaceTask::getTransaction)
+				.map(ItemStackTransaction::getBlockingStacks)
+				.orElseGet(ImmutableList::of);
+		this.sharedState.setMissingItems(missingItems);
+		this.sharedState.setPowered(true);
 
-			if((this.dwellingTicks % 1000) == 20)
-			{
-				BuilderDwellUpdate update = new BuilderDwellUpdate(this.getPos(), this.missingBlock, this.dwellingTicks);
-				ImhotepMod.instance.getNetChannel().sendToAll(update);
-			}
-		}
-		else
+		if(this.lastSyncedStateHash != this.sharedState.hashCode())
 		{
-			this.dwellTask = currentTask;
-			this.dwellingTicks = 0;
-			this.missingBlock = Optional.ofNullable(currentTask)
-					.map(AbstractBuilderPlaceTask.class::cast)
-					.map(AbstractBuilderPlaceTask::getStateForPlacement)
-					.map(IBlockState::getBlock)
-					.orElse(null);
+			BuilderSharedStateUpdate update = new BuilderSharedStateUpdate(this.getPos(), this.sharedState);
+			ImhotepMod.instance.getNetChannel().sendToAll(update);
+			this.lastSyncedStateHash = this.sharedState.hashCode();
 		}
 	}
 

@@ -12,12 +12,12 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Nullable;
 
-public class BuilderDwellUpdateHandler implements IMessageHandler<BuilderDwellUpdate, IMessage> {
+public class BuilderDwellUpdateHandler implements IMessageHandler<BuilderSharedStateUpdate, IMessage> {
 	private static final Log LOGGER = LogFactory.getLog(BuilderDwellUpdateHandler.class);
 
 	@Nullable
 	@Override
-	public IMessage onMessage(BuilderDwellUpdate message, MessageContext ctx)
+	public IMessage onMessage(BuilderSharedStateUpdate message, MessageContext ctx)
 	{
 		WorldClient world = Minecraft.getMinecraft().world;
 		TileEntity tile = world.getTileEntity(message.getBuilderPos());
@@ -26,7 +26,7 @@ public class BuilderDwellUpdateHandler implements IMessageHandler<BuilderDwellUp
 			LOGGER.error("Tile entity for BuilderDwellUpdate is not a builder!");
 			return null;
 		}
-		((TileEntityBuilder)tile).onDwellUpdateReceived(message);
+		((TileEntityBuilder)tile).onStateUpdateReceived(message);
 		return null;
 	}
 }
