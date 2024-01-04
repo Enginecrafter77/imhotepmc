@@ -7,14 +7,16 @@ buildscript {
     dependencies {
         classpath 'gradle.plugin.fr.brouillard.oss.gradle:gradle-jgitver-plugin:0.10.0-rc03'
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
 
 apply plugin: 'fr.brouillard.oss.gradle.jgitver'
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.matthewprenger.cursegradle'
 
 group = "dev.enginecrafter77.imhotepmc"
-archivesBaseName = "Imhotep"
+archivesBaseName = "ImhotepMC"
 
 // Need this here so eclipse task generates correctly.
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
@@ -86,4 +88,21 @@ processResources {
 
     // Move ATs to meta inf directory
     rename '(.+_at.cfg)', 'META-INF/$1'
+}
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_APIKEY") ?: '#invalid-key#'
+    project {
+        id = project.properties['curseforge.project_id'] ?: '#invalid-id#'
+        releaseType = System.getenv("CURSEFORGE_RELEASE_TYPE") ?: 'release'
+        changelogType = 'markdown'
+        changelog = "For changelog, see the github repository."
+
+        mainArtifact(jar) {
+            displayName = "${project.archivesBaseName}-${project.minecraft.version}-${project.version}.jar"
+        }
+    }
+    options {
+        debug System.getenv("DRY_RUN") != null
+    }
 }
