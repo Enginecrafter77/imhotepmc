@@ -11,7 +11,7 @@ for 1.12.2. It is correct to state that ImhotepMC is **heavily** inspired by Bui
 but also by other mods such as RFTools and so on.
 
 ImhotepMC is named after an ancient egyptian builder [Imhotep](https://en.wikipedia.org/wiki/Imhotep) who's thought to have built the pyramid of Djoser.
-The reason I chose that name is that this was the only thing circulating in my mind when I thought about the world "build".
+The reason I chose that name is that this was the only thing circulating in my mind when I thought about the word "build".
 
 ## Features
  * Schematic item
