@@ -9,7 +9,7 @@ import org.lwjgl.util.WritablePoint;
 import java.lang.reflect.Method;
 
 public class GridSlotGenerator implements SlotGenerator {
-	private static final Method SLOT_INSERT_METHOD = ObfuscationReflectionHelper.findMethod(Container.class, "addSlotToContainer", Slot.class, Slot.class);
+	private static final Method SLOT_INSERT_METHOD = ObfuscationReflectionHelper.findMethod(Container.class, "func_75146_a", Slot.class, Slot.class);
 
 	private final SlotFactory factory;
 	private final SlotIndexer indexer;

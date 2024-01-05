@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializable<NBTTagLongArray> {
-	private static final Field NLA_DATA_FIELD = ObfuscationReflectionHelper.findField(NBTTagLongArray.class, "data"); // field_193587_b
+	private static final Field NLA_DATA_FIELD = ObfuscationReflectionHelper.findField(NBTTagLongArray.class, "field_193587_b");
 
 	private final ImmutableBiMap<T, Integer> palette;
 
