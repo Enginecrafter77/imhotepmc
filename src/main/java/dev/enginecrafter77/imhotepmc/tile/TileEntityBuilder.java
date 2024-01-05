@@ -201,6 +201,12 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	}
 
 	@Override
+	public boolean isPlacementValid()
+	{
+		return !this.tileEntityInvalid;
+	}
+
+	@Override
 	public void onLoad()
 	{
 		super.onLoad();

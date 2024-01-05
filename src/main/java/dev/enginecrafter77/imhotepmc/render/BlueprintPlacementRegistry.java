@@ -2,8 +2,12 @@ package dev.enginecrafter77.imhotepmc.render;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import net.minecraftforge.fml.common.SidedProxy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class BlueprintPlacementRegistry {
+	private static final Log LOGGER = LogFactory.getLog(BlueprintPlacementRegistry.class);
+
 	@SidedProxy(modId = ImhotepMod.MOD_ID)
 	public static BlueprintPlacementProxy proxy;
 
@@ -18,6 +22,7 @@ public class BlueprintPlacementRegistry {
 		@Override
 		public void registerProvider(BlueprintPlacementProvider placement)
 		{
+			LOGGER.info("Registering BlueprintPlacementProvider " + placement + " on client side");
 			RenderBlueprintPlacements.INSTANCE.registerProvider(placement);
 		}
 

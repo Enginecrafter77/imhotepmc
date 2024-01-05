@@ -1,7 +1,6 @@
 package dev.enginecrafter77.imhotepmc.render;
 
 import com.google.common.collect.Maps;
-import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -9,9 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 public class RenderBlueprintPlacements {
@@ -64,7 +61,7 @@ public class RenderBlueprintPlacements {
 
 		public boolean shouldBeCulled()
 		{
-			return this.provider.isInvalid();
+			return !this.provider.isPlacementValid();
 		}
 
 		@Override
