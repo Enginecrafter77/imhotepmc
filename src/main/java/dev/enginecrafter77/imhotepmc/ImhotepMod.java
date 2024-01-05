@@ -112,6 +112,16 @@ public class ImhotepMod {
         this.modConfigDir = new File(configDir, ImhotepMod.MOD_ID);
         this.schematicsDir = new File(gameDirectory, "schematics");
 
+        if(!this.schematicsDir.exists())
+        {
+            if(!this.schematicsDir.mkdir())
+                throw new RuntimeException("Creating schematics directory failed");
+        }
+        else if(!this.schematicsDir.isDirectory())
+        {
+            throw new RuntimeException("Path defined as schematics directory is not a directory");
+        }
+
         MinecraftForge.EVENT_BUS.register(this);
 
         this.registerTileEntities();
