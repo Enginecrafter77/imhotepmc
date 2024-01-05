@@ -1,16 +1,16 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import com.google.common.collect.ImmutableBiMap;
+import dev.enginecrafter77.imhotepmc.util.LocalReflectionHelper;
 import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.*;
 
 public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializable<NBTTagLongArray> {
-	private static final Field NLA_DATA_FIELD = ObfuscationReflectionHelper.findField(NBTTagLongArray.class, "field_193587_b");
+	private static final Field NLA_DATA_FIELD = LocalReflectionHelper.findField(NBTTagLongArray.class, "data", "field_193587_b");
 
 	private final ImmutableBiMap<T, Integer> palette;
 
