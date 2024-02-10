@@ -6,6 +6,7 @@ import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -95,11 +96,6 @@ public class BlockAreaMarker extends Block {
 		return this.getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta));
 	}
 
-	public EnumFacing getAnchor(IBlockState state)
-	{
-		return state.getValue(FACING).getOpposite();
-	}
-
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
 	{
@@ -128,6 +124,24 @@ public class BlockAreaMarker extends Block {
 	}
 
 	@Override
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+	{
+		super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+
+		EnumFacing supportSide = state.getValue(FACING);
+		EnumFacing anchorSide = supportSide.getOpposite();
+		BlockPos support = pos.add(anchorSide.getDirectionVec());
+		IBlockState supportState = worldIn.getBlockState(support);
+		BlockFaceShape supportShape = supportState.getBlockFaceShape(worldIn, support, supportSide);
+
+		if(supportShape != BlockFaceShape.SOLID)
+		{
+			this.dropBlockAsItem(worldIn, pos, state, 0);
+			worldIn.setBlockToAir(pos);
+		}
+	}
+
+	@Override
 	protected BlockStateContainer createBlockState()
 	{
 		return new BlockStateContainer(this, FACING);
@@ -144,5 +158,15 @@ public class BlockAreaMarker extends Block {
 	public TileEntity createTileEntity(World world, IBlockState state)
 	{
 		return new TileEntityAreaMarker();
+	}
+
+	public EnumFacing getFacing(IBlockAccess world, BlockPos pos)
+	{
+		return world.getBlockState(pos).getValue(FACING);
+	}
+
+	public EnumFacing getAnchor(IBlockAccess world, BlockPos pos)
+	{
+		return this.getFacing(world, pos);
 	}
 }
