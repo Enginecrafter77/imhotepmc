@@ -128,9 +128,19 @@ public class ItemInsituExchanger extends Item {
 	{
 		Item offHandItem = stack.getItem();
 		if(offHandItem instanceof ItemBlock)
-			return ((ItemBlock)offHandItem).getBlock().getDefaultState();
+		{
+			ItemBlock itemBlock = (ItemBlock)offHandItem;
+			int meta = itemBlock.getMetadata(stack);
+			Block block = itemBlock.getBlock();
+			return block.getStateFromMeta(meta);
+		}
 		else if(offHandItem instanceof ItemBlockSpecial)
-			return ((ItemBlockSpecial)offHandItem).getBlock().getDefaultState();
+		{
+			ItemBlockSpecial itemBlock = (ItemBlockSpecial)offHandItem;
+			int meta = itemBlock.getMetadata(stack);
+			Block block = itemBlock.getBlock();
+			return block.getStateFromMeta(meta);
+		}
 		return null;
 	}
 
