@@ -27,14 +27,18 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ItemInsituExchanger extends Item {
@@ -95,30 +99,39 @@ public class ItemInsituExchanger extends Item {
 		if(this.isExchangeActive(exchangerStack))
 			return EnumActionResult.SUCCESS;
 
-		Block replacement;
-		Item offHandItem = offHandStack.getItem();
-		if(offHandItem instanceof ItemBlock)
-			replacement = ((ItemBlock)offHandItem).getBlock();
-		else if(offHandItem instanceof ItemBlockSpecial)
-			replacement = ((ItemBlockSpecial)offHandItem).getBlock();
-		else
+		IBlockState replacement = this.getReplacementBlockFromStack(offHandStack);
+		if(replacement == null)
 			return EnumActionResult.SUCCESS;
 
 		IEnergyStorage energyStorage = exchangerStack.getCapability(CapabilityEnergy.ENERGY, null);
 		if(energyStorage == null)
 			throw new IllegalStateException();
 
-		@Nullable IItemHandler playerInv = new PlayerInvWrapper(player.inventory);
-		if(player.isCreative())
-			playerInv = null;
-
-		ConnectedReplaceTask task = new ConnectedReplaceTask(worldIn, player, energyStorage, playerInv);
-		task.setup(pos, replacement.getDefaultState());
+		@Nullable IItemHandler inv = player.isCreative() ? null : player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		ConnectedReplaceTask task = new ConnectedReplaceTask(worldIn, player, energyStorage, inv);
+		task.setup(pos, replacement);
 		task.setOnStartCallback(() -> this.onExchangeStart(exchangerStack));
 		task.setOnCompleteCallback(() -> this.onExchangeStop(exchangerStack));
 		ImhotepMod.instance.getBackgroundTaskScheduler().enqueue(task);
 
 		return EnumActionResult.SUCCESS;
+	}
+
+	@Override
+	public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player)
+	{
+		return false;
+	}
+
+	@Nullable
+	private IBlockState getReplacementBlockFromStack(ItemStack stack)
+	{
+		Item offHandItem = stack.getItem();
+		if(offHandItem instanceof ItemBlock)
+			return ((ItemBlock)offHandItem).getBlock().getDefaultState();
+		else if(offHandItem instanceof ItemBlockSpecial)
+			return ((ItemBlockSpecial)offHandItem).getBlock().getDefaultState();
+		return null;
 	}
 
 	@Override
@@ -194,6 +207,42 @@ public class ItemInsituExchanger extends Item {
 		return slotChanged;
 	}
 
+	@SubscribeEvent
+	public static void interceptLeftClick(PlayerInteractEvent.LeftClickBlock event)
+	{
+		EntityPlayer player = event.getEntityPlayer();
+		World worldIn = player.world;
+		if(worldIn.isRemote)
+			return;
+
+		ItemInsituExchanger instance = ImhotepMod.ITEM_INSITU_EXCHANGER;
+		ItemStack exchangerStack = player.getHeldItem(EnumHand.MAIN_HAND);
+		if(!(exchangerStack.getItem() instanceof ItemInsituExchanger) || instance.isExchangeActive(exchangerStack))
+			return;
+
+		ItemStack offHandStack = player.getHeldItem(EnumHand.OFF_HAND);
+		if(instance.isExchangeActive(exchangerStack))
+			return;
+
+		IBlockState existingOccupant = worldIn.getBlockState(event.getPos());
+		IBlockState replacement = instance.getReplacementBlockFromStack(offHandStack);
+		if(replacement == null || Objects.equals(existingOccupant, replacement))
+			return;
+
+		IEnergyStorage energyStorage = exchangerStack.getCapability(CapabilityEnergy.ENERGY, null);
+		if(energyStorage == null)
+			throw new IllegalStateException();
+
+		@Nullable IItemHandler inv = player.isCreative() ? null : player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+
+		ConnectedReplaceTask task = new ConnectedReplaceTask(worldIn, player, energyStorage, inv);
+		task.setup(event.getPos(), replacement);
+		task.setBlockLimit(1);
+		task.runBlocking();
+
+		event.setCanceled(true);
+	}
+
 	public static class InsituExchangerCapabilityContainer implements ICapabilitySerializable<NBTTagCompound>
 	{
 		private final IEnergyStorage energyStorage;
@@ -247,6 +296,8 @@ public class ItemInsituExchanger extends Item {
 		@Nullable
 		private final IEnergyStorage energyStorage;
 
+		private int blockLimit;
+		private int replacedBlocks;
 		private float distanceLimit;
 		private IBlockState replace;
 		private IBlockState replacement;
@@ -260,6 +311,8 @@ public class ItemInsituExchanger extends Item {
 			this.world = world;
 			this.inventory = inventory;
 			this.distanceLimit = 64F;
+			this.blockLimit = -1;
+			this.replacedBlocks = 0;
 		}
 
 		public void setup(BlockPos origin, IBlockState replaceWith)
@@ -269,11 +322,22 @@ public class ItemInsituExchanger extends Item {
 			this.origin = origin;
 			this.replace = this.world.getBlockState(origin);
 			this.replacement = replaceWith;
+			this.replacedBlocks = 0;
 		}
 
 		public void setDistanceLimit(float distanceLimit)
 		{
 			this.distanceLimit = distanceLimit;
+		}
+
+		public void setBlockLimit(int blockLimit)
+		{
+			this.blockLimit = blockLimit;
+		}
+
+		public void removeBlockLimit()
+		{
+			this.blockLimit = -1;
 		}
 
 		public int getReplaceEnergyConsumed(BlockPos pos)
@@ -291,6 +355,12 @@ public class ItemInsituExchanger extends Item {
 		@Override
 		public void update()
 		{
+			if(this.blockLimit != -1 && this.replacedBlocks >= this.blockLimit)
+			{
+				this.markComplete();
+				return;
+			}
+
 			BlockPos pos;
 			do
 			{
@@ -341,6 +411,7 @@ public class ItemInsituExchanger extends Item {
 
 			this.world.playEvent(2001, pos, Block.getStateId(this.replace));
 			this.world.setBlockState(pos, this.replacement);
+			++this.replacedBlocks;
 
 			BlockPosUtil.neighbors(pos).forEach(this.queued::add);
 		}

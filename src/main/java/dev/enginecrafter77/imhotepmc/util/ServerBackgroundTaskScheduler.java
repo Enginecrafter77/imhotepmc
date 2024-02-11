@@ -117,5 +117,11 @@ public class ServerBackgroundTaskScheduler {
 			if(this.complete && this.onCompleteCallback != null)
 				this.onCompleteCallback.run();
 		}
+
+		public void runBlocking()
+		{
+			while(!this.isComplete())
+				this.tick();
+		}
 	}
 }

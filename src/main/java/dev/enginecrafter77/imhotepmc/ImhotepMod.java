@@ -135,6 +135,7 @@ public class ImhotepMod {
 
         this.backgroundTaskScheduler = new ServerBackgroundTaskScheduler();
         MinecraftForge.EVENT_BUS.register(this.backgroundTaskScheduler);
+        MinecraftForge.EVENT_BUS.register(ItemInsituExchanger.class);
 
         this.builderBomProvider = new DefaultBOMProvider();
 
