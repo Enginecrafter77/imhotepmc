@@ -6,6 +6,7 @@ import dev.enginecrafter77.imhotepmc.util.ServerBackgroundTaskScheduler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -111,7 +112,7 @@ public class ItemInsituExchanger extends Item {
 		if(player.isCreative())
 			playerInv = null;
 
-		ConnectedReplaceTask task = new ConnectedReplaceTask(worldIn, energyStorage, playerInv);
+		ConnectedReplaceTask task = new ConnectedReplaceTask(worldIn, player, energyStorage, playerInv);
 		task.setup(pos, replacement.getDefaultState());
 		task.setOnStartCallback(() -> this.onExchangeStart(exchangerStack));
 		task.setOnCompleteCallback(() -> this.onExchangeStop(exchangerStack));
@@ -238,6 +239,7 @@ public class ItemInsituExchanger extends Item {
 	{
 		private final Queue<BlockPos> queued;
 		private final World world;
+		private final Entity holder;
 
 		@Nullable
 		private final IItemHandler inventory;
@@ -250,8 +252,9 @@ public class ItemInsituExchanger extends Item {
 		private IBlockState replacement;
 		private BlockPos origin;
 
-		public ConnectedReplaceTask(World world, @Nullable IEnergyStorage energyStorage, @Nullable IItemHandler inventory)
+		public ConnectedReplaceTask(World world, Entity holder, @Nullable IEnergyStorage energyStorage, @Nullable IItemHandler inventory)
 		{
+			this.holder = holder;
 			this.energyStorage = energyStorage;
 			this.queued = new LinkedBlockingQueue<BlockPos>();
 			this.world = world;
@@ -278,7 +281,11 @@ public class ItemInsituExchanger extends Item {
 			float hardness = this.replace.getBlockHardness(this.world, pos);
 			if(hardness == -1.0F) // unbreakable
 				return Integer.MAX_VALUE;
-			return Math.round(hardness * 50F + 10F);
+			float baseReplaceCost = hardness * 50F + 10F;
+
+			float distance = (float)Math.sqrt(this.holder.getDistanceSqToCenter(pos));
+			float distanceMultiplier = Math.min(5F, distance * 0.25F);
+			return Math.round(distanceMultiplier * baseReplaceCost);
 		}
 
 		@Override
@@ -312,11 +319,7 @@ public class ItemInsituExchanger extends Item {
 				}
 
 				if(consumeSlot == -1 || reclaimSlot == -1)
-				{
-					this.queued.clear();
-					this.markComplete();
 					return;
-				}
 			}
 
 			int requiredEnergy = this.getReplaceEnergyConsumed(pos);
@@ -324,11 +327,7 @@ public class ItemInsituExchanger extends Item {
 			{
 				int disposableEnergy = this.energyStorage.extractEnergy(requiredEnergy, true);
 				if(disposableEnergy < requiredEnergy)
-				{
-					this.queued.clear();
-					this.markComplete();
 					return;
-				}
 			}
 
 			if(this.inventory != null)
