@@ -153,6 +153,14 @@ public class ItemInsituExchanger extends Item {
 		IEnergyStorage energyStorage = stack.getCapability(CapabilityEnergy.ENERGY, null);
 		if(energyStorage != null)
 			tooltip.add(new TextComponentTranslation("label.energy.fill", energyStorage.getEnergyStored(), energyStorage.getMaxEnergyStored()).getFormattedText());
+
+		tooltip.add("");
+		tooltip.add(new TextComponentTranslation("desc.insitu_exchanger.0").getFormattedText());
+		tooltip.add(new TextComponentTranslation("desc.insitu_exchanger.1").getFormattedText());
+		tooltip.add("");
+		tooltip.add(new TextComponentTranslation("desc.insitu_exchanger.2").getFormattedText());
+		tooltip.add(new TextComponentTranslation("desc.insitu_exchanger.3").getFormattedText());
+		tooltip.add(new TextComponentTranslation("desc.insitu_exchanger.4").getFormattedText());
 	}
 
 	@Nullable

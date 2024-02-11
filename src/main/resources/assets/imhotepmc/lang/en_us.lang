@@ -18,6 +18,12 @@ label.energy.fill=%d / %d RF
 
 message.missing_block.text=Missing Block
 
+desc.insitu_exchanger.0=Left-clicking a block changes it
+desc.insitu_exchanger.1=to the one held in off hand.
+desc.insitu_exchanger.2=Right-clicking a block changes
+desc.insitu_exchanger.3=all similar blocks in 64 block
+desc.insitu_exchanger.4=radius to the one held in off hand.
+
 shape.fill.name=Fill
 shape.clear.name=Clear
 shape.ellipsoid.name=Sphere
