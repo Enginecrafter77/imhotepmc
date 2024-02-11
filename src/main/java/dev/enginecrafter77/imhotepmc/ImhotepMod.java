@@ -7,6 +7,7 @@ import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
+import dev.enginecrafter77.imhotepmc.item.ItemInsituExchanger;
 import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.item.ItemShapeCard;
 import dev.enginecrafter77.imhotepmc.net.*;
@@ -15,6 +16,7 @@ import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
 import dev.enginecrafter77.imhotepmc.render.*;
 import dev.enginecrafter77.imhotepmc.tile.*;
+import dev.enginecrafter77.imhotepmc.util.ServerBackgroundTaskScheduler;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
 import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
 import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncHandler;
@@ -35,6 +37,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -93,6 +96,7 @@ public class ImhotepMod {
     public static ItemConstructionTape ITEM_CONSTRUCTION_TAPE;
     public static ItemShapeCard ITEM_SHAPE_CARD;
     public static BlockCreativeBuildCache BLOCK_CREATIVE_BUILD_CACHE;
+    public static ItemInsituExchanger ITEM_INSITU_EXCHANGER;
 
     private DefaultBOMProvider builderBomProvider;
     private DefaultDataVersionTranslator versionTranslator;
@@ -103,6 +107,8 @@ public class ImhotepMod {
 
     private PacketStreamWrapper packetStreamer;
     private WorldDataSyncHandler worldDataSyncHandler;
+
+    private ServerBackgroundTaskScheduler backgroundTaskScheduler;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
@@ -126,6 +132,9 @@ public class ImhotepMod {
 
         this.registerTileEntities();
         this.initializeContent();
+
+        this.backgroundTaskScheduler = new ServerBackgroundTaskScheduler();
+        MinecraftForge.EVENT_BUS.register(this.backgroundTaskScheduler);
 
         this.builderBomProvider = new DefaultBOMProvider();
 
@@ -174,6 +183,12 @@ public class ImhotepMod {
         RenderBlueprintPlacements.register();
     }
 
+    @Mod.EventHandler
+    public void onServerStarting(FMLServerStartingEvent event)
+    {
+        this.backgroundTaskScheduler.dropAllTasks();
+    }
+
     public File getSchematicsDir()
     {
         return this.schematicsDir;
@@ -207,6 +222,11 @@ public class ImhotepMod {
     public DefaultDataVersionTranslator getVersionTranslator()
     {
         return this.versionTranslator;
+    }
+
+    public ServerBackgroundTaskScheduler getBackgroundTaskScheduler()
+    {
+        return this.backgroundTaskScheduler;
     }
 
     private static final Pattern BTT_FILENAME_PATTERN = Pattern.compile("D([0-9]+).btt");
@@ -302,6 +322,7 @@ public class ImhotepMod {
         ITEM_SHAPE_CARD = new ItemShapeCard();
         BLOCK_MACHINE_HULL = new BlockMachineHull();
         BLOCK_CREATIVE_BUILD_CACHE = new BlockCreativeBuildCache();
+        ITEM_INSITU_EXCHANGER = new ItemInsituExchanger();
     }
 
     public void registerTileEntities()
@@ -328,6 +349,7 @@ public class ImhotepMod {
         reg.register(ITEM_SCHEMATIC_BLUEPRINT);
         reg.register(ITEM_CONSTRUCTION_TAPE);
         reg.register(ITEM_SHAPE_CARD);
+        reg.register(ITEM_INSITU_EXCHANGER);
         this.registerItemBlock(reg, BLOCK_BLUEPRINT_LIBRARY);
         this.registerItemBlock(reg, BLOCK_AREA_MARKER);
         this.registerItemBlock(reg, BLOCK_BUILDER);
@@ -368,6 +390,8 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(ITEM_SCHEMATIC_BLUEPRINT, ItemSchematicBlueprint.META_EMPTY, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_empty"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_SCHEMATIC_BLUEPRINT, ItemSchematicBlueprint.META_WRITTEN, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "schematic_blueprint_written"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_CONSTRUCTION_TAPE, 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "construction_tape"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_INSITU_EXCHANGER, 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "insitu_exchanger_inactive"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ITEM_INSITU_EXCHANGER, 1, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "insitu_exchanger_active"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.FILL.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_fill"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.CLEAR.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_clear"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(ITEM_SHAPE_CARD, TerraformMode.ELLIPSOID.ordinal(), new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "shape_card_ellipsoid"), "inventory"));

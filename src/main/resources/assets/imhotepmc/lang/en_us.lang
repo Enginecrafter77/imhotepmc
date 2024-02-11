@@ -11,8 +11,10 @@ tile.creative_build_cache.name=Creative Builder Cache
 item.schematic_blueprint.name=Schematic Blueprint
 item.construction_tape.name=Construction Tape
 item.shape_card.name=Shape Card
+item.insitu_exchanger.name=In-Situ Exchanger
 
 label.terraformer.mode=Mode
+label.energy.fill=%d / %d RF
 
 message.missing_block.text=Missing Block
 
