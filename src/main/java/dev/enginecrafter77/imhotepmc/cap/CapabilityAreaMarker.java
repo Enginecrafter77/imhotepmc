@@ -29,12 +29,12 @@ import java.util.Objects;
 public class CapabilityAreaMarker {
 	private static final ResourceLocation PLAYER_CAP_ID = new ResourceLocation(ImhotepMod.MOD_ID, "area_marker");
 
-	@CapabilityInject(AreaMarkJob.class)
-	public static Capability<AreaMarkJob> AREA_MARKER = null;
+	@CapabilityInject(AreaMarkingEntity.class)
+	public static Capability<AreaMarkingEntity> AREA_MARKER = null;
 
 	public static void register()
 	{
-		CapabilityManager.INSTANCE.register(AreaMarkJob.class, AreaMarkJobStorage.INSTANCE, AreaMarkJobImpl::new);
+		CapabilityManager.INSTANCE.register(AreaMarkingEntity.class, AreaMarkJobStorage.INSTANCE, AreaMarkingEntityImpl::new);
 		MinecraftForge.EVENT_BUS.register(CapabilityAreaMarker.class);
 	}
 
@@ -42,7 +42,7 @@ public class CapabilityAreaMarker {
 	public static void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event)
 	{
 		if(event.getObject() instanceof EntityPlayer)
-			event.addCapability(PLAYER_CAP_ID, new AreaMarkJobHolder());
+			event.addCapability(PLAYER_CAP_ID, new AreaMarkingEntityContainer());
 	}
 
 	@SubscribeEvent
@@ -55,7 +55,7 @@ public class CapabilityAreaMarker {
 		if(held.getItem() != ImhotepMod.ITEM_CONSTRUCTION_TAPE)
 			return;
 
-		AreaMarkJob job = event.getEntityPlayer().getCapability(AREA_MARKER, null);
+		AreaMarkingEntity job = event.getEntityPlayer().getCapability(AREA_MARKER, null);
 		if(job == null)
 			return;
 
@@ -99,7 +99,7 @@ public class CapabilityAreaMarker {
 		}
 	}
 
-	public static class AreaMarkJobStorage implements Capability.IStorage<AreaMarkJob>
+	public static class AreaMarkJobStorage implements Capability.IStorage<AreaMarkingEntity>
 	{
 		private static final String NBT_KEY_POS = "linking_to";
 
@@ -107,7 +107,7 @@ public class CapabilityAreaMarker {
 
 		@Nullable
 		@Override
-		public NBTBase writeNBT(Capability<AreaMarkJob> capability, AreaMarkJob instance, EnumFacing side)
+		public NBTBase writeNBT(Capability<AreaMarkingEntity> capability, AreaMarkingEntity instance, EnumFacing side)
 		{
 			NBTTagCompound tag = new NBTTagCompound();
 			BlockPos link = instance.getCurrentLinkingPosition();
@@ -117,7 +117,7 @@ public class CapabilityAreaMarker {
 		}
 
 		@Override
-		public void readNBT(Capability<AreaMarkJob> capability, AreaMarkJob instance, EnumFacing side, NBTBase nbt)
+		public void readNBT(Capability<AreaMarkingEntity> capability, AreaMarkingEntity instance, EnumFacing side, NBTBase nbt)
 		{
 			NBTTagCompound tag = (NBTTagCompound)nbt;
 			if(!tag.hasKey(NBT_KEY_POS))

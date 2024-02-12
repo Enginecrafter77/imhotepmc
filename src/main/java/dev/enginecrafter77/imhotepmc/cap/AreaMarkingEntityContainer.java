@@ -8,10 +8,10 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AreaMarkJobHolder implements ICapabilitySerializable<NBTBase> {
-	private final AreaMarkJob job;
+public class AreaMarkingEntityContainer implements ICapabilitySerializable<NBTBase> {
+	private final AreaMarkingEntity job;
 
-	public AreaMarkJobHolder()
+	public AreaMarkingEntityContainer()
 	{
 		this.job = CapabilityAreaMarker.AREA_MARKER.getDefaultInstance();
 	}
@@ -34,12 +34,12 @@ public class AreaMarkJobHolder implements ICapabilitySerializable<NBTBase> {
 	@Override
 	public NBTBase serializeNBT()
 	{
-		return CapabilityAreaMarker.AREA_MARKER.getStorage().writeNBT(CapabilityAreaMarker.AREA_MARKER, this.job, null);
+		return CapabilityAreaMarker.AREA_MARKER.writeNBT(this.job, null);
 	}
 
 	@Override
 	public void deserializeNBT(NBTBase nbt)
 	{
-		CapabilityAreaMarker.AREA_MARKER.getStorage().readNBT(CapabilityAreaMarker.AREA_MARKER, this.job, null, nbt);
+		CapabilityAreaMarker.AREA_MARKER.readNBT(this.job, null, nbt);
 	}
 }

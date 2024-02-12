@@ -4,7 +4,7 @@ import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 
-public interface AreaMarkJob {
+public interface AreaMarkingEntity {
 	@Nullable
 	public BlockPos getCurrentLinkingPosition();
 

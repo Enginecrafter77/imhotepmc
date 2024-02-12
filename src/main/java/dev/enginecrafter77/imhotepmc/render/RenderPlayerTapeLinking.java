@@ -1,6 +1,6 @@
 package dev.enginecrafter77.imhotepmc.render;
 
-import dev.enginecrafter77.imhotepmc.cap.AreaMarkJob;
+import dev.enginecrafter77.imhotepmc.cap.AreaMarkingEntity;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import net.minecraft.client.Minecraft;
@@ -44,7 +44,7 @@ public class RenderPlayerTapeLinking {
 	public void render(RenderWorldLastEvent event)
 	{
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
-		AreaMarkJob job = player.getCapability(CapabilityAreaMarker.AREA_MARKER, null);
+		AreaMarkingEntity job = player.getCapability(CapabilityAreaMarker.AREA_MARKER, null);
 		if(job == null)
 			return;
 

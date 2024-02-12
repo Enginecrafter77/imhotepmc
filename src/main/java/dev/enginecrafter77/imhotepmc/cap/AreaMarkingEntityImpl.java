@@ -4,11 +4,11 @@ import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 
-public class AreaMarkJobImpl implements AreaMarkJob {
+public class AreaMarkingEntityImpl implements AreaMarkingEntity {
 	@Nullable
 	private BlockPos linkingPosition;
 
-	public AreaMarkJobImpl()
+	public AreaMarkingEntityImpl()
 	{
 		this.linkingPosition = null;
 	}
