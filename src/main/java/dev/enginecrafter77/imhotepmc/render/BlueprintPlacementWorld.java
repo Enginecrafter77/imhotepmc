@@ -45,7 +45,12 @@ public class BlueprintPlacementWorld implements IBlockAccess {
 	@Nullable
 	protected IBlockState createBlockStateFor(BlockPos pos)
 	{
-		return this.placement.getBlockAt(pos).createBlockState();
+		IBlockState state = this.placement.getBlockAt(pos).createBlockState();
+		if(state != null)
+		{
+			state = state.withRotation(this.placement.getRotation());
+		}
+		return state;
 	}
 
 	@Nullable
