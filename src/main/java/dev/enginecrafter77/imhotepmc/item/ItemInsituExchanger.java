@@ -99,8 +99,12 @@ public class ItemInsituExchanger extends Item {
 		if(this.isExchangeActive(exchangerStack))
 			return EnumActionResult.SUCCESS;
 
+		IBlockState existingOccupant = worldIn.getBlockState(pos);
+		if(!existingOccupant.isFullCube())
+			return EnumActionResult.SUCCESS;
+
 		IBlockState replacement = this.getReplacementBlockFromStack(offHandStack);
-		if(replacement == null)
+		if(replacement == null || Objects.equals(existingOccupant, replacement))
 			return EnumActionResult.SUCCESS;
 
 		IEnergyStorage energyStorage = exchangerStack.getCapability(CapabilityEnergy.ENERGY, null);
@@ -243,6 +247,9 @@ public class ItemInsituExchanger extends Item {
 			return;
 
 		IBlockState existingOccupant = worldIn.getBlockState(event.getPos());
+		if(!existingOccupant.isFullCube())
+			return;
+
 		IBlockState replacement = instance.getReplacementBlockFromStack(offHandStack);
 		if(replacement == null || Objects.equals(existingOccupant, replacement))
 			return;
