@@ -60,7 +60,7 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.itemDrawPos = new Point3d();
 
 		VecUtil.spriteRect(FACE_DIM, SWITCH_RECT, this.switchOffset, this.switchSize);
-		this.switchOffset.z = 0.0078125D;
+		this.switchOffset.z = 1D / 512D;
 	}
 
 	private void renderMissingItem(@Nonnull TileEntityBuilder te, double x, double y, double z, float partialTicks)
