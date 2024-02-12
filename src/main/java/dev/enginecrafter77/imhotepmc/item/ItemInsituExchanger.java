@@ -190,7 +190,14 @@ public class ItemInsituExchanger extends Item {
 		NBTTagCompound itemtag = super.getNBTShareTag(stack);
 		if(itemtag != null)
 			tag.setTag(NBT_KEY_ITEMTAG, itemtag);
-		tag.setTag(NBT_KEY_ENERGY, Objects.requireNonNull(CapabilityEnergy.ENERGY.writeNBT(Objects.requireNonNull(stack.getCapability(CapabilityEnergy.ENERGY, null)), null)));
+
+		IEnergyStorage energyStorage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+		if(energyStorage != null)
+		{
+			NBTBase energyTag = CapabilityEnergy.ENERGY.writeNBT(energyStorage, null);
+			if(energyTag != null)
+				tag.setTag(NBT_KEY_ENERGY, energyTag);
+		}
 
 		return tag;
 	}
@@ -205,8 +212,10 @@ public class ItemInsituExchanger extends Item {
 		}
 
 		super.readNBTShareTag(stack, nbt.getCompoundTag(NBT_KEY_ITEMTAG));
-		NBTBase energyTag = nbt.getTag(NBT_KEY_ENERGY);
-		CapabilityEnergy.ENERGY.readNBT(Objects.requireNonNull(stack.getCapability(CapabilityEnergy.ENERGY, null)), null, energyTag);
+
+		IEnergyStorage energyStorage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+		if(energyStorage != null && nbt.hasKey(NBT_KEY_ENERGY))
+			CapabilityEnergy.ENERGY.readNBT(energyStorage, null, nbt.getTag(NBT_KEY_ENERGY));
 	}
 
 	@Override
@@ -297,9 +306,7 @@ public class ItemInsituExchanger extends Item {
 		public NBTTagCompound serializeNBT()
 		{
 			NBTTagCompound tag = new NBTTagCompound();
-			NBTBase energyTag = CapabilityEnergy.ENERGY.writeNBT(this.energyStorage, null);
-			if(energyTag != null)
-				tag.setTag(NBT_KEY_ENERGY, energyTag);
+			tag.setTag(NBT_KEY_ENERGY, Objects.requireNonNull(CapabilityEnergy.ENERGY.writeNBT(this.energyStorage, null)));
 			return tag;
 		}
 
