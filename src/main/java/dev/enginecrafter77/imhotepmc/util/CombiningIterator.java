@@ -1,9 +1,12 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.Iterator;
 import java.util.List;
 
-public class CombiningIterator<T1, T2> implements Iterator<CombiningIterator.Pair<T1, T2>> {
+public class CombiningIterator<T1, T2> implements Iterator<Pair<T1, T2>> {
 	private final List<T1> src1;
 	private final List<T2> src2;
 
@@ -45,7 +48,8 @@ public class CombiningIterator<T1, T2> implements Iterator<CombiningIterator.Pai
 				this.i2 = -1;
 		}
 		++this.i2;
-		this.pair.set(this.src1.get(this.i1), this.src2.get(this.i2));
+		this.pair.setLeft(this.src1.get(this.i1));
+		this.pair.setRight(this.src2.get(this.i2));
 		return this.pair;
 	}
 
@@ -57,41 +61,5 @@ public class CombiningIterator<T1, T2> implements Iterator<CombiningIterator.Pai
 	public static <T1, T2> Iterable<Pair<T1, T2>> combinations(List<T1> src1, List<T2> src2)
 	{
 		return () -> new CombiningIterator<T1, T2>(src1, src2);
-	}
-
-	public static interface Pair<T1, T2>
-	{
-		public T1 getFirst();
-		public T2 getSecond();
-	}
-
-	public static class MutablePair<T1, T2> implements Pair<T1, T2>
-	{
-		private T1 first;
-		private T2 second;
-
-		public MutablePair()
-		{
-			this.first = null;
-			this.second = null;
-		}
-
-		public void set(T1 first, T2 second)
-		{
-			this.first = first;
-			this.second = second;
-		}
-
-		@Override
-		public T1 getFirst()
-		{
-			return this.first;
-		}
-
-		@Override
-		public T2 getSecond()
-		{
-			return this.second;
-		}
 	}
 }

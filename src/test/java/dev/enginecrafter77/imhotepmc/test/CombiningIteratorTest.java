@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.test;
 
 import dev.enginecrafter77.imhotepmc.util.CombiningIterator;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import scala.actors.threadpool.Arrays;
@@ -86,8 +87,8 @@ public class CombiningIteratorTest {
 		Assertions.assertEquals( "ab", concat.get(0));
 	}
 
-	public static String concat(CombiningIterator.Pair<String, String> pair)
+	public static String concat(Pair<String, String> pair)
 	{
-		return pair.getFirst() + pair.getSecond();
+		return pair.getLeft() + pair.getRight();
 	}
 }

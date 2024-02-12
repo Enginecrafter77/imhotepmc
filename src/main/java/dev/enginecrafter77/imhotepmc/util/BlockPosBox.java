@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.vecmath.Vector3d;
 import java.util.Collection;
@@ -77,9 +78,9 @@ public abstract class BlockPosBox {
 		List<BlockPos> corners = this.cornerStream().distinct().collect(Collectors.toList());
 
 		ImmutableList.Builder<BlockPosEdge> edges = ImmutableList.builder();
-		for(CombiningIterator.Pair<BlockPos, BlockPos> pos : CombiningIterator.selfCombinations(corners))
+		for(Pair<BlockPos, BlockPos> pos : CombiningIterator.selfCombinations(corners))
 		{
-			BlockPosEdge edge = BlockPosEdge.tryConnect(pos.getFirst(), pos.getSecond());
+			BlockPosEdge edge = BlockPosEdge.tryConnect(pos.getLeft(), pos.getRight());
 			if(edge == null)
 				continue;
 			if(edge.getLength() == 0)

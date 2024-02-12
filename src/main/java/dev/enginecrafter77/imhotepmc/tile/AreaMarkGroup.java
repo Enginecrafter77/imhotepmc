@@ -14,6 +14,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Point3d;
@@ -129,9 +130,9 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 	{
 		Set<Axis3d> definedAxes = this.getDefinedAxes();
 
-		for(CombiningIterator.Pair<BlockPos, BlockPos> edge : CombiningIterator.combinations(this.getDefiningCorners(), Collections.singletonList(other)))
+		for(Pair<BlockPos, BlockPos> edge : CombiningIterator.combinations(this.getDefiningCorners(), Collections.singletonList(other)))
 		{
-			Axis3d shared = BlockPosUtil.getSharedAxis(edge.getFirst(), edge.getSecond());
+			Axis3d shared = BlockPosUtil.getSharedAxis(edge.getLeft(), edge.getRight());
 			if(shared == null || definedAxes.contains(shared))
 				continue;
 			return this.deriveNext(other);
@@ -253,9 +254,9 @@ public class AreaMarkGroup implements INBTSerializable<NBTTagCompound> {
 			return EnumSet.noneOf(Axis3d.class);
 
 		Set<Axis3d> set = EnumSet.noneOf(Axis3d.class);
-		for(CombiningIterator.Pair<BlockPos, BlockPos> edge : CombiningIterator.selfCombinations(definingCorners))
+		for(Pair<BlockPos, BlockPos> edge : CombiningIterator.selfCombinations(definingCorners))
 		{
-			Axis3d sharedAxis = BlockPosUtil.getSharedAxis(edge.getFirst(), edge.getSecond());
+			Axis3d sharedAxis = BlockPosUtil.getSharedAxis(edge.getLeft(), edge.getRight());
 			if(sharedAxis == null)
 				continue;
 			set.add(sharedAxis);
