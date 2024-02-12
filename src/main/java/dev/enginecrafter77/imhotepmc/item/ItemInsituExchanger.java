@@ -52,6 +52,7 @@ public class ItemInsituExchanger extends Item {
 		this.setRegistryName(new ResourceLocation(ImhotepMod.MOD_ID, "insitu_exchanger"));
 		this.setTranslationKey("insitu_exchanger");
 		this.setCreativeTab(ImhotepMod.CREATIVE_TAB);
+		this.setMaxStackSize(1);
 	}
 
 	@Override
