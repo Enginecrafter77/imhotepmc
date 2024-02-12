@@ -43,7 +43,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ItemInsituExchanger extends Item {
 	private static final String NBT_KEY_ENERGY = "Energy";
-	private static final String NBT_KEY_ITEMTAG = "Tag";
 	private static final String NBT_KEY_ACTIVE = "Active";
 
 	public ItemInsituExchanger()
@@ -185,11 +184,9 @@ public class ItemInsituExchanger extends Item {
 	@Override
 	public NBTTagCompound getNBTShareTag(ItemStack stack)
 	{
-		NBTTagCompound tag = new NBTTagCompound();
-
-		NBTTagCompound itemtag = super.getNBTShareTag(stack);
-		if(itemtag != null)
-			tag.setTag(NBT_KEY_ITEMTAG, itemtag);
+		NBTTagCompound tag = super.getNBTShareTag(stack);
+		if(tag == null)
+			tag = new NBTTagCompound();
 
 		IEnergyStorage energyStorage = stack.getCapability(CapabilityEnergy.ENERGY, null);
 		if(energyStorage != null)
@@ -205,13 +202,9 @@ public class ItemInsituExchanger extends Item {
 	@Override
 	public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt)
 	{
+		super.readNBTShareTag(stack, nbt);
 		if(nbt == null)
-		{
-			super.readNBTShareTag(stack, null);
 			return;
-		}
-
-		super.readNBTShareTag(stack, nbt.getCompoundTag(NBT_KEY_ITEMTAG));
 
 		IEnergyStorage energyStorage = stack.getCapability(CapabilityEnergy.ENERGY, null);
 		if(energyStorage != null && nbt.hasKey(NBT_KEY_ENERGY))

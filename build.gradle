@@ -26,6 +26,8 @@ minecraft {
     mappings = "stable_39"
     runDir = "run"
 
+    clientJvmArgs = ["-ea"]
+    serverJvmArgs = ["-ea"]
     clientRunArgs = ["--username=${System.getenv("MINECRAFT_USERNAME")}"]
 }
 
