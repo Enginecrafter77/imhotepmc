@@ -57,11 +57,14 @@ public class TileEntityArchitectTable extends TileEntity {
 
 	public StructureBlueprint scanStructure()
 	{
+		BlockPos origin = this.selection.getMinCorner();
+
 		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
+		blueprintEditor.setSize(this.selection.getSize());
 		for(BlockPos pos : this.selection.internalBlocks())
 		{
 			SavedTileState sts = SavedTileState.sample(this.world, pos);
-			blueprintEditor.addBlock(pos.toImmutable(), sts);
+			blueprintEditor.addBlock(pos.subtract(origin), sts);
 		}
 		return blueprintEditor.build();
 	}
