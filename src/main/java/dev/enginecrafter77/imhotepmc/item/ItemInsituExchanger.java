@@ -391,8 +391,8 @@ public class ItemInsituExchanger extends Item {
 			}
 			while(!this.isBlockCandidateForReplacement(pos));
 
-			ItemStack consume = new ItemStack(this.replacement.getBlock(), 1);
-			ItemStack reclaim = new ItemStack(this.replace.getBlock(), 1);
+			ItemStack consume = new ItemStack(this.replacement.getBlock(), 1, this.replacement.getBlock().getMetaFromState(this.replacement));
+			ItemStack reclaim = new ItemStack(this.replace.getBlock(), 1, this.replace.getBlock().getMetaFromState(this.replace));
 			int consumeSlot = -1, reclaimSlot = -1;
 			if(this.inventory != null)
 			{
