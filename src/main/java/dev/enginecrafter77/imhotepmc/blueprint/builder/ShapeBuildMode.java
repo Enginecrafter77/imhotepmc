@@ -30,14 +30,14 @@ public enum ShapeBuildMode implements ShapeBuildStrategy {
 		}
 	}
 
-	public BuilderTask createShapeTask(BuilderHandler handler, World world, BlockPos pos)
+	public BuilderTask createShapeTask(World world, BlockPos pos, BuilderContext context)
 	{
 		switch(this)
 		{
 		case BUILD:
-			return handler.createTemplateTask(world, pos);
+			return new BuilderTemplateTask(world, pos, context);
 		case CLEAR:
-			return handler.createClearTask(world, pos);
+			return new BuilderClearTask(world, pos, context);
 		default:
 			throw new UnsupportedOperationException();
 		}

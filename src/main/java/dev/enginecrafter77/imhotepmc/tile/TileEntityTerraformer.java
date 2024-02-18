@@ -15,6 +15,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -22,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class TileEntityTerraformer extends TileEntity implements ITickable {
+public class TileEntityTerraformer extends TileEntity implements ITickable, BuilderContext {
 	private static final String NBT_KEY_AREA = "area";
 	private static final String NBT_KEY_MODE = "mode";
 	private static final String NBT_KEY_HAS_AREA = "hasArea";
@@ -32,9 +33,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 
 	private final BlockSelectionBox selectionBox;
 
-	private final BuilderHandler builderHandler;
-
-	private final TickedBuilderInvoker builderInvoker;
+	private final BuilderWrapper builderWrapper;
 
 	private boolean hasSearchedForArea;
 	private boolean hasArea;
@@ -46,8 +45,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
 		this.selectionBox = new BlockSelectionBox();
-		this.builderHandler = new PoweredBuilderHandler(this::getBlockSource, ImhotepMod.instance.getBuilderBomProvider(), this.energyStorage);
-		this.builderInvoker = new TickedBuilderInvoker();
+		this.builderWrapper = new BuilderWrapper();
 
 		this.mode = TerraformMode.CLEAR;
 		this.hasSearchedForArea = false;
@@ -65,29 +63,14 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		return this.mode;
 	}
 
-	@Nullable
-	protected BuilderMaterialStorage getBlockSource()
-	{
-		BlockPos blockSourcePos = this.pos.up();
-		TileEntity tile = this.world.getTileEntity(blockSourcePos);
-		if(tile == null)
-			return null;
-		if(!tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
-			return null;
-		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		if(handler == null)
-			return null;
-		return new InventoryMaterialStorage(handler);
-	}
-
 	protected void onSettingsChanged(BlockSelectionBox box, TerraformMode mode)
 	{
 		if(!this.hasArea)
 		{
-			this.builderInvoker.setBuilder(null);
+			this.builderWrapper.setBuilder(null);
 			return;
 		}
-		this.builderInvoker.setBuilder(new ShapeBuilder(box, mode.getShapeGenerator(), mode.getBuildStrategy(), this.builderHandler));
+		this.builderWrapper.setBuilder(new ShapeBuilder(box, mode.getShapeGenerator(), mode.getBuildStrategy(), this));
 	}
 
 	@Override
@@ -120,7 +103,9 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 			}
 			this.hasSearchedForArea = true;
 		}
-		this.builderInvoker.update(this.world);
+
+		this.builderWrapper.setWorld(this.world);
+		this.builderWrapper.update();
 	}
 
 	@Override
@@ -132,9 +117,9 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		this.hasArea = compound.getBoolean(NBT_KEY_HAS_AREA);
 		if(compound.hasKey(NBT_KEY_STATE))
 		{
-			StructureBuilder builder = new ShapeBuilder(this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy(), this.builderHandler);
-			builder.restoreState(compound.getCompoundTag(NBT_KEY_STATE));
-			this.builderInvoker.setBuilder(builder);
+			StructureBuilder builder = new ShapeBuilder(this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy(), this);
+			this.builderWrapper.setBuilder(builder);
+			this.builderWrapper.restoreState(compound.getCompoundTag(NBT_KEY_STATE));
 		}
 	}
 
@@ -145,11 +130,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 		compound.setTag(NBT_KEY_AREA, this.selectionBox.serializeNBT());
 		compound.setByte(NBT_KEY_MODE, (byte)this.mode.ordinal());
 		compound.setBoolean(NBT_KEY_HAS_AREA, this.hasArea);
-
-		StructureBuilder builder = this.builderInvoker.getBuilder();
-		if(builder != null)
-			compound.setTag(NBT_KEY_STATE, builder.saveState());
-
+		compound.setTag(NBT_KEY_STATE, this.builderWrapper.saveState());
 		return compound;
 	}
 
@@ -179,5 +160,48 @@ public class TileEntityTerraformer extends TileEntity implements ITickable {
 	public ITextComponent getDisplayName()
 	{
 		return new TextComponentTranslation("label.terraformer.mode").appendText(": ").appendSibling(this.mode.getTranslatedName());
+	}
+
+	@Nullable
+	@Override
+	public IEnergyStorage getEnergyStorage()
+	{
+		return this.energyStorage;
+	}
+
+	@Override
+	public BuilderBOMProvider getBOMProvider()
+	{
+		return ImhotepMod.instance.getBuilderBomProvider();
+	}
+
+	@Override
+	public BuilderMaterialProvider getMaterialProvider()
+	{
+		return this::getMaterialSource;
+	}
+
+	@Override
+	public boolean isEnergyRequired()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean areItemsRequired()
+	{
+		return true;
+	}
+
+	@Nullable
+	protected IItemHandler getMaterialSource()
+	{
+		BlockPos blockSourcePos = this.pos.up();
+		TileEntity tile = this.world.getTileEntity(blockSourcePos);
+		if(tile == null)
+			return null;
+		if(!tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
+			return null;
+		return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 	}
 }

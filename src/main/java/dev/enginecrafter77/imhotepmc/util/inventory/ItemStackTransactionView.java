@@ -1,12 +1,10 @@
-package dev.enginecrafter77.imhotepmc.blueprint.builder;
+package dev.enginecrafter77.imhotepmc.util.inventory;
 
 import net.minecraft.item.ItemStack;
 
 import java.util.Collection;
 
-public interface ItemStackTransaction {
+public interface ItemStackTransactionView {
 	public Collection<ItemStack> getTransactionStacks();
 	public Collection<ItemStack> getBlockingStacks();
-	public boolean isCommitable();
-	public void commit();
 }

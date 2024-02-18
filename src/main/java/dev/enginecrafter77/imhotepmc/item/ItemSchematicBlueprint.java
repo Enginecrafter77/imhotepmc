@@ -1,18 +1,15 @@
 package dev.enginecrafter77.imhotepmc.item;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.blueprint.*;
-import dev.enginecrafter77.imhotepmc.blueprint.builder.BlueprintBuilder;
-import dev.enginecrafter77.imhotepmc.blueprint.builder.CreativeBuilderHandler;
-import dev.enginecrafter77.imhotepmc.blueprint.builder.SynchronousBuilderInvoker;
+import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
+import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
+import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.blueprint.SchematicMetadata;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 

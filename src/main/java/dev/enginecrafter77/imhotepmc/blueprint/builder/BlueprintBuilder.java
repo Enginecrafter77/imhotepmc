@@ -9,30 +9,30 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 public class BlueprintBuilder implements StructureBuilder {
 	private static final String NBT_KEY_DEFERRED = "deferred";
 
 	private final LinkedList<BlueprintVoxel> deferred;
-	private final BuilderHandler handler;
+	private final BuilderContext context;
 	private final VoxelIndexer indexer;
 	private final BlueprintPlacement placement;
+	private final BlueprintReader reader;
 
 	@Nullable
 	private BuilderTask currentTask;
 
-	@Nonnull
-	private BlueprintReader reader;
-
-	public BlueprintBuilder(BlueprintPlacement placement, BuilderHandler handler)
+	public BlueprintBuilder(BlueprintPlacement placement, BuilderContext context)
 	{
 		this.indexer = new NaturalVoxelIndexer(placement.getOriginOffset(), placement.getSize());
 		this.deferred = new LinkedList<BlueprintVoxel>();
 		this.placement = placement;
-		this.handler = handler;
+		this.context = context;
 		this.reader = placement.reader();
 		this.currentTask = null;
 	}
@@ -56,7 +56,7 @@ public class BlueprintBuilder implements StructureBuilder {
 			if(blk == null)
 				continue;
 			BuilderBlockPlacementDetails details = BuilderBlockPlacementDetails.fromBlueprintEntry(entry).rotated(this.placement.getRotation());
-			this.currentTask = this.handler.createPlaceTask(world, voxel.getPosition(), details);
+			this.currentTask = new BuilderPlaceTask(world, voxel.getPosition(), details, this.context);
 			return true;
 		}
 

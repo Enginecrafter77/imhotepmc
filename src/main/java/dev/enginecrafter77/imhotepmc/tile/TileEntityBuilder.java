@@ -12,8 +12,8 @@ import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementProvider;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.inventory.ItemStackTransactionView;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -32,9 +33,10 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 
-public class TileEntityBuilder extends TileEntity implements ITickable, BlueprintPlacementProvider {
+public class TileEntityBuilder extends TileEntity implements ITickable, BlueprintPlacementProvider, BuilderContext {
 	private static final String NBT_KEY_BLUEPRINT = "blueprint";
 	private static final String NBT_KEY_BUILDER = "builder_state";
 	private static final String NBT_KEY_FACING = "facing";
@@ -43,8 +45,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	private static final NBTBlueprintSerializer SERIALIZER = new LitematicaBlueprintSerializer();
 
 	private final EnergyStorage energyStorage;
-	private final BuilderHandler builderHandler;
-	private final TickedBuilderInvoker builderInvoker;
+	private final BuilderWrapper builderWrapper;
 
 	@Nonnull
 	private Collection<BlockPosEdge> buildAreaEdges;
@@ -70,8 +71,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	public TileEntityBuilder()
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
-		this.builderHandler = new PoweredBuilderHandler(this::getBlockSource, ImhotepMod.instance.getBuilderBomProvider(), this.energyStorage);
-		this.builderInvoker = new TickedBuilderInvoker();
+		this.builderWrapper = new BuilderWrapper();
 		this.buildAreaEdges = ImmutableList.of();
 		this.facing = EnumFacing.NORTH;
 		this.projectionActive = false;
@@ -82,9 +82,49 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		this.lastSyncedStateHash = this.sharedState.hashCode();
 	}
 
-	public BuilderInvoker getInvoker()
+	@Nullable
+	@Override
+	public IEnergyStorage getEnergyStorage()
 	{
-		return this.builderInvoker;
+		return this.energyStorage;
+	}
+
+	@Override
+	public BuilderBOMProvider getBOMProvider()
+	{
+		return ImhotepMod.instance.getBuilderBomProvider();
+	}
+
+	@Override
+	public BuilderMaterialProvider getMaterialProvider()
+	{
+		return this::getMaterialSource;
+	}
+
+	@Override
+	public boolean isEnergyRequired()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean areItemsRequired()
+	{
+		BlockPos blockSourcePos = this.pos.up();
+		IBlockState state = this.world.getBlockState(blockSourcePos);
+		return !Objects.equals(state.getBlock(), ImhotepMod.BLOCK_CREATIVE_BUILD_CACHE);
+	}
+
+	@Nullable
+	protected IItemHandler getMaterialSource()
+	{
+		BlockPos blockSourcePos = this.pos.up();
+		TileEntity tile = this.world.getTileEntity(blockSourcePos);
+		if(tile == null)
+			return null;
+		if(!tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
+			return null;
+		return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 	}
 
 	public boolean isProjectionActive()
@@ -106,30 +146,6 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	public SharedBuilderState getSharedState()
 	{
 		return this.sharedState;
-	}
-
-	private CreativeMaterialStorage creativeMaterialStorage;
-	@Nullable
-	protected BuilderMaterialStorage getBlockSource()
-	{
-		BlockPos blockSourcePos = this.pos.up();
-		IBlockState state = this.world.getBlockState(blockSourcePos);
-		if(state.getBlock() == ImhotepMod.BLOCK_CREATIVE_BUILD_CACHE)
-		{
-			if(this.creativeMaterialStorage == null)
-				this.creativeMaterialStorage = new CreativeMaterialStorage(Blocks.STONE);
-			return this.creativeMaterialStorage;
-		}
-
-		TileEntity tile = this.world.getTileEntity(blockSourcePos);
-		if(tile == null)
-			return null;
-		if(!tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
-			return null;
-		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		if(handler == null)
-			return null;
-		return new InventoryMaterialStorage(handler);
 	}
 
 	public void setFacing(EnumFacing facing)
@@ -172,9 +188,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	{
 		this.blueprint = blueprint;
 		this.placement = this.createPlacement(blueprint, this.pos, this.facing);
-		BlueprintBuilder builder = new BlueprintBuilder(this.placement, this.builderHandler);
+		BlueprintBuilder builder = new BlueprintBuilder(this.placement, this);
 		this.onBuilderCreated(builder);
-		this.builderInvoker.setBuilder(builder);
+		this.builderWrapper.setBuilder(builder);
 	}
 
 	protected void onBuilderCreated(BlueprintBuilder builder)
@@ -219,18 +235,11 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		if(this.world.isRemote)
 			return;
 
-		this.builderInvoker.update(this.world);
+		this.builderWrapper.setWorld(this.world);
+		this.builderWrapper.update();
 
-		StructureBuilder builder = this.builderInvoker.getBuilder();
-		if(builder == null)
-			return;
-		BuilderTask currentTask = builder.getLastTask(this.world);
-
-		Collection<ItemStack> missingItems = Optional.ofNullable(currentTask)
-				.map(MaterializedBuilderPlaceTask.class::cast)
-				.map(MaterializedBuilderPlaceTask::getTransaction)
-				.map(ItemStackTransaction::getBlockingStacks)
-				.orElseGet(ImmutableList::of);
+		@Nullable BuilderTask task = this.builderWrapper.getLastTask();
+		Collection<ItemStack> missingItems = Optional.ofNullable(task).map(BuilderTask::getItemStackTransaction).map(ItemStackTransactionView::getBlockingStacks).orElseGet(ImmutableList::of);
 		this.sharedState.setMissingItems(missingItems);
 		this.sharedState.setPowered(true);
 
@@ -255,11 +264,10 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		if(this.blueprint != null)
 		{
 			this.placement = this.createPlacement(this.blueprint, this.pos, this.facing);
-			BlueprintBuilder builder = new BlueprintBuilder(this.placement, this.builderHandler);
-			if(compound.hasKey(NBT_KEY_BUILDER))
-				builder.restoreState(compound.getCompoundTag(NBT_KEY_BUILDER));
+			BlueprintBuilder builder = new BlueprintBuilder(this.placement, this);
+			this.builderWrapper.setBuilder(builder);
+			this.builderWrapper.restoreState(compound.getCompoundTag(NBT_KEY_BUILDER));
 			this.onBuilderCreated(builder);
-			this.builderInvoker.setBuilder(builder);
 		}
 	}
 
@@ -272,10 +280,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 
 		if(this.blueprint != null)
 			compound.setTag(NBT_KEY_BLUEPRINT, SERIALIZER.serializeBlueprint(this.blueprint));
-
-		StructureBuilder builder = this.builderInvoker.getBuilder();
-		if(builder != null)
-			compound.setTag(NBT_KEY_BUILDER, builder.saveState());
+		compound.setTag(NBT_KEY_BUILDER, this.builderWrapper.saveState());
 
 		return compound;
 	}

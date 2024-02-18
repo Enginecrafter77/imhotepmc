@@ -11,22 +11,22 @@ import javax.annotation.Nullable;
 public class ShapeBuilder implements StructureBuilder {
 	private static final String NBT_KEY_INDEX = "index";
 
-	private final BuilderHandler handler;
 	private final ShapeGenerator generator;
 	private final BlockSelectionBox area;
 	private final ShapeBuildMode buildMode;
 	private final VoxelIndexer indexer;
+	private final BuilderContext context;
 
 	@Nullable
 	private BuilderTask currentTask;
 
 	private int index;
 
-	public ShapeBuilder(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildMode buildMode, BuilderHandler handler)
+	public ShapeBuilder(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildMode buildMode, BuilderContext context)
 	{
 		this.indexer = buildMode.createVoxelIndexer(area);
+		this.context = context;
 		this.generator = generator;
-		this.handler = handler;
 		this.buildMode = buildMode;
 		this.area = area;
 		this.currentTask = null;
@@ -69,7 +69,7 @@ public class ShapeBuilder implements StructureBuilder {
 
 		if(this.buildMode.wouldTaskBeInVain(world, pos))
 			return null;
-		return this.buildMode.createShapeTask(this.handler, world, pos);
+		return this.buildMode.createShapeTask(world, pos, this.context);
 	}
 
 	@Override
