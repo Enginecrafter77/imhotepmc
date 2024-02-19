@@ -33,6 +33,7 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -45,7 +46,6 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	private static final NBTBlueprintSerializer SERIALIZER = new LitematicaBlueprintSerializer();
 
 	private final EnergyStorage energyStorage;
-	private final BuilderWrapper builderWrapper;
 
 	@Nonnull
 	private Collection<BlockPosEdge> buildAreaEdges;
@@ -57,10 +57,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	private EnumFacing facing;
 
 	@Nullable
-	private SchematicBlueprint blueprint;
-
-	@Nullable
-	private BlueprintPlacement placement;
+	private BlueprintBuildJob job;
 
 	private boolean projectionActive;
 
@@ -71,13 +68,11 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	public TileEntityBuilder()
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
-		this.builderWrapper = new BuilderWrapper();
 		this.buildAreaEdges = ImmutableList.of();
 		this.facing = EnumFacing.NORTH;
 		this.projectionActive = false;
 		this.boundingBox = null;
-		this.blueprint = null;
-		this.placement = null;
+		this.job = null;
 		this.sharedState = new SharedBuilderState();
 		this.lastSyncedStateHash = this.sharedState.hashCode();
 	}
@@ -169,7 +164,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	@Override
 	public BlueprintPlacement getPlacement()
 	{
-		return this.placement;
+		if(this.job == null)
+			return null;
+		return this.job.getPlacement();
 	}
 
 	@Override
@@ -186,17 +183,22 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 
 	public void setBlueprint(SchematicBlueprint blueprint)
 	{
-		this.blueprint = blueprint;
-		this.placement = this.createPlacement(blueprint, this.pos, this.facing);
-		BlueprintBuilder builder = new BlueprintBuilder(this.placement, this);
-		this.onBuilderCreated(builder);
-		this.builderWrapper.setBuilder(builder);
+		BlueprintPlacement placement = this.createPlacement(blueprint, this.pos, this.facing);
+		this.job = new BlueprintBuildJob(placement, this);
+		this.onJobChanged(this.job);
 	}
 
-	protected void onBuilderCreated(BlueprintBuilder builder)
+	protected void onJobChanged(@Nullable BlueprintBuildJob job)
 	{
+		if(job == null)
+		{
+			this.buildAreaEdges = Collections.emptyList();
+			this.boundingBox = new AxisAlignedBB(this.pos.getX(), this.pos.getY(), this.pos.getZ(), this.pos.getX() + 1D, this.pos.getY() + 1D, this.pos.getZ() + 1D);
+			return;
+		}
+
 		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStartSize(builder.getPlacement().getOriginOffset(), builder.getPlacement().getSize());
+		box.setStartSize(job.getPlacement().getOriginOffset(), job.getPlacement().getSize());
 		this.buildAreaEdges = box.edges();
 		box.include(this.getPos());
 		this.boundingBox = box.toAABB();
@@ -232,13 +234,13 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	@Override
 	public void update()
 	{
-		if(this.world.isRemote)
+		if(this.world.isRemote || this.job == null)
 			return;
 
-		this.builderWrapper.setWorld(this.world);
-		this.builderWrapper.update();
+		this.job.setWorld(this.world);
+		this.job.update();
 
-		@Nullable BuilderTask task = this.builderWrapper.getLastTask();
+		@Nullable BuilderTask task = this.job.getCurrentTask();
 		Collection<ItemStack> missingItems = Optional.ofNullable(task).map(BuilderTask::getItemStackTransaction).map(ItemStackTransactionView::getBlockingStacks).orElseGet(ImmutableList::of);
 		this.sharedState.setMissingItems(missingItems);
 		this.sharedState.setPowered(true);
@@ -257,18 +259,19 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		super.readFromNBT(compound);
 		this.facing = EnumFacing.byHorizontalIndex(compound.getByte(NBT_KEY_FACING));
 		this.projectionActive = compound.getBoolean(NBT_KEY_PROJECTION);
-
-		if(compound.hasKey(NBT_KEY_BLUEPRINT))
-			this.blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag(NBT_KEY_BLUEPRINT));
-
-		if(this.blueprint != null)
+		boolean jobPresent = compound.hasKey(NBT_KEY_BUILDER) && compound.hasKey(NBT_KEY_BLUEPRINT);
+		if(jobPresent)
 		{
-			this.placement = this.createPlacement(this.blueprint, this.pos, this.facing);
-			BlueprintBuilder builder = new BlueprintBuilder(this.placement, this);
-			this.builderWrapper.setBuilder(builder);
-			this.builderWrapper.restoreState(compound.getCompoundTag(NBT_KEY_BUILDER));
-			this.onBuilderCreated(builder);
+			SchematicBlueprint blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag(NBT_KEY_BLUEPRINT));
+			BlueprintPlacement placement = this.createPlacement(blueprint, this.pos, this.facing);
+			this.job = new BlueprintBuildJob(placement, this);
+			this.job.restoreState(compound.getCompoundTag(NBT_KEY_BUILDER));
 		}
+		else
+		{
+			this.job = null;
+		}
+		this.onJobChanged(this.job);
 	}
 
 	@Override
@@ -278,9 +281,12 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		compound.setByte(NBT_KEY_FACING, (byte)this.facing.getHorizontalIndex());
 		compound.setBoolean(NBT_KEY_PROJECTION, this.projectionActive);
 
-		if(this.blueprint != null)
-			compound.setTag(NBT_KEY_BLUEPRINT, SERIALIZER.serializeBlueprint(this.blueprint));
-		compound.setTag(NBT_KEY_BUILDER, this.builderWrapper.saveState());
+		if(this.job != null)
+		{
+			SchematicBlueprint blueprint = (SchematicBlueprint)this.job.getPlacement().getBlueprint();
+			compound.setTag(NBT_KEY_BLUEPRINT, SERIALIZER.serializeBlueprint(blueprint));
+			compound.setTag(NBT_KEY_BUILDER, this.job.saveState());
+		}
 
 		return compound;
 	}

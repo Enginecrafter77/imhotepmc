@@ -33,10 +33,11 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 
 	private final BlockSelectionBox selectionBox;
 
-	private final BuilderWrapper builderWrapper;
-
 	private boolean hasSearchedForArea;
 	private boolean hasArea;
+
+	@Nullable
+	private ShapeBuildJob job;
 
 	@Nonnull
 	private TerraformMode mode;
@@ -45,8 +46,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
 		this.selectionBox = new BlockSelectionBox();
-		this.builderWrapper = new BuilderWrapper();
-
+		this.job = null;
 		this.mode = TerraformMode.CLEAR;
 		this.hasSearchedForArea = false;
 		this.hasArea = false;
@@ -67,10 +67,10 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 	{
 		if(!this.hasArea)
 		{
-			this.builderWrapper.setBuilder(null);
+			this.job = null;
 			return;
 		}
-		this.builderWrapper.setBuilder(new ShapeBuilder(box, mode.getShapeGenerator(), mode.getBuildStrategy(), this));
+		this.job = new ShapeBuildJob(box, mode.getShapeGenerator(), mode.getBuildStrategy(), this);
 	}
 
 	@Override
@@ -104,8 +104,10 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 			this.hasSearchedForArea = true;
 		}
 
-		this.builderWrapper.setWorld(this.world);
-		this.builderWrapper.update();
+		if(this.job == null)
+			return;
+		this.job.setWorld(this.world);
+		this.job.update();
 	}
 
 	@Override
@@ -117,9 +119,12 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 		this.hasArea = compound.getBoolean(NBT_KEY_HAS_AREA);
 		if(compound.hasKey(NBT_KEY_STATE))
 		{
-			StructureBuilder builder = new ShapeBuilder(this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy(), this);
-			this.builderWrapper.setBuilder(builder);
-			this.builderWrapper.restoreState(compound.getCompoundTag(NBT_KEY_STATE));
+			this.job = new ShapeBuildJob(this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy(), this);
+			this.job.restoreState(compound.getCompoundTag(NBT_KEY_STATE));
+		}
+		else
+		{
+			this.job = null;
 		}
 	}
 
@@ -130,7 +135,8 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 		compound.setTag(NBT_KEY_AREA, this.selectionBox.serializeNBT());
 		compound.setByte(NBT_KEY_MODE, (byte)this.mode.ordinal());
 		compound.setBoolean(NBT_KEY_HAS_AREA, this.hasArea);
-		compound.setTag(NBT_KEY_STATE, this.builderWrapper.saveState());
+		if(this.job != null)
+			compound.setTag(NBT_KEY_STATE, this.job.saveState());
 		return compound;
 	}
 

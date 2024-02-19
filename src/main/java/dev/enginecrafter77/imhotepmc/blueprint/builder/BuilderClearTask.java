@@ -26,7 +26,7 @@ public class BuilderClearTask extends AbstractPoweredBuilderTask {
 	protected EnergyTransaction createEnergyTransaction()
 	{
 		float hardness = this.getBlockToBreak().getBlockHardness(this.world, this.pos);
-		int energy = Math.round(Math.min(2000F, hardness * 500F));
+		int energy = Math.round(Math.min(500F, hardness * 100F));
 		return new EnergyExtractTransaction(energy);
 	}
 
