@@ -188,7 +188,7 @@ public class BlueprintPlacement implements Blueprint {
 		public BlueprintPlacementReader(BlueprintPlacement placement)
 		{
 			this.placement = placement;
-			this.wrapped = placement.reader();
+			this.wrapped = placement.getBlueprint().reader();
 		}
 
 		@Override
