@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class BlueprintTransferHandler implements PacketStreamTopicHandler {
-	private static final Log LOGGER = LogFactory.getLog(BlueprintTransferHandler.class);
+	static final Log LOGGER = LogFactory.getLog(BlueprintTransferHandler.class);
 
 	public static final String NBT_ARG_TILEPOS = "TileEntityPosition";
 	public static final String NBT_ARG_FORMAT = "Format";

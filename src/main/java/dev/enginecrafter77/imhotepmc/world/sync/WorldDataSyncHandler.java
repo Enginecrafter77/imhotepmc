@@ -43,7 +43,7 @@ public class WorldDataSyncHandler {
 		while(itr.hasNext())
 		{
 			DataSyncEntry ent = itr.next();
-			if(Objects.equals(name, ent.name))
+			if(Objects.equals(name, ent.getName()))
 			{
 				itr.remove();
 				return;
@@ -148,6 +148,11 @@ public class WorldDataSyncHandler {
 		{
 			this.cls = cls;
 			this.name = name;
+		}
+
+		public String getName()
+		{
+			return this.name;
 		}
 
 		@Nullable

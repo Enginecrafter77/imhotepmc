@@ -126,7 +126,7 @@ public class BlueprintPlacement implements Blueprint {
 	@Override
 	public BlueprintReader reader()
 	{
-		return new BlueprintPlacementReader();
+		return new BlueprintPlacementReader(this);
 	}
 
 	@Override
@@ -180,13 +180,15 @@ public class BlueprintPlacement implements Blueprint {
 		}
 	}
 
-	private class BlueprintPlacementReader implements BlueprintReader
+	private static class BlueprintPlacementReader implements BlueprintReader
 	{
-		public final BlueprintReader wrapped;
+		private final BlueprintPlacement placement;
+		private final BlueprintReader wrapped;
 
-		public BlueprintPlacementReader()
+		public BlueprintPlacementReader(BlueprintPlacement placement)
 		{
-			this.wrapped = BlueprintPlacement.this.blueprint.reader();
+			this.placement = placement;
+			this.wrapped = placement.reader();
 		}
 
 		@Override
@@ -210,7 +212,7 @@ public class BlueprintPlacement implements Blueprint {
 		@Override
 		public BlueprintVoxel next()
 		{
-			return BlueprintPlacement.this.mapBlueprintVoxel(this.wrapped.next());
+			return this.placement.mapBlueprintVoxel(this.wrapped.next());
 		}
 	}
 }

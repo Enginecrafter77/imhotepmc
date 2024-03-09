@@ -87,7 +87,7 @@ public class StructureBlueprint implements Blueprint {
 	@Override
 	public BlueprintReader reader()
 	{
-		return new RegionReader();
+		return new RegionReader(this.vector, this.indexer, this.getOriginOffset());
 	}
 
 	@Override
@@ -109,21 +109,27 @@ public class StructureBlueprint implements Blueprint {
 		return new BlueprintEditor();
 	}
 
-	private class RegionReader implements BlueprintReader
+	private static class RegionReader implements BlueprintReader
 	{
+		private final CompactPalettedBitVector<? extends BlueprintEntry> blockVector;
+		private final VoxelIndexer indexer;
 		private final MutableBlueprintVoxel voxel;
+		private final BlockPos offset;
 		private int index;
 
-		public RegionReader()
+		public RegionReader(CompactPalettedBitVector<? extends BlueprintEntry> blockVector, VoxelIndexer indexer, BlockPos offset)
 		{
+			this.blockVector = blockVector;
+			this.indexer = indexer;
 			this.voxel = new MutableBlueprintVoxel();
+			this.offset = offset;
 			this.index = -1;
 		}
 
 		@Override
 		public boolean hasNext()
 		{
-			return (this.index + 1) < StructureBlueprint.this.indexer.getVolume();
+			return (this.index + 1) < this.indexer.getVolume();
 		}
 
 		@Override
@@ -131,8 +137,8 @@ public class StructureBlueprint implements Blueprint {
 		{
 			++this.index;
 
-			BlockPos pos = StructureBlueprint.this.indexer.fromIndex(this.index).add(StructureBlueprint.this.getOriginOffset());
-			this.voxel.set(pos, StructureBlueprint.this.vector.get(this.index));
+			BlockPos pos = this.indexer.fromIndex(this.index).add(this.offset);
+			this.voxel.set(pos, this.blockVector.get(this.index));
 			return this.voxel;
 		}
 

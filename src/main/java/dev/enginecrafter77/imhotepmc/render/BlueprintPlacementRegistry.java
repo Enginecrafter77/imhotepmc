@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class BlueprintPlacementRegistry {
-	private static final Log LOGGER = LogFactory.getLog(BlueprintPlacementRegistry.class);
+	static final Log LOGGER = LogFactory.getLog(BlueprintPlacementRegistry.class);
 
 	@SidedProxy(modId = ImhotepMod.MOD_ID)
 	public static BlueprintPlacementProxy proxy;

@@ -82,6 +82,11 @@ public class PacketStreamClientChannel implements Closeable {
 		this.checkTransactionsAndClose();
 	}
 
+	protected ByteBuf getBuffer()
+	{
+		return this.buffer;
+	}
+
 	@Override
 	public void close()
 	{
@@ -119,7 +124,7 @@ public class PacketStreamClientChannel implements Closeable {
 		public void write(@Nonnull byte[] byteArray, int off, int len)
 		{
 			this.writeLock.lock();
-			int rem = PacketStreamClientChannel.this.buffer.writableBytes();
+			int rem = PacketStreamClientChannel.this.getBuffer().writableBytes();
 			if(len > rem)
 			{
 				this.write(byteArray, off, rem);
@@ -127,7 +132,7 @@ public class PacketStreamClientChannel implements Closeable {
 				off += rem;
 				len -= rem;
 			}
-			PacketStreamClientChannel.this.buffer.writeBytes(byteArray, off, len);
+			PacketStreamClientChannel.this.getBuffer().writeBytes(byteArray, off, len);
 			this.writeLock.unlock();
 		}
 
@@ -135,9 +140,9 @@ public class PacketStreamClientChannel implements Closeable {
 		public void write(int bt)
 		{
 			this.writeLock.lock();
-			if(PacketStreamClientChannel.this.buffer.writableBytes() == 0)
+			if(PacketStreamClientChannel.this.getBuffer().writableBytes() == 0)
 				PacketStreamClientChannel.this.flush();
-			PacketStreamClientChannel.this.buffer.writeByte(bt);
+			PacketStreamClientChannel.this.getBuffer().writeByte(bt);
 			this.writeLock.lock();
 		}
 
