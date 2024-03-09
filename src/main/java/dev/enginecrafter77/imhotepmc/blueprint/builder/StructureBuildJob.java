@@ -75,7 +75,7 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 
 	public boolean isDone()
 	{
-		return this.currentIndex >= this.indexer.getVolume() && this.deferred.isEmpty();
+		return (this.currentIndex + 1) >= this.indexer.getVolume() && this.deferred.isEmpty();
 	}
 
 	protected void advanceIndex()
