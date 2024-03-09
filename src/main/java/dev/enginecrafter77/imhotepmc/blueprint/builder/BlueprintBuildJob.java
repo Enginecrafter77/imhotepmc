@@ -15,7 +15,7 @@ public class BlueprintBuildJob extends StructureBuildJob {
 
 	public BlueprintBuildJob(BlueprintPlacement placement, BuilderContext context)
 	{
-		super(placement.getPlacementOrigin(), placement.getSize());
+		super(placement.getOriginOffset(), placement.getSize());
 		this.placement = placement;
 		this.context = context;
 	}
