@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
+import dev.enginecrafter77.imhotepmc.util.Vector3i;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -48,19 +49,6 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		NBTTagCompound compound = new NBTTagCompound();
 		this.serializeVectorInto(vector, compound);
 		return compound;
-	}
-
-	private static Vec3i readVector(NBTTagCompound tag)
-	{
-		int x = tag.getInteger("x");
-		int y = tag.getInteger("y");
-		int z = tag.getInteger("z");
-		return new Vec3i(x, y, z);
-	}
-
-	private static Vec3i absolutizeVector(Vec3i other)
-	{
-		return new Vec3i(Math.abs(other.getX()), Math.abs(other.getY()), Math.abs(other.getZ()));
 	}
 
 	protected NBTTagCompound createMetadataTag(SchematicBlueprint blueprint)
@@ -160,13 +148,15 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 
 		int dataVersion = source.getInteger(NBT_KEY_MCDATAVERSION);
 
+		Vector3i offset = new Vector3i();
 		NBTTagCompound regions = source.getCompoundTag(NBT_KEY_REGIONS);
 		for(String name : regions.getKeySet())
 		{
 			NBTTagCompound regionTag = regions.getCompoundTag(name);
+			regionTag = this.normalizeRegion(regionTag);
 			StructureBlueprint region = deserializeRegionBlueprint(regionTag, dataVersion);
-			BlockPos offset = new BlockPos(readVector(regionTag.getCompoundTag(NBT_KEY_REGION_OFFSET)));
-			builder.addRegion(name, region, offset);
+			offset.deserializeNBT(regionTag.getCompoundTag(NBT_KEY_REGION_OFFSET));
+			builder.addRegion(name, region, offset.toBlockPos());
 		}
 
 		return builder.build();
@@ -184,7 +174,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 		metadata.setDescription(meta.getString(NBT_KEY_META_DESCRIPTION));
 		metadata.setName(meta.getString(NBT_KEY_META_NAME));
 		metadata.setDefinedBlockCount(meta.getInteger(NBT_KEY_META_BLOCK_COUNT));
-		metadata.setSize(readVector(meta.getCompoundTag(NBT_KEY_META_SIZE)));
+		metadata.setSize(new Vector3i(meta.getCompoundTag(NBT_KEY_META_SIZE)).toVec3i());
 
 		metadata.setRegionCount(source.getCompoundTag(NBT_KEY_REGIONS).getSize());
 		return metadata;
@@ -192,7 +182,7 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 
 	public StructureBlueprint deserializeRegionBlueprint(NBTTagCompound regionTag, int version)
 	{
-		Vec3i size = absolutizeVector(readVector(regionTag.getCompoundTag(NBT_KEY_REGION_SIZE)));
+		Vector3i size = new Vector3i(regionTag.getCompoundTag(NBT_KEY_REGION_SIZE));
 
 		NBTTagList paletteTag = regionTag.getTagList(NBT_KEY_REGION_PALETTE, 10);
 		List<SavedBlockState> paletteList = new ArrayList<SavedBlockState>(paletteTag.tagCount());
@@ -209,12 +199,12 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 
 		NBTTagLongArray arrayTag = (NBTTagLongArray)regionTag.getTag(NBT_KEY_REGION_BLOCKMAP);
 		CompactPalettedBitVector<SavedBlockState> vector = CompactPalettedBitVector.readFromNBT(paletteList, arrayTag);
-		VoxelIndexer indexer = NaturalVoxelIndexer.inVolume(size);
+		VoxelIndexer indexer = NaturalVoxelIndexer.inVolume(size.toVec3i());
 		SavedBlockState air = paletteList.get(0);
 
 		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
 		blueprintEditor.setDataVersion(version);
-		blueprintEditor.setSize(size);
+		blueprintEditor.setSize(size.toVec3i());
 		for(int index = 0; index < indexer.getVolume(); ++index)
 		{
 			SavedBlockState block = vector.get(index);
@@ -224,14 +214,46 @@ public class LitematicaBlueprintSerializer implements NBTBlueprintSerializer {
 			blueprintEditor.addBlock(pos, block);
 		}
 
+		Vector3i tilePos = new Vector3i();
 		NBTTagList tileEntities = regionTag.getTagList(NBT_KEY_REGION_TILE_ENTITIES, 10);
 		for(int index = 0; index < tileEntities.tagCount(); ++index)
 		{
 			NBTTagCompound tileTag = tileEntities.getCompoundTagAt(index);
-			BlockPos pos = new BlockPos(readVector(tileTag));
-			blueprintEditor.addTileEntity(pos, tileTag);
+			tilePos.deserializeNBT(tileTag);
+			blueprintEditor.addTileEntity(tilePos.toBlockPos(), tileTag);
 		}
 
 		return blueprintEditor.build();
+	}
+
+	public NBTTagCompound normalizeRegion(NBTTagCompound regionTag)
+	{
+		Vector3i size = new Vector3i(regionTag.getCompoundTag(NBT_KEY_REGION_SIZE));
+		Vector3i offset = new Vector3i(regionTag.getCompoundTag(NBT_KEY_REGION_OFFSET));
+		this.normalizeRegionSizes(size, offset);
+		regionTag.setTag(NBT_KEY_REGION_SIZE, size.serializeNBT());
+		regionTag.setTag(NBT_KEY_REGION_OFFSET, offset.serializeNBT());
+		return regionTag;
+	}
+
+	public void normalizeRegionSizes(Vector3i size, Vector3i offset)
+	{
+		if(size.x < 0)
+		{
+			size.x = Math.abs(size.x);
+			offset.x -= size.x - 1;
+		}
+
+		if(size.y < 0)
+		{
+			size.y = Math.abs(size.y);
+			offset.y -= size.y - 1;
+		}
+
+		if(size.z < 0)
+		{
+			size.z = Math.abs(size.z);
+			offset.z -= size.z - 1;
+		}
 	}
 }
