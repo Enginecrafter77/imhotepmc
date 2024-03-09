@@ -1,0 +1,29 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "thermalexpansion"
+		}
+	],
+	"pattern": [
+		"BBB",
+		"CHC",
+		"BBB"
+	],
+	"key": {
+		"B": {
+			"item": "imhotepmc:schematic_blueprint"
+		},
+		"C": {
+			"item": "minecraft:bookshelf"
+		},
+		"H": {
+			"item": "thermalexpansion:frame",
+			"data": 64
+		}
+	},
+	"result": {
+		"item": "imhotepmc:blueprint_library"
+	}
+}

@@ -10,22 +10,22 @@
 		}
 	],
 	"pattern": [
-		"IBI",
-		"BRB",
-		"IBI"
+		"BBB",
+		"CHC",
+		"BBB"
 	],
 	"key": {
 		"B": {
-			"item": "minecraft:iron_bars"
+			"item": "imhotepmc:schematic_blueprint"
 		},
-		"I": {
-			"item": "minecraft:iron_ingot"
+		"C": {
+			"item": "minecraft:bookshelf"
 		},
-		"R": {
-			"item": "minecraft:redstone"
+		"H": {
+			"item": "imhotepmc:machine_hull"
 		}
 	},
 	"result": {
-		"item": "imhotepmc:machine_hull"
+		"item": "imhotepmc:blueprint_library"
 	}
 }

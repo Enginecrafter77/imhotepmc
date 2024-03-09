@@ -10,22 +10,29 @@
 		}
 	],
 	"pattern": [
-		"IBI",
-		"BRB",
-		"IBI"
+		" M ",
+		"THT",
+		"RCR"
 	],
 	"key": {
-		"B": {
-			"item": "minecraft:iron_bars"
+		"M": {
+			"item": "imhotepmc:area_marker"
 		},
-		"I": {
-			"item": "minecraft:iron_ingot"
+		"T": {
+			"item": "imhotepmc:construction_tape"
+		},
+		"H": {
+			"item": "imhotepmc:machine_hull"
 		},
 		"R": {
 			"item": "minecraft:redstone"
+		},
+		"C": {
+			"item": "imhotepmc:shape_card",
+			"data": 0
 		}
 	},
 	"result": {
-		"item": "imhotepmc:machine_hull"
+		"item": "imhotepmc:terraformer"
 	}
 }

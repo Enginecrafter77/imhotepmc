@@ -1,0 +1,37 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "thermalexpansion"
+		}
+	],
+	"pattern": [
+		" B ",
+		"THT",
+		"GCG"
+	],
+	"key": {
+		"B": {
+			"item": "imhotepmc:schematic_blueprint"
+		},
+		"T": {
+			"item": "imhotepmc:construction_tape"
+		},
+		"H": {
+			"item": "thermalexpansion:frame",
+			"data": 0
+		},
+		"G": {
+			"item": "thermalfoundation:material",
+			"data": 293
+		},
+		"C": {
+			"item": "imhotepmc:shape_card",
+			"data": 1
+		}
+	},
+	"result": {
+		"item": "imhotepmc:builder"
+	}
+}
