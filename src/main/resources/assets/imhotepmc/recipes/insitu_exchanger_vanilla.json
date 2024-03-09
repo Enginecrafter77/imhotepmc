@@ -1,0 +1,37 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:not",
+			"value": {
+				"type": "forge:mod_loaded",
+				"modid": "thermalfoundation"
+			}
+		}
+	],
+	"pattern": [
+		"GRG",
+		"PBP",
+		" I "
+	],
+	"key": {
+		"G": {
+			"item": "minecraft:gold_ingot"
+		},
+		"R": {
+			"item": "minecraft:redstone"
+		},
+		"P": {
+			"item": "minecraft:iron_pickaxe"
+		},
+		"B": {
+			"item": "minecraft:stone_button"
+		},
+		"I": {
+			"item": "minecraft:iron_ingot"
+		}
+	},
+	"result": {
+		"item": "imhotepmc:insitu_exchanger"
+	}
+}

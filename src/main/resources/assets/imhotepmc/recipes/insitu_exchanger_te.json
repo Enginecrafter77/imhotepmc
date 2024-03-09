@@ -1,0 +1,34 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "thermalfoundation"
+		}
+	],
+	"pattern": [
+		"E E",
+		"NSN",
+		" C "
+	],
+	"key": {
+		"E": {
+			"item": "thermalfoundation:material",
+			"data": 161
+		},
+		"N": {
+			"item": "minecraft:iron_nugget"
+		},
+		"S": {
+			"item": "thermalfoundation:material",
+			"data": 512
+		},
+		"C": {
+			"item": "thermalfoundation:material",
+			"data": 513
+		}
+	},
+	"result": {
+		"item": "imhotepmc:insitu_exchanger"
+	}
+}
