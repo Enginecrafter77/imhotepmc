@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube",
+	"textures": {
+		"up": "imhotepmc:blocks/restoration_charge_top",
+		"down": "imhotepmc:blocks/restoration_charge_top",
+		"north": "imhotepmc:blocks/restoration_charge",
+		"south": "imhotepmc:blocks/restoration_charge",
+		"east": "imhotepmc:blocks/restoration_charge",
+		"west": "imhotepmc:blocks/restoration_charge",
+		"particle": "imhotepmc:blocks/restoration_charge"
+	}
+}

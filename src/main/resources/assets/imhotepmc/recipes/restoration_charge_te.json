@@ -1,0 +1,35 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "thermalexpansion"
+		}
+	],
+	"pattern": [
+		"CDC",
+		"PGP",
+		"CDC"
+	],
+	"key": {
+		"C": {
+			"item": "thermalfoundation:material",
+			"data": 866
+		},
+		"D": {
+			"item": "thermalfoundation:material",
+			"data": 1027
+		},
+		"P": {
+			"item": "thermalfoundation:material",
+			"data": 359
+		},
+		"G": {
+			"item": "minecraft:gunpowder"
+		}
+	},
+	"result": {
+		"item": "imhotepmc:restoration_charge",
+		"amount": 4
+	}
+}

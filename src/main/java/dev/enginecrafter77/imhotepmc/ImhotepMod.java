@@ -5,11 +5,9 @@ import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
 import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
+import dev.enginecrafter77.imhotepmc.entity.EntityPrimedRestorationCharge;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
-import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
-import dev.enginecrafter77.imhotepmc.item.ItemInsituExchanger;
-import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
-import dev.enginecrafter77.imhotepmc.item.ItemShapeCard;
+import dev.enginecrafter77.imhotepmc.item.*;
 import dev.enginecrafter77.imhotepmc.net.*;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamWrapper;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
@@ -34,6 +32,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -41,6 +40,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -92,6 +93,7 @@ public class ImhotepMod {
     public static BlockMachineHull BLOCK_MACHINE_HULL;
     public static BlockBuilder BLOCK_BUILDER;
     public static BlockTerraformer BLOCK_TERRAFORMER;
+	public static BlockRestorationCharge BLOCK_RESTORATION_CHARGE;
     public static ItemSchematicBlueprint ITEM_SCHEMATIC_BLUEPRINT;
     public static ItemConstructionTape ITEM_CONSTRUCTION_TAPE;
     public static ItemShapeCard ITEM_SHAPE_CARD;
@@ -150,6 +152,7 @@ public class ImhotepMod {
 
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
         this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderSharedStateUpdate.class, 1, Side.CLIENT);
+		this.netChannel.registerMessage(DisplayRestorationParticlesHandler.class, DisplayRestorationParticlesMessage.class, 2, Side.CLIENT);
         this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
@@ -182,6 +185,8 @@ public class ImhotepMod {
         RenderWorldAreaMarkers.register();
         TapeLinkingRenderHandler.register();
         RenderBlueprintPlacements.register();
+
+		RenderingRegistry.registerEntityRenderingHandler(EntityPrimedRestorationCharge.class, RenderEntityPrimedRestorationCharge::new);
     }
 
     @Mod.EventHandler
@@ -324,6 +329,7 @@ public class ImhotepMod {
         BLOCK_MACHINE_HULL = new BlockMachineHull();
         BLOCK_CREATIVE_BUILD_CACHE = new BlockCreativeBuildCache();
         ITEM_INSITU_EXCHANGER = new ItemInsituExchanger();
+		BLOCK_RESTORATION_CHARGE = new BlockRestorationCharge();
     }
 
     public void registerTileEntities()
@@ -334,6 +340,18 @@ public class ImhotepMod {
         GameRegistry.registerTileEntity(TileEntityArchitectTable.class, new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"));
         GameRegistry.registerTileEntity(TileEntityTerraformer.class, new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"));
     }
+
+	@SubscribeEvent
+	public void registerEntities(RegistryEvent.Register<EntityEntry> event)
+	{
+		event.getRegistry().register(EntityEntryBuilder.create()
+				.id(new ResourceLocation(ImhotepMod.MOD_ID, "primed_restoration_charge"), 0)
+				.entity(EntityPrimedRestorationCharge.class)
+				.name("primed_restoration_charge")
+				.tracker(64, 1, true)
+				.build()
+		);
+	}
 
     @SubscribeEvent
     public void registerSerializers(RegistryEvent.Register<DataSerializerEntry> event)
@@ -358,6 +376,7 @@ public class ImhotepMod {
         this.registerItemBlock(reg, BLOCK_TERRAFORMER);
         this.registerItemBlock(reg, BLOCK_MACHINE_HULL);
         this.registerItemBlock(reg, BLOCK_CREATIVE_BUILD_CACHE);
+		this.registerItemBlock(reg, BLOCK_RESTORATION_CHARGE);
     }
 
     @SubscribeEvent
@@ -371,6 +390,7 @@ public class ImhotepMod {
         reg.register(BLOCK_TERRAFORMER);
         reg.register(BLOCK_MACHINE_HULL);
         reg.register(BLOCK_CREATIVE_BUILD_CACHE);
+		reg.register(BLOCK_RESTORATION_CHARGE);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
@@ -405,5 +425,6 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_TERRAFORMER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_MACHINE_HULL), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "machine_hull"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_CREATIVE_BUILD_CACHE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "creative_build_cache"), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_RESTORATION_CHARGE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "restoration_charge"), "inventory"));
     }
 }

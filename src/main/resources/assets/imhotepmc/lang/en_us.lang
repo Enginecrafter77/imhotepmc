@@ -7,6 +7,7 @@ tile.builder.name=Builder
 tile.terraformer.name=Terraformer
 tile.machine_hull.name=Machine Hull
 tile.creative_build_cache.name=Creative Builder Cache
+tile.restoration_charge.name=Restoration Charge
 
 item.schematic_blueprint.name=Schematic Blueprint
 item.construction_tape.name=Construction Tape
@@ -23,6 +24,11 @@ desc.insitu_exchanger.1=to the one held in off hand.
 desc.insitu_exchanger.2=Right-clicking a block changes
 desc.insitu_exchanger.3=all similar blocks in 64 block
 desc.insitu_exchanger.4=radius to the one held in off hand.
+
+desc.restoration_charge.0=Creates a small explosion that
+desc.restoration_charge.1=restores the blocks in vicinity
+desc.restoration_charge.2=to their original state after
+desc.restoration_charge.3=world generation. Naturalism!
 
 shape.fill.name=Fill
 shape.clear.name=Clear
