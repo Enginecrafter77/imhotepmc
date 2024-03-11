@@ -50,7 +50,9 @@ public class CompiledTranslationRule implements BlueprintTranslationRule {
 		while(matcher.find())
 		{
 			String key = matcher.group(1);
-			String val = substitutions.getOrDefault(key, "");
+			String val = substitutions.get(key);
+			if(val == null)
+				val = "";
 			builder.replace(matcher.start(), matcher.end(), val);
 			matcher.reset();
 		}
