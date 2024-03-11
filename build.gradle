@@ -9,7 +9,7 @@ buildscript {
         classpath 'gradle.plugin.fr.brouillard.oss.gradle:gradle-jgitver-plugin:0.10.0-rc03'
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
-		classpath 'dev.enginecrafter77.githubrelease:githubrelease:0.1.0'
+		classpath 'dev.enginecrafter77.githubrelease:githubrelease:0.1.1'
     }
 }
 
@@ -117,7 +117,6 @@ curseforge {
 
 github {
 	repository = project.properties['github.repository']
-	username = System.getenv("GITHUB_USERNAME")
 	token = System.getenv("GITHUB_TOKEN")
 	artifacts {
 		fromJar(jar) {
