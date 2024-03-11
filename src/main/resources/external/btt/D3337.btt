@@ -107,17 +107,17 @@ minecraft:bamboo_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
 minecraft:crimson_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
 minecraft:warped_sign[rotation=%1]{*} => minecraft:standing_sign[rotation=%1]{*}
 
-minecraft:oak_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:spruce_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:birch_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:jungle_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:acacia_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:dark_oak_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:mangrove_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:cherry_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:bamboo_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:crimson_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
-minecraft:warped_wall_sign[rotation=%1]{*} => minecraft:wall_sign[rotation=%1]{*}
+minecraft:oak_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:spruce_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:birch_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:jungle_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:acacia_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:dark_oak_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:mangrove_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:cherry_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:bamboo_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:crimson_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
+minecraft:warped_wall_sign[facing=%1]{*} => minecraft:wall_sign[facing=%1]{*}
 
 minecraft:oak_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
 minecraft:spruce_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5] => minecraft:wooden_door[facing=%1,half=%2,powered=%3,hinge=%4,open=%5]
