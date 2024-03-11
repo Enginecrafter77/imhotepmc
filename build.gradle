@@ -2,15 +2,18 @@ buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url = 'https://plugins.gradle.org/m2' }
+		maven { url = 'https://maven.enginecrafter77.dev/general' }
         mavenCentral()
     }
     dependencies {
         classpath 'gradle.plugin.fr.brouillard.oss.gradle:gradle-jgitver-plugin:0.10.0-rc03'
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
+		classpath 'dev.enginecrafter77.githubrelease:githubrelease:0.1.0'
     }
 }
 
+apply plugin: 'dev.enginecrafter77.githubrelease'
 apply plugin: 'fr.brouillard.oss.gradle.jgitver'
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.matthewprenger.cursegradle'
@@ -110,4 +113,18 @@ curseforge {
     options {
         debug System.getenv("DRY_RUN") != null
     }
+}
+
+github {
+	repository = project.properties['github.repository']
+	username = System.getenv("GITHUB_USERNAME")
+	token = System.getenv("GITHUB_TOKEN")
+	artifacts {
+		fromJar(jar) {
+			name = "${archivesBaseName}-${minecraft.version}-${version}.jar"
+		}
+	}
+	release {
+		useLatestTag()
+	}
 }
