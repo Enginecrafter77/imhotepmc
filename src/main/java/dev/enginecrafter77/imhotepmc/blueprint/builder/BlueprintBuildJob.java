@@ -3,7 +3,7 @@ package dev.enginecrafter77.imhotepmc.blueprint.builder;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintEntry;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -37,8 +37,11 @@ public class BlueprintBuildJob extends StructureBuildJob {
 	@Override
 	public boolean shouldBeSkipped(BlockPos pos)
 	{
+		if(this.world == null)
+			return false;
+		IBlockState currentBlock = this.world.getBlockState(pos);
 		BlueprintEntry entry = this.placement.getBlockAt(pos);
-		return Objects.equals(entry.getBlock(), Blocks.AIR);
+		return Objects.equals(entry.getBlock(), currentBlock.getBlock());
 	}
 
 	@Override
