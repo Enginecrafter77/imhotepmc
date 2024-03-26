@@ -5,6 +5,8 @@ plugins {
 	id 'com.gtnewhorizons.retrofuturagradle'
 }
 
+def githubArtifactName = objects.property(String)
+
 group = "dev.enginecrafter77.imhotepmc"
 archivesBaseName = "ImhotepMC"
 
@@ -50,6 +52,10 @@ dependencies {
 jgitver {
     autoIncrementPatch false
     nonQualifierBranches "main"
+}
+
+afterEvaluate {
+	githubArtifactName.set("${archivesBaseName}-${minecraft.mcVersion.get()}-${project.version}.jar")
 }
 
 jar {
@@ -98,11 +104,6 @@ github {
 	repository = project.properties['github.repository']
 	token = System.getenv("GITHUB_TOKEN")
 	artifacts {
-		fromJar(jar) {
-			name = "${archivesBaseName}-${minecraft.version}-${version}.jar"
-		}
-	}
-	release {
-		useLatestTag()
+		from jar named githubArtifactName
 	}
 }
