@@ -1,22 +1,9 @@
-buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'https://plugins.gradle.org/m2' }
-		maven { url = 'https://maven.enginecrafter77.dev/general' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'gradle.plugin.fr.brouillard.oss.gradle:gradle-jgitver-plugin:0.10.0-rc03'
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
-		classpath 'dev.enginecrafter77.githubrelease:githubrelease:0.1.1'
-    }
+plugins {
+	id 'dev.enginecrafter77.githubrelease'
+	id 'com.matthewprenger.cursegradle'
+	id 'fr.brouillard.oss.gradle.jgitver'
+	id 'com.gtnewhorizons.retrofuturagradle'
 }
-
-apply plugin: 'dev.enginecrafter77.githubrelease'
-apply plugin: 'fr.brouillard.oss.gradle.jgitver'
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.matthewprenger.cursegradle'
 
 group = "dev.enginecrafter77.imhotepmc"
 archivesBaseName = "ImhotepMC"
@@ -25,13 +12,11 @@ archivesBaseName = "ImhotepMC"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    version = "1.12.2-14.23.5.2847"
-    mappings = "stable_39"
-    runDir = "run"
-
-    clientJvmArgs = ["-ea"]
-    serverJvmArgs = ["-ea"]
-    clientRunArgs = ["--username=${System.getenv("MINECRAFT_USERNAME")}"]
+	mcVersion = '1.12.2'
+	mcpMappingChannel = 'stable'
+	mcpMappingVersion = '39'
+	username = System.getenv("MINECRAFT_USERNAME") ?: "Steve"
+	extraRunJvmArguments.add("-ea")
 }
 
 repositories {
@@ -44,19 +29,19 @@ test {
 }
 
 dependencies {
-    compile 'org.apache.logging.log4j:log4j-jcl:2.8.1'
-    compile 'org.apache.commons:commons-lang3:3.5'
-    compile 'li.cil.oc:OpenComputers:MC1.12.2-1.7.5.+:api'
+    implementation 'org.apache.logging.log4j:log4j-jcl:2.17.1'
+    implementation 'org.apache.commons:commons-lang3:3.5'
+    implementation 'li.cil.oc:OpenComputers:MC1.12.2-1.7.5.+:api'
 
-    runtime "codechicken:CodeChickenLib:1.12.2-3.2.3.+:universal"
-    runtime "cofh:CoFHCore:1.12.2-4.6.3.+:universal"
-    runtime "cofh:CoFHWorld:1.12.2-1.3.1.+:universal"
-    runtime "cofh:ThermalFoundation:1.12.2-2.6.0.+:universal"
-    runtime "cofh:ThermalExpansion:1.12.2-5.5.4.+:universal"
-    runtime "cofh:ThermalDynamics:1.12.2-2.5.5.+:universal"
-    runtime "cofh:RedstoneFlux:1.12-2.1.0.7:universal"
-    runtime "mezz.jei:jei_1.12.2:4.9.2.196"
-    runtime "curse.maven:Hwyla-253449:2568751"
+    runtimeOnly "codechicken:CodeChickenLib:1.12.2-3.2.3.+:universal"
+    runtimeOnly "cofh:CoFHCore:1.12.2-4.6.3.+:universal"
+    runtimeOnly "cofh:CoFHWorld:1.12.2-1.3.1.+:universal"
+    runtimeOnly "cofh:ThermalFoundation:1.12.2-2.6.0.+:universal"
+    runtimeOnly "cofh:ThermalExpansion:1.12.2-5.5.4.+:universal"
+    runtimeOnly "cofh:ThermalDynamics:1.12.2-2.5.5.+:universal"
+    runtimeOnly "cofh:RedstoneFlux:1.12-2.1.0.7:universal"
+    runtimeOnly "mezz.jei:jei_1.12.2:4.9.2.196"
+    runtimeOnly "curse.maven:Hwyla-253449:2568751"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
@@ -87,12 +72,10 @@ processResources {
     inputs.property "version", project.version.toString()
 
     // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-
-        // replace version and mcversion
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-    }
+	filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
+		// Replace version and mcversion
+		fcd.expand ('version': project.version, 'mcversion': project.minecraft.version)
+	}
 
     // Move ATs to meta inf directory
     rename '(.+_at.cfg)', 'META-INF/$1'
