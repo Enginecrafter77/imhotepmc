@@ -33,7 +33,6 @@ test {
 dependencies {
     implementation 'org.apache.logging.log4j:log4j-jcl:2.17.1'
     implementation 'org.apache.commons:commons-lang3:3.5'
-    implementation 'li.cil.oc:OpenComputers:MC1.12.2-1.7.5.+:api'
 
     runtimeOnly "codechicken:CodeChickenLib:1.12.2-3.2.3.+:universal"
     runtimeOnly "cofh:CoFHCore:1.12.2-4.6.3.+:universal"
