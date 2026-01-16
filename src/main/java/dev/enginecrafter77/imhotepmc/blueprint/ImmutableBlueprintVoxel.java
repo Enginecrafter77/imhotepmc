@@ -1,7 +1,8 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public class ImmutableBlueprintVoxel implements BlueprintVoxel {
