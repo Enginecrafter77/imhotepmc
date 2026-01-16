@@ -3,8 +3,8 @@ package dev.enginecrafter77.imhotepmc.util;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ServerBackgroundTaskScheduler {
-	private static final Log LOGGER = LogFactory.getLog(ServerBackgroundTaskScheduler.class);
+	private static final Logger LOGGER = LogManager.getLogger(ServerBackgroundTaskScheduler.class);
 
 	private final List<ServerBackgroundTask> tasks;
 

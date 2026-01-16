@@ -8,14 +8,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
 
 public class BlueprintSampleMessageHandler implements IMessageHandler<BlueprintSampleMessage, IMessage> {
-	private static final Log LOGGER = LogFactory.getLog(BlueprintSampleMessageHandler.class);
+	private static final Logger LOGGER = LogManager.getLogger(BlueprintSampleMessageHandler.class);
 
 	public SchematicMetadata generateMetadata(BlueprintSampleMessage message, MessageContext ctx)
 	{
@@ -38,7 +38,7 @@ public class BlueprintSampleMessageHandler implements IMessageHandler<BlueprintS
 		TileEntity genericTile = player.world.getTileEntity(message.getArchitectTableTilePos());
 		if(!(genericTile instanceof TileEntityArchitectTable))
 		{
-			LOGGER.error(String.format("Tile entity at %s is not TileEntityArchitectTable!", message.getArchitectTableTilePos()));
+			LOGGER.error("Tile entity at {} is not TileEntityArchitectTable!", message.getArchitectTableTilePos());
 			return null;
 		}
 		TileEntityArchitectTable tile = (TileEntityArchitectTable)genericTile;

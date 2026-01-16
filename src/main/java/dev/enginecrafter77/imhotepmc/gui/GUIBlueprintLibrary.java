@@ -21,13 +21,13 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.util.ReadableRectangle;
 import org.lwjgl.util.Rectangle;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class GUIBlueprintLibrary extends GuiContainer {
-	private static final Log LOGGER = LogFactory.getLog(GUIBlueprintLibrary.class);
+	private static final Logger LOGGER = LogManager.getLogger(GUIBlueprintLibrary.class);
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(ImhotepMod.MOD_ID, "textures/gui/gui_schematic_library.png");
 

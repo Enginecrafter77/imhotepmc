@@ -2,11 +2,11 @@ package dev.enginecrafter77.imhotepmc.render;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import net.minecraftforge.fml.common.SidedProxy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BlueprintPlacementRegistry {
-	static final Log LOGGER = LogFactory.getLog(BlueprintPlacementRegistry.class);
+	static final Logger LOGGER = LogManager.getLogger(BlueprintPlacementRegistry.class);
 
 	@SidedProxy(modId = ImhotepMod.MOD_ID)
 	public static BlueprintPlacementProxy proxy;

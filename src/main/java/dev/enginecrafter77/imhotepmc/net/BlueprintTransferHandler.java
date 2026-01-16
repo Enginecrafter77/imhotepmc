@@ -22,11 +22,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BlueprintTransferHandler implements PacketStreamTopicHandler {
-	static final Log LOGGER = LogFactory.getLog(BlueprintTransferHandler.class);
+	static final Logger LOGGER = LogManager.getLogger(BlueprintTransferHandler.class);
 
 	public static final String NBT_ARG_TILEPOS = "TileEntityPosition";
 	public static final String NBT_ARG_FORMAT = "Format";

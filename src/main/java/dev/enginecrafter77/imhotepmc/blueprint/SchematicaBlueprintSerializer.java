@@ -8,11 +8,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SchematicaBlueprintSerializer implements NBTBlueprintSerializer {
-	private static final Log LOGGER = LogFactory.getLog(SchematicaBlueprintSerializer.class);
+	private static final Logger LOGGER = LogManager.getLogger(SchematicaBlueprintSerializer.class);
 
 	private static final String NBT_KEY_SIZE_X = "Width";
 	private static final String NBT_KEY_SIZE_Y = "Height";
@@ -41,7 +41,7 @@ public class SchematicaBlueprintSerializer implements NBTBlueprintSerializer {
 			IBlockState state = voxel.getBlueprintEntry().createBlockState();
 			if(state == null)
 			{
-				LOGGER.error("Unable to synthesize block state for " + voxel);
+				LOGGER.error("Unable to synthesize block state for {}", voxel);
 				continue;
 			}
 

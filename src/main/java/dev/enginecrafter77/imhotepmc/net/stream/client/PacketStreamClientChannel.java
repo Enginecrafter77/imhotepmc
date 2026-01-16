@@ -6,8 +6,8 @@ import dev.enginecrafter77.imhotepmc.net.stream.msg.PacketStreamTransferMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
@@ -19,7 +19,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class PacketStreamClientChannel implements Closeable {
-	private static final Log LOGGER = LogFactory.getLog(PacketStreamClientChannel.class);
+	private static final Logger LOGGER = LogManager.getLogger(PacketStreamClientChannel.class);
 
 	private static final int MAX_BUFFER_SIZE = 16384;
 

@@ -2,15 +2,15 @@ package dev.enginecrafter77.imhotepmc.util;
 
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class LocalReflectionHelper {
-	private static final Log LOGGER = LogFactory.getLog(LocalReflectionHelper.class);
+	private static final Logger LOGGER = LogManager.getLogger(LocalReflectionHelper.class);
 
 	public static Field findField(Class<?> clazz, String fieldName, String fieldObfName)
 	{
@@ -20,7 +20,7 @@ public class LocalReflectionHelper {
 		}
 		catch(ReflectionHelper.UnableToFindFieldException exc)
 		{
-			LOGGER.error(String.format("Unable to find field %s/%s in %s, using fallback mechanism", fieldName, fieldObfName, clazz.getName()));
+			LOGGER.error("Unable to find field {}/{} in {}, using fallback mechanism", fieldName, fieldObfName, clazz.getName());
 			return ReflectionHelper.findField(clazz, fieldName, null); // Fall back to using the dev name
 		}
 	}
@@ -33,7 +33,7 @@ public class LocalReflectionHelper {
 		}
 		catch(ReflectionHelper.UnableToFindMethodException exc)
 		{
-			LOGGER.error(String.format("Unable to find method %s/%s in %s, using fallback mechanism", methodName, methodObfName, clazz.getName()));
+			LOGGER.error("Unable to find method {}/{} in {}, using fallback mechanism", methodName, methodObfName, clazz.getName());
 			return ReflectionHelper.findMethod(clazz, methodName, null, parameters); // Fall back to using the dev name
 		}
 	}

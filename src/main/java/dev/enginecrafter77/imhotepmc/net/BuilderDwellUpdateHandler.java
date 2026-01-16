@@ -7,13 +7,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
 public class BuilderDwellUpdateHandler implements IMessageHandler<BuilderSharedStateUpdate, IMessage> {
-	private static final Log LOGGER = LogFactory.getLog(BuilderDwellUpdateHandler.class);
+	private static final Logger LOGGER = LogManager.getLogger(BuilderDwellUpdateHandler.class);
 
 	@Nullable
 	@Override
