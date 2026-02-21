@@ -6,7 +6,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -40,6 +44,19 @@ public class BlockRestorationCharge extends Block {
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
 		if(worldIn.isBlockPowered(pos))
 			this.trigger(worldIn, pos);
+	}
+
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	{
+		ItemStack stack = playerIn.getHeldItem(hand);
+		if(stack.getItem() == Items.FLINT_AND_STEEL)
+		{
+			stack.damageItem(1, playerIn);
+			this.trigger(worldIn, pos);
+			return true;
+		}
+		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 	}
 
 	protected void trigger(World worldIn, BlockPos pos)
