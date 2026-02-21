@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -52,7 +53,8 @@ public class CompiledVertexBuffer {
 
 		ByteBuffer copy = ByteBuffer.allocateDirect(source.limit());
 		copy.put(source);
-		copy.flip();
+		//noinspection RedundantCast (https://stackoverflow.com/questions/61267495/exception-in-thread-main-java-lang-nosuchmethoderror-java-nio-bytebuffer-flip)
+		((Buffer) copy).flip();
 		return new CompiledVertexBuffer(source, builder.getVertexCount(), builder.getDrawMode(), builder.getVertexFormat());
 	}
 }
