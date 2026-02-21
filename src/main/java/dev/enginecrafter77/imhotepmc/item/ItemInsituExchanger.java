@@ -277,7 +277,7 @@ public class ItemInsituExchanger extends Item {
 
 		public InsituExchangerCapabilityContainer()
 		{
-			this.energyStorage = new EnergyStorage(64000, 1000, 0);
+			this.energyStorage = new EnergyStorage(64000, 1000, 1000);
 		}
 
 		@Override
