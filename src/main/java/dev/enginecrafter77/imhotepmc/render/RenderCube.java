@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
 
+@Deprecated
 public class RenderCube extends CompiledBufferRenderer {
 	private static final double V0 = -0.5D;
 	private static final double V1 = 0.5D;

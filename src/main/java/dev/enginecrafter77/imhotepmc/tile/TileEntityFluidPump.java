@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -28,12 +29,15 @@ import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import javax.annotation.Nullable;
 
 public class TileEntityFluidPump extends TileEntity implements ITickable {
+	private static final float PROGRESS_INCREMENT_PER_TICK = 0.01F;
+
 	private final EnergyStorage battery;
 	private final FluidTank fluidBuffer;
 
 	@Nullable
 	private GraphBlockIterator pumpIterator;
-	private int pumpDepth;
+	private int pumpDepthTarget;
+	private float pipeExtension;
 	private boolean done;
 
 	public TileEntityFluidPump()
@@ -41,18 +45,14 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 		this.battery = new EnergyStorage(64000);
 		this.fluidBuffer = new FluidTank(10 * Fluid.BUCKET_VOLUME);
 		this.pumpIterator = null;
-		this.pumpDepth = 0;
+		this.pumpDepthTarget = 0;
+		this.pipeExtension = 0F;
 		this.done = false;
 	}
 
-	public int getPumpDepth()
+	public float getPipeExtension()
 	{
-		return this.pumpDepth;
-	}
-
-	public float getPumpPipeDepth()
-	{
-		return this.getPumpDepth();
+		return this.pipeExtension;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 	{
 		serializeCapability(CapabilityEnergy.ENERGY, this.battery, null, compound, "battery");
 		serializeCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.fluidBuffer, null, compound, "tank");
-		compound.setInteger("depth", this.pumpDepth);
+		compound.setInteger("depth", this.pumpDepthTarget);
 		compound.setBoolean("done", this.done);
 		return super.writeToNBT(compound);
 	}
@@ -89,9 +89,21 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 	{
 		deserializeCapability(CapabilityEnergy.ENERGY, this.battery, null, compound, "battery");
 		deserializeCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.fluidBuffer, null, compound, "tank");
-		this.pumpDepth = compound.getInteger("depth");
+		this.pipeExtension = this.pumpDepthTarget = compound.getInteger("depth");
 		this.done = compound.getBoolean("done");
 		super.readFromNBT(compound);
+	}
+
+	@Override
+	public NBTTagCompound getUpdateTag()
+	{
+		return this.writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox()
+	{
+		return super.getRenderBoundingBox().expand(0D, -this.pipeExtension, 0D);
 	}
 
 	@Nullable
@@ -139,7 +151,7 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 	{
 		return GraphBlockIterator.bfs()
 				.by(GraphBlockIterator.BlockExpandFunction.HPLANE.filter(this::canScanBlock))
-				.startingAt(this.getPipePos(this.pumpDepth))
+				.startingAt(this.getPipePos(this.pumpDepthTarget))
 				.build();
 	}
 
@@ -147,7 +159,7 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 	{
 		if(this.done)
 			return false;
-		if(this.pumpDepth == 0)
+		if(this.pumpDepthTarget == 0)
 			return true;
 		if(this.pumpIterator == null)
 			return false;
@@ -156,7 +168,7 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 
 	private void tryLowerPipe()
 	{
-		BlockPos pipePos = this.getPipePos(this.pumpDepth + 1);
+		BlockPos pipePos = this.getPipePos(this.pumpDepthTarget + 1);
 		if(!this.canScanBlock(pipePos))
 		{
 			this.done = true; // we hit the bottom
@@ -164,7 +176,7 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 		}
 
 		this.pumpIterator = null;
-		++this.pumpDepth;
+		++this.pumpDepthTarget;
 	}
 
 	private void tryPushFluid()
@@ -181,6 +193,13 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 	@Override
 	public void update()
 	{
+		this.tryPushFluid();
+		if(this.pipeExtension < (float)this.pumpDepthTarget)
+		{
+			this.pipeExtension += PROGRESS_INCREMENT_PER_TICK;
+			return; // cannot pump until pipe is fully extended
+		}
+
 		if(this.shouldLowerPipe())
 			this.tryLowerPipe();
 		if(this.done)
@@ -206,8 +225,6 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 		{
 			this.pumpIterator.next();
 		}
-
-		this.tryPushFluid();
 	}
 
 	private int maxCartesianDistance(BlockPos other)

@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 public class TextureSlice {
@@ -97,6 +98,16 @@ public class TextureSlice {
 		return this.pmaxV;
 	}
 
+	public void bind()
+	{
+		Minecraft.getMinecraft().getTextureManager().bindTexture(this.getTexture());
+	}
+
+	public ReadableTexturePosition asPosition()
+	{
+		return new TexPosition();
+	}
+
 	public TextureSlice sub(int x, int y, int w, int h)
 	{
 		int remW = this.getWidth() - x;
@@ -109,5 +120,31 @@ public class TextureSlice {
 	public static TextureSlice full(ResourceLocation texture, int width, int height)
 	{
 		return new TextureSlice(texture, width, height, 0, 0, width, height);
+	}
+
+	public class TexPosition implements ReadableTexturePosition {
+		@Override
+		public float getMinU()
+		{
+			return getPartialMinU();
+		}
+
+		@Override
+		public float getMinV()
+		{
+			return getPartialMinV();
+		}
+
+		@Override
+		public float getMaxU()
+		{
+			return getPartialMaxU();
+		}
+
+		@Override
+		public float getMaxV()
+		{
+			return getPartialMaxV();
+		}
 	}
 }

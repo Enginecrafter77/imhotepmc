@@ -29,9 +29,9 @@ public class TexturePosition implements ReadableTexturePosition {
 		this.maxV = maxV;
 	}
 
-	public void set(TexturePosition other)
+	public void set(ReadableTexturePosition other)
 	{
-		this.set(other.minU, other.minV, other.maxU, other.maxV);
+		this.set(other.getMinU(), other.getMinV(), other.getMaxU(), other.getMaxV());
 	}
 
 	public void set(TextureAtlasSprite sprite)

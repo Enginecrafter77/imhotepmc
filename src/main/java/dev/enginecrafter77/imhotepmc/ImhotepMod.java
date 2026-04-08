@@ -183,6 +183,7 @@ public class ImhotepMod {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArchitectTable.class, new RenderArchitectTable());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBuilder.class, new RenderBuilder());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTerraformer.class, new RenderTerraformer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFluidPump.class, new RenderFluidPump());
         RenderWorldAreaMarkers.register();
         TapeLinkingRenderHandler.register();
         RenderBlueprintPlacements.register();
