@@ -99,6 +99,7 @@ public class ImhotepMod {
     public static ItemShapeCard ITEM_SHAPE_CARD;
     public static BlockCreativeBuildCache BLOCK_CREATIVE_BUILD_CACHE;
     public static ItemInsituExchanger ITEM_INSITU_EXCHANGER;
+	public static BlockFluidPump BLOCK_FLUID_PUMP;
 
     private DefaultBOMProvider builderBomProvider;
     private DefaultDataVersionTranslator versionTranslator;
@@ -330,6 +331,7 @@ public class ImhotepMod {
         BLOCK_CREATIVE_BUILD_CACHE = new BlockCreativeBuildCache();
         ITEM_INSITU_EXCHANGER = new ItemInsituExchanger();
 		BLOCK_RESTORATION_CHARGE = new BlockRestorationCharge();
+		BLOCK_FLUID_PUMP = new BlockFluidPump();
     }
 
     public void registerTileEntities()
@@ -339,6 +341,7 @@ public class ImhotepMod {
         GameRegistry.registerTileEntity(TileEntityBuilder.class, new ResourceLocation(ImhotepMod.MOD_ID, "builder"));
         GameRegistry.registerTileEntity(TileEntityArchitectTable.class, new ResourceLocation(ImhotepMod.MOD_ID, "architect_table"));
         GameRegistry.registerTileEntity(TileEntityTerraformer.class, new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"));
+		GameRegistry.registerTileEntity(TileEntityFluidPump.class, new ResourceLocation(ImhotepMod.MOD_ID, "fluid_pump"));
     }
 
 	@SubscribeEvent
@@ -377,6 +380,7 @@ public class ImhotepMod {
         this.registerItemBlock(reg, BLOCK_MACHINE_HULL);
         this.registerItemBlock(reg, BLOCK_CREATIVE_BUILD_CACHE);
 		this.registerItemBlock(reg, BLOCK_RESTORATION_CHARGE);
+		this.registerItemBlock(reg, BLOCK_FLUID_PUMP);
     }
 
     @SubscribeEvent
@@ -391,6 +395,7 @@ public class ImhotepMod {
         reg.register(BLOCK_MACHINE_HULL);
         reg.register(BLOCK_CREATIVE_BUILD_CACHE);
 		reg.register(BLOCK_RESTORATION_CHARGE);
+		reg.register(BLOCK_FLUID_PUMP);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
