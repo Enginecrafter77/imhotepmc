@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.util.energy;
 
 import net.minecraftforge.energy.IEnergyStorage;
 
+@Deprecated
 public class EnergyExtractTransaction implements EnergyTransaction {
 	private final int amount;
 

@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.util.energy;
 
 import net.minecraftforge.energy.IEnergyStorage;
 
+@Deprecated
 public interface EnergyTransaction {
 	public int getAmount();
 	public void evaluate(IEnergyStorage energyStorage);
