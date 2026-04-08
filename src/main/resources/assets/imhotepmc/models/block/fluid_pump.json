@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube",
+	"textures": {
+		"up": "imhotepmc:blocks/fluid_pump_top",
+		"down": "imhotepmc:blocks/fluid_pump_bottom",
+		"north": "imhotepmc:blocks/fluid_pump_side",
+		"south": "imhotepmc:blocks/fluid_pump_side",
+		"east": "imhotepmc:blocks/fluid_pump_side",
+		"west": "imhotepmc:blocks/fluid_pump_side",
+		"particle": "imhotepmc:blocks/fluid_pump_side"
+	}
+}
