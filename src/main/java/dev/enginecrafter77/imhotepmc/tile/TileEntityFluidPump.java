@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import dev.enginecrafter77.imhotepmc.util.GraphBlockIterator;
+import dev.enginecrafter77.imhotepmc.util.TickModulator;
 import dev.enginecrafter77.imhotepmc.util.transaction.EnergyConsumeTransaction;
 import dev.enginecrafter77.imhotepmc.util.transaction.FluidTransferTransaction;
 import dev.enginecrafter77.imhotepmc.util.transaction.Transaction;
@@ -31,6 +32,8 @@ import javax.annotation.Nullable;
 public class TileEntityFluidPump extends TileEntity implements ITickable {
 	private static final float PROGRESS_INCREMENT_PER_TICK = 0.01F;
 
+	private final TickModulator pumpActionModulator;
+
 	private final EnergyStorage battery;
 	private final FluidTank fluidBuffer;
 
@@ -42,12 +45,15 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 
 	public TileEntityFluidPump()
 	{
+		this.pumpActionModulator = new TickModulator(this::pumpAction);
 		this.battery = new EnergyStorage(64000);
 		this.fluidBuffer = new FluidTank(10 * Fluid.BUCKET_VOLUME);
 		this.pumpIterator = null;
 		this.pumpDepthTarget = 0;
 		this.pipeExtension = 0F;
 		this.done = false;
+
+		this.pumpActionModulator.setTickRate(0.25F);
 	}
 
 	public float getPipeExtension()
@@ -210,6 +216,11 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 			return; // don't do anything after starting the process of lowering the pipe (we need to wait util it is fully extended).
 		}
 
+		this.pumpActionModulator.update();
+	}
+
+	private void pumpAction()
+	{
 		if(this.pumpIterator == null)
 			this.pumpIterator = this.initIterator();
 
