@@ -3,6 +3,7 @@ package dev.enginecrafter77.imhotepmc.test;
 import dev.enginecrafter77.imhotepmc.util.TickModulator;
 import net.minecraft.util.ITickable;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -78,7 +79,7 @@ public class TickModulatorTest {
 		Assertions.assertEquals(1, tickable.tickCount);
 	}
 
-	@Test
+	@RepeatedTest(32)
 	public void testArbitraryModulation()
 	{
 		MockTickable tickable = new MockTickable();
