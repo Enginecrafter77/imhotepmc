@@ -200,10 +200,14 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 			return; // cannot pump until pipe is fully extended
 		}
 
-		if(this.shouldLowerPipe())
-			this.tryLowerPipe();
 		if(this.done)
 			return;
+
+		if(this.shouldLowerPipe())
+		{
+			this.tryLowerPipe();
+			return; // don't do anything after starting the process of lowering the pipe (we need to wait util it is fully extended).
+		}
 
 		if(this.pumpIterator == null)
 			this.pumpIterator = this.initIterator();
