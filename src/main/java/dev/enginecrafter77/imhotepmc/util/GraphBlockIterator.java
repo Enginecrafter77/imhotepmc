@@ -11,16 +11,14 @@ public class GraphBlockIterator implements Iterator<BlockPos> {
 	private final GraphIterationMethod method;
 	private final BlockExpandFunction expandFunction;
 
-	private final Set<BlockPos> closed;
-	private final Set<BlockPos> queued;
+	private final Set<BlockPos> explored; // acts also as the closed queue
 	private final Deque<BlockPos> open;
 
 	public GraphBlockIterator(GraphIterationMethod method, BlockExpandFunction expandFunction)
 	{
 		this.expandFunction = expandFunction;
 		this.method = method;
-		this.closed = new TreeSet<>();
-		this.queued = new TreeSet<>();
+		this.explored = new TreeSet<>();
 		this.open = new LinkedList<>();
 	}
 
@@ -39,13 +37,11 @@ public class GraphBlockIterator implements Iterator<BlockPos> {
 	public BlockPos next()
 	{
 		BlockPos next = this.method.pop(this.open);
-		this.queued.remove(next);
-		this.closed.add(next);
 		this.expandFunction.expand(next)
-				.filter(b -> !this.closed.contains(b) && !this.queued.contains(b))
+				.filter(b -> !this.explored.contains(b))
 				.forEach(b -> {
 					this.method.push(this.open, b);
-					this.queued.add(b);
+					this.explored.add(b);
 				});
 		return next;
 	}

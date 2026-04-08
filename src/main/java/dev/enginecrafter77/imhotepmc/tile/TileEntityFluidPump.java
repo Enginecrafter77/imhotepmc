@@ -172,6 +172,7 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 		if(!this.canScanBlock(pipePos))
 		{
 			this.done = true; // we hit the bottom
+			this.pumpIterator = null; // allow the iterator to be GC'd
 			return;
 		}
 
