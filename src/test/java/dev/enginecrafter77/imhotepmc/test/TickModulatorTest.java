@@ -16,7 +16,7 @@ public class TickModulatorTest {
 	}
 
 	@Test
-	public void testSuperodulation2()
+	public void testSupermodulation2()
 	{
 		MockTickable tickable = new MockTickable();
 		TickModulator modulator = new TickModulator(tickable);
@@ -28,7 +28,7 @@ public class TickModulatorTest {
 	}
 
 	@Test
-	public void testSuperodulationN()
+	public void testSupermodulationN()
 	{
 		MockTickable tickable = new MockTickable();
 		TickModulator modulator = new TickModulator(tickable);
