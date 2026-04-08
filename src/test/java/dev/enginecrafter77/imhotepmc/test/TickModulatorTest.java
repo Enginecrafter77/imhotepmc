@@ -66,7 +66,8 @@ public class TickModulatorTest {
 		MockTickable tickable = new MockTickable();
 		TickModulator modulator = new TickModulator(tickable);
 
-		int rate = this.rng.nextInt(32) + 2;
+		// use only powers of 2 to avoid FP precision errors
+		int rate = 1 << (this.rng.nextInt(8) + 1);
 
 		modulator.setTickRate(1.0F / rate);
 
