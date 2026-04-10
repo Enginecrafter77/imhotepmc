@@ -4,20 +4,19 @@ import dev.enginecrafter77.imhotepmc.blueprint.BlueprintEntry;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class BlueprintBuildJob extends StructureBuildJob {
-	private final BuilderContext context;
 	private final BlueprintPlacement placement;
 
-	public BlueprintBuildJob(BlueprintPlacement placement, BuilderContext context)
+	public BlueprintBuildJob(BuilderContext context, BlueprintPlacement placement)
 	{
-		super(placement.getOriginOffset(), placement.getSize());
+		super(context, placement.getOriginOffset(), placement.getSize());
 		this.placement = placement;
-		this.context = context;
 	}
 
 	public BlueprintPlacement getPlacement()
@@ -25,32 +24,36 @@ public class BlueprintBuildJob extends StructureBuildJob {
 		return this.placement;
 	}
 
-	@Nonnull
 	@Override
 	public BuilderTask createTask(BlockPos pos)
 	{
 		BlueprintEntry entry = this.placement.getBlockAt(pos);
 		BuilderBlockPlacementDetails details = BuilderBlockPlacementDetails.fromBlueprintEntry(entry);
-		return new BuilderPlaceTask(Objects.requireNonNull(this.world), pos, details, this.context);
+		return new BuilderPlaceTask(this.context, pos, details);
+	}
+
+	public Stream<ItemStack> currentlyMissingItems()
+	{
+		if(this.isDone())
+			return Stream.empty();
+		AbstractBuilderTask task = (AbstractBuilderTask)this.getCurrentTask();
+		if(task == null)
+			return Stream.empty();
+		return task.missingItems();
 	}
 
 	@Override
-	public boolean shouldBeSkipped(BlockPos pos)
+	public TaskAction getTaskActionFor(BlockPos pos)
 	{
-		if(this.world == null)
-			return false;
-		IBlockState currentBlock = this.world.getBlockState(pos);
+		IBlockState currentBlock = this.getWorld().getBlockState(pos);
 		BlueprintEntry entry = this.placement.getBlockAt(pos);
-		return Objects.equals(entry.getBlock(), currentBlock.getBlock());
-	}
-
-	@Override
-	public boolean shouldBeDeferred(BlockPos pos)
-	{
-		BlueprintEntry entry = this.placement.getBlockAt(pos);
+		if(Objects.equals(entry.getBlock(), currentBlock.getBlock()))
+			return TaskAction.SKIP;
 		Block block = entry.getBlock();
 		if(block == null)
-			return false;
-		return !block.canPlaceBlockAt(Objects.requireNonNull(this.world), pos);
+			return TaskAction.SKIP; // block failed to resolve, hard skip
+		if(!block.canPlaceBlockAt(this.getWorld(), pos))
+			return TaskAction.DEFER;
+		return TaskAction.PROCEED;
 	}
 }

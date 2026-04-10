@@ -1,8 +1,8 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
 import com.google.common.base.Predicates;
-import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.blueprint.builder.*;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderContext;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.ShapeBuildJob;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +18,7 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,7 +71,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 			this.job = null;
 			return;
 		}
-		this.job = new ShapeBuildJob(box, mode.getShapeGenerator(), mode.getBuildStrategy(), this);
+		this.job = new ShapeBuildJob(this, box, mode.getShapeGenerator(), mode.getBuildStrategy());
 	}
 
 	@Override
@@ -106,7 +107,6 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 
 		if(this.job == null)
 			return;
-		this.job.setWorld(this.world);
 		this.job.update();
 	}
 
@@ -119,7 +119,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 		this.hasArea = compound.getBoolean(NBT_KEY_HAS_AREA);
 		if(compound.hasKey(NBT_KEY_STATE))
 		{
-			this.job = new ShapeBuildJob(this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy(), this);
+			this.job = new ShapeBuildJob(this, this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy());
 			this.job.restoreState(compound.getCompoundTag(NBT_KEY_STATE));
 		}
 		else
@@ -176,38 +176,15 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 	}
 
 	@Override
-	public BuilderBOMProvider getBOMProvider()
-	{
-		return ImhotepMod.instance.getBuilderBomProvider();
-	}
-
-	@Override
-	public BuilderMaterialProvider getMaterialProvider()
-	{
-		return this::getMaterialSource;
-	}
-
-	@Override
-	public boolean isEnergyRequired()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean areItemsRequired()
-	{
-		return true;
-	}
-
-	@Nullable
-	protected IItemHandler getMaterialSource()
+	public IItemHandler getMaterialProvider()
 	{
 		BlockPos blockSourcePos = this.pos.up();
 		TileEntity tile = this.world.getTileEntity(blockSourcePos);
 		if(tile == null)
-			return null;
-		if(!tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
-			return null;
-		return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+			return EmptyHandler.INSTANCE; // no items
+		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+		if(handler == null)
+			return EmptyHandler.INSTANCE; // no items
+		return handler;
 	}
 }

@@ -6,15 +6,13 @@ import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
-import dev.enginecrafter77.imhotepmc.blueprint.builder.*;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.BlueprintBuildJob;
+import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderContext;
 import dev.enginecrafter77.imhotepmc.net.BuilderSharedStateUpdate;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementProvider;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
 import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
-import dev.enginecrafter77.imhotepmc.util.inventory.ItemStackTransactionView;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -29,13 +27,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
 
 public class TileEntityBuilder extends TileEntity implements ITickable, BlueprintPlacementProvider, BuilderContext {
 	private static final String NBT_KEY_BLUEPRINT = "blueprint";
@@ -74,7 +71,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		this.boundingBox = null;
 		this.job = null;
 		this.sharedState = new SharedBuilderState();
-		this.lastSyncedStateHash = this.sharedState.hashCode();
+		this.lastSyncedStateHash = 0;
 	}
 
 	@Nullable
@@ -85,41 +82,16 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	}
 
 	@Override
-	public BuilderBOMProvider getBOMProvider()
-	{
-		return ImhotepMod.instance.getBuilderBomProvider();
-	}
-
-	@Override
-	public BuilderMaterialProvider getMaterialProvider()
-	{
-		return this::getMaterialSource;
-	}
-
-	@Override
-	public boolean isEnergyRequired()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean areItemsRequired()
-	{
-		BlockPos blockSourcePos = this.pos.up();
-		IBlockState state = this.world.getBlockState(blockSourcePos);
-		return !Objects.equals(state.getBlock(), ImhotepMod.BLOCK_CREATIVE_BUILD_CACHE);
-	}
-
-	@Nullable
-	protected IItemHandler getMaterialSource()
+	public IItemHandler getMaterialProvider()
 	{
 		BlockPos blockSourcePos = this.pos.up();
 		TileEntity tile = this.world.getTileEntity(blockSourcePos);
 		if(tile == null)
-			return null;
-		if(!tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
-			return null;
-		return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+			return EmptyHandler.INSTANCE; // no items
+		IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+		if(handler == null)
+			return EmptyHandler.INSTANCE; // no items
+		return handler;
 	}
 
 	public boolean isProjectionActive()
@@ -184,7 +156,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	public void setBlueprint(SchematicBlueprint blueprint)
 	{
 		BlueprintPlacement placement = this.createPlacement(blueprint, this.pos, this.facing);
-		this.job = new BlueprintBuildJob(placement, this);
+		this.job = new BlueprintBuildJob(this, placement);
 		this.onJobChanged(this.job);
 	}
 
@@ -236,13 +208,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	{
 		if(this.world.isRemote || this.job == null)
 			return;
-
-		this.job.setWorld(this.world);
 		this.job.update();
 
-		@Nullable BuilderTask task = this.job.getCurrentTask();
-		Collection<ItemStack> missingItems = Optional.ofNullable(task).map(BuilderTask::getItemStackTransaction).map(ItemStackTransactionView::getBlockingStacks).orElseGet(ImmutableList::of);
-		this.sharedState.setMissingItems(missingItems);
+		this.sharedState.setMissingItemsFrom(this.job.currentlyMissingItems());
 		this.sharedState.setPowered(true);
 
 		if(this.lastSyncedStateHash != this.sharedState.hashCode())
@@ -264,7 +232,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		{
 			SchematicBlueprint blueprint = SERIALIZER.deserializeBlueprint(compound.getCompoundTag(NBT_KEY_BLUEPRINT));
 			BlueprintPlacement placement = this.createPlacement(blueprint, this.pos, this.facing);
-			this.job = new BlueprintBuildJob(placement, this);
+			this.job = new BlueprintBuildJob(this, placement);
 			this.job.restoreState(compound.getCompoundTag(NBT_KEY_BUILDER));
 		}
 		else

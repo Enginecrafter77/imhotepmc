@@ -1,9 +1,7 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
-import dev.enginecrafter77.imhotepmc.util.energy.EnergyExtractTransaction;
-import dev.enginecrafter77.imhotepmc.util.energy.EnergyTransaction;
-import dev.enginecrafter77.imhotepmc.util.inventory.ItemStackTransaction;
-import dev.enginecrafter77.imhotepmc.util.inventory.MatchingExtractItemStackTransaction;
+import dev.enginecrafter77.imhotepmc.util.transaction.EnergyConsumeTransaction;
+import dev.enginecrafter77.imhotepmc.util.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
@@ -11,26 +9,20 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 
-public class BuilderTemplateTask extends AbstractPoweredBuilderTask {
+import javax.annotation.Nullable;
+
+public class BuilderTemplateTask implements BuilderTask {
+	private final BuilderContext context;
+	private final BlockPos pos;
 	protected int updateFlags;
 
-	public BuilderTemplateTask(World world, BlockPos pos, BuilderContext context)
+	public BuilderTemplateTask(BuilderContext context, BlockPos pos)
 	{
-		super(world, pos, context);
+		this.context = context;
+		this.pos = pos;
 		this.updateFlags = 3;
-	}
-
-	@Override
-	protected ItemStackTransaction createItemStackTransaction()
-	{
-		return new MatchingExtractItemStackTransaction(this::isItemStackSuitableTemplateItem, 1);
-	}
-
-	@Override
-	protected EnergyTransaction createEnergyTransaction()
-	{
-		return new EnergyExtractTransaction(1000);
 	}
 
 	public void setUpdateFlags(int updateFlags)
@@ -38,23 +30,128 @@ public class BuilderTemplateTask extends AbstractPoweredBuilderTask {
 		this.updateFlags = updateFlags;
 	}
 
-	@Override
-	public void performTask()
+	public BuilderContext getContext()
 	{
-		super.performTask();
-
-		ItemStack extracted = this.getItemStackTransaction().getTransactionStacks().stream().findFirst().orElseThrow(IllegalStateException::new); // you're lying
-		@SuppressWarnings("deprecation") IBlockState state = ((ItemBlock)extracted.getItem()).getBlock().getStateFromMeta(extracted.getMetadata());
-		this.world.setBlockState(this.pos, state, this.updateFlags);
+		return this.context;
 	}
 
-	protected boolean isItemStackSuitableTemplateItem(ItemStack stack)
+	@Override
+	public BlockPos getPosition()
 	{
-		Item item = stack.getItem();
-		if(!(item instanceof ItemBlock))
-			return false;
-		Block blk = ((ItemBlock)item).getBlock();
-		@SuppressWarnings("deprecation") IBlockState state = blk.getStateFromMeta(stack.getMetadata());
-		return state.isFullCube();
+		return this.pos;
+	}
+
+	@Override
+	public World getWorld()
+	{
+		return this.context.getWorld();
+	}
+
+	@Override
+	public Transaction asTransaction()
+	{
+		return new TemplatedPlaceTransaction();
+	}
+
+	@Override
+	public void update()
+	{
+		//NOOP
+	}
+
+	void placeBlock(IBlockState state)
+	{
+		this.getWorld().setBlockState(this.pos, state, this.updateFlags);
+	}
+
+	private static class TemplateMaterialMatch
+	{
+		private final IItemHandler source;
+		private final IBlockState state;
+		private final int slot;
+
+		public TemplateMaterialMatch(IItemHandler source, IBlockState state, int slot)
+		{
+			this.source = source;
+			this.state = state;
+			this.slot = slot;
+		}
+
+		public IBlockState getBlockState()
+		{
+			return this.state;
+		}
+
+		public void consume()
+		{
+			this.source.extractItem(this.slot, 1, false);
+		}
+
+		@Nullable
+		public static TemplateMaterialMatch tryMatch(IItemHandler source, int slot)
+		{
+			ItemStack stack = source.getStackInSlot(slot);
+			Item item = stack.getItem();
+			if(!(item instanceof ItemBlock))
+				return null;
+			Block blk = ((ItemBlock)item).getBlock();
+			@SuppressWarnings("deprecation") IBlockState state = blk.getStateFromMeta(stack.getMetadata());
+			if(!state.isFullCube())
+				return null;
+			return new TemplateMaterialMatch(source, state, slot);
+		}
+	}
+
+	public class TemplatedPlaceTransaction implements Transaction
+	{
+		private final EnergyConsumeTransaction energyTransaction;
+
+		@Nullable
+		private TemplateMaterialMatch material;
+
+		public TemplatedPlaceTransaction()
+		{
+			this.energyTransaction = new EnergyConsumeTransaction(BuilderTemplateTask.this.getContext().getEnergyStorage(), 1000);
+			this.material = null;
+		}
+
+		private void findMaterial()
+		{
+			if(this.material != null)
+				return;
+
+			IItemHandler inv = getContext().getMaterialProvider();
+			for(int i = 0; i < inv.getSlots(); ++i)
+			{
+				this.material = TemplateMaterialMatch.tryMatch(inv, i);
+				if(this.material != null)
+					break;
+			}
+		}
+
+		public void invalidate()
+		{
+			this.material = null;
+		}
+
+		@Override
+		public boolean canCommit()
+		{
+			if(!this.energyTransaction.canCommit())
+				return false;
+			this.findMaterial();
+			return this.material != null;
+		}
+
+		@Override
+		public void commit()
+		{
+			this.findMaterial();
+			assert this.material != null;
+
+			this.energyTransaction.commit();
+			this.material.consume();
+			BuilderTemplateTask.this.placeBlock(this.material.getBlockState());
+		}
 	}
 }

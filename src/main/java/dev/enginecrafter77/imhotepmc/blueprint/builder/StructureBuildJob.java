@@ -3,6 +3,7 @@ package dev.enginecrafter77.imhotepmc.blueprint.builder;
 import dev.enginecrafter77.imhotepmc.blueprint.NaturalVoxelIndexer;
 import dev.enginecrafter77.imhotepmc.blueprint.VoxelIndexer;
 import dev.enginecrafter77.imhotepmc.util.SaveableStateHolder;
+import dev.enginecrafter77.imhotepmc.util.transaction.Transaction;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,13 +12,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCompound>, ITickable {
 	private static final String NBT_KEY_DEFERRED = "deferred";
 	private static final String NBT_KEY_INDEX = "index";
 
+	protected final BuilderContext context;
 	protected final BlockPos buildOrigin;
 	protected final Vec3i buildSize;
 
@@ -25,39 +26,32 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 	private final VoxelIndexer indexer;
 
 	@Nullable
-	protected World world;
-
-	@Nullable
 	private BuilderTask currentTask;
+	private boolean advanceTaskNextRound;
 	private int currentIndex;
 
-	public StructureBuildJob(BlockPos buildOrigin, Vec3i buildSize, VoxelIndexer indexer)
+	public StructureBuildJob(BuilderContext context, BlockPos buildOrigin, Vec3i buildSize, VoxelIndexer indexer)
 	{
 		this.deferred = new IntArrayList();
 		this.buildOrigin = buildOrigin;
 		this.buildSize = buildSize;
 		this.indexer = indexer;
+		this.context = context;
+		this.advanceTaskNextRound = true;
 		this.currentTask = null;
-		this.currentIndex = 0;
-		this.world = null;
+		this.currentIndex = -1;
 	}
 
-	public StructureBuildJob(BlockPos buildOrigin, Vec3i buildSize)
+	public StructureBuildJob(BuilderContext context, BlockPos buildOrigin, Vec3i buildSize)
 	{
-		this(buildOrigin, buildSize, new NaturalVoxelIndexer(buildOrigin, buildSize));
+		this(context, buildOrigin, buildSize, new NaturalVoxelIndexer(buildOrigin, buildSize));
 	}
 
-	@Nonnull
 	public abstract BuilderTask createTask(BlockPos pos);
 
-	public boolean shouldBeSkipped(BlockPos pos)
+	public TaskAction getTaskActionFor(BlockPos pos)
 	{
-		return false;
-	}
-
-	public boolean shouldBeDeferred(BlockPos pos)
-	{
-		return false;
+		return TaskAction.PROCEED;
 	}
 
 	@Nullable
@@ -66,60 +60,77 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 		return this.currentTask;
 	}
 
+	protected World getWorld()
+	{
+		return this.context.getWorld();
+	}
+
 	protected void reset()
 	{
 		this.deferred.clear();
 		this.currentTask = null;
-		this.currentIndex = 0;
+		this.currentIndex = -1;
+	}
+
+	private int getIndexLimit()
+	{
+		return this.indexer.getVolume() + this.deferred.size();
 	}
 
 	public boolean isDone()
 	{
-		return (this.currentIndex + 1) >= this.indexer.getVolume() && this.deferred.isEmpty();
+		return (this.currentIndex + 1) >= this.getIndexLimit();
 	}
 
 	protected void advanceIndex()
 	{
-		while((this.currentIndex + 1) < this.indexer.getVolume())
+		while((this.currentIndex + 1) < this.getIndexLimit())
 		{
 			++this.currentIndex;
 			BlockPos pos = this.indexer.fromIndex(this.currentIndex);
-			if(this.shouldBeSkipped(pos))
-				continue;
-			if(this.shouldBeDeferred(pos))
+			switch(this.getTaskActionFor(pos))
 			{
+			case DEFER:
 				this.deferred.add(this.currentIndex);
+			case SKIP:
 				continue;
+			case PROCEED:
+				return;
 			}
-			return;
 		}
 	}
 
-	public void setWorld(@Nullable World world)
+	private BuilderTask createActiveTask()
 	{
-		this.world = world;
+		int taskIndex = this.currentIndex;
+		if(taskIndex >= this.indexer.getVolume())
+			taskIndex = this.deferred.getInt(taskIndex - this.indexer.getVolume());
+		BlockPos pos = this.indexer.fromIndex(taskIndex);
+		return this.createTask(pos);
 	}
 
 	@Override
 	public void update()
 	{
-		if(this.isDone() || this.world == null)
+		if(this.isDone())
 			return;
 
-		if(this.currentTask == null)
+		if(this.advanceTaskNextRound)
 		{
-			int taskIndex = this.currentIndex;
-			if(taskIndex >= this.indexer.getVolume() && !this.deferred.isEmpty())
-				taskIndex = this.deferred.removeInt(0);
-			BlockPos pos = this.indexer.fromIndex(taskIndex);
-			this.currentTask = this.createTask(pos);
+			this.advanceTaskNextRound = false;
+			this.advanceIndex();
 		}
 
-		if(!this.currentTask.canPerformTask())
+		if(this.currentTask == null)
+			this.currentTask = this.createActiveTask();
+		this.currentTask.update();
+
+		Transaction transaction = this.currentTask.asTransaction();
+		if(!transaction.canCommit())
 			return;
-		this.currentTask.performTask();
+		transaction.commit();
 		this.currentTask = null;
-		this.advanceIndex();
+		this.advanceTaskNextRound = true;
 	}
 
 	@Override
@@ -137,5 +148,15 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 		this.deferred.clear();
 		this.deferred.addElements(0, tag.getIntArray(NBT_KEY_DEFERRED));
 		this.currentIndex = tag.getInteger(NBT_KEY_INDEX);
+		this.advanceTaskNextRound = false;
+	}
+
+	public static enum TaskAction {
+		/** Proceed with executing action for given block */
+		PROCEED,
+		/** Skip executing task for placing this block. */
+		SKIP,
+		/** Skip executing the task for now, return to it later (i.e. place the task to the end of the queue) */
+		DEFER
 	}
 }

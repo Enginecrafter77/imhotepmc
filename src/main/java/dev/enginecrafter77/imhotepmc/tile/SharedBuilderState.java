@@ -1,25 +1,27 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class SharedBuilderState implements INBTSerializable<NBTTagCompound> {
 	private static final String NBT_KEY_MI = "MissingItems";
 	private static final String NBT_KEY_POWERED = "Powered";
 
-	private Collection<ItemStack> missingItems;
+	private List<ItemStack> missingItems;
 	private boolean powered;
 
 	public SharedBuilderState()
 	{
-		this.missingItems = ImmutableList.of();
+		this.missingItems = new ArrayList<>();
 		this.powered = false;
 	}
 
@@ -29,14 +31,27 @@ public class SharedBuilderState implements INBTSerializable<NBTTagCompound> {
 		this.powered = other.powered;
 	}
 
-	public void setMissingItems(Collection<ItemStack> missingItems)
+	public void setMissingItems(List<ItemStack> missingItems)
 	{
-		this.missingItems = missingItems;
+		this.missingItems.clear();
+		this.missingItems.addAll(missingItems);
 	}
 
-	public Collection<ItemStack> getMissingItems()
+	public void setMissingItemsFrom(Stream<ItemStack> missingItems)
 	{
-		return this.missingItems;
+		this.missingItems.clear();
+		missingItems.forEach(this.missingItems::add);
+	}
+
+	public void clearMissingItems(Stream<ItemStack> missingItems)
+	{
+		this.missingItems.clear();
+		missingItems.forEach(this.missingItems::add);
+	}
+
+	public List<ItemStack> getMissingItems()
+	{
+		return Collections.unmodifiableList(this.missingItems);
 	}
 
 	public boolean hasPower()
@@ -82,9 +97,9 @@ public class SharedBuilderState implements INBTSerializable<NBTTagCompound> {
 	public void deserializeNBT(NBTTagCompound nbt)
 	{
 		this.powered = nbt.getBoolean(NBT_KEY_POWERED);
-		ImmutableList.Builder<ItemStack> builder = ImmutableList.builder();
+
+		this.missingItems.clear();
 		for(NBTBase missingItemBaseTag : nbt.getTagList(NBT_KEY_MI, 10))
-			builder.add(new ItemStack((NBTTagCompound)missingItemBaseTag));
-		this.missingItems = builder.build();
+			this.missingItems.add(new ItemStack((NBTTagCompound)missingItemBaseTag));
 	}
 }

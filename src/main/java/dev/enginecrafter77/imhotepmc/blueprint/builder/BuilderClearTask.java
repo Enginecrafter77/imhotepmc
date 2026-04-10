@@ -1,45 +1,42 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.util.EnumWorldEvent;
-import dev.enginecrafter77.imhotepmc.util.energy.EnergyExtractTransaction;
-import dev.enginecrafter77.imhotepmc.util.energy.EnergyTransaction;
-import dev.enginecrafter77.imhotepmc.util.inventory.ItemStackInsertTransaction;
-import dev.enginecrafter77.imhotepmc.util.inventory.ItemStackTransaction;
+import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransactionTemplate;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-public class BuilderClearTask extends AbstractPoweredBuilderTask {
-	public BuilderClearTask(World world, BlockPos pos, BuilderContext context)
+public class BuilderClearTask extends AbstractBuilderTask {
+	public BuilderClearTask(BuilderContext context, BlockPos pos)
 	{
-		super(world, pos, context);
+		super(context, pos);
 	}
 
 	@Override
-	protected ItemStackTransaction createItemStackTransaction()
+	public ItemStackTransactionTemplate createItemStackTransactionTemplate()
 	{
-		return new ItemStackInsertTransaction(this.context.getBOMProvider().getBlockClearReclaimedItems(this.world, this.pos));
+		return ItemStackTransactionTemplate.builder()
+				.recoverAll(ImhotepMod.instance.getBuilderBomProvider().getBlockClearReclaimedItems(this.getWorld(), this.pos))
+				.build();
 	}
 
 	@Override
-	protected EnergyTransaction createEnergyTransaction()
+	public int getEnergyRequired()
 	{
-		float hardness = this.getBlockToBreak().getBlockHardness(this.world, this.pos);
-		int energy = Math.round(Math.min(500F, hardness * 100F));
-		return new EnergyExtractTransaction(energy);
+		float hardness = this.getBlockToBreak().getBlockHardness(this.getWorld(), this.pos);
+		return Math.round(Math.min(500F, hardness * 100F));
 	}
 
 	public IBlockState getBlockToBreak()
 	{
-		return this.world.getBlockState(this.pos);
+		return this.getWorld().getBlockState(this.pos);
 	}
 
 	@Override
 	public void performTask()
 	{
-		super.performTask();
-		EnumWorldEvent.BLOCK_BREAK.play(this.world, this.pos, Block.getStateId(this.getBlockToBreak()));
-		this.world.setBlockToAir(this.pos);
+		EnumWorldEvent.BLOCK_BREAK.play(this.getWorld(), this.pos, Block.getStateId(this.getBlockToBreak()));
+		this.getWorld().setBlockToAir(this.pos);
 	}
 }

@@ -3,19 +3,14 @@ package dev.enginecrafter77.imhotepmc.blueprint.builder;
 import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nonnull;
-import java.util.Objects;
-
 public class ShapeBuildJob extends StructureBuildJob {
 	private final ShapeGenerator generator;
 	private final BlockSelectionBox area;
 	private final ShapeBuildMode buildMode;
-	private final BuilderContext context;
 
-	public ShapeBuildJob(BlockSelectionBox area, ShapeGenerator generator, ShapeBuildMode buildMode, BuilderContext context)
+	public ShapeBuildJob(BuilderContext context, BlockSelectionBox area, ShapeGenerator generator, ShapeBuildMode buildMode)
 	{
-		super(area.getMinCorner(), area.getSize(), buildMode.createVoxelIndexer(area));
-		this.context = context;
+		super(context, area.getMinCorner(), area.getSize(), buildMode.createVoxelIndexer(area));
 		this.generator = generator;
 		this.buildMode = buildMode;
 		this.area = area;
@@ -31,16 +26,17 @@ public class ShapeBuildJob extends StructureBuildJob {
 		return this.generator;
 	}
 
-	@Nonnull
 	@Override
 	public BuilderTask createTask(BlockPos pos)
 	{
-		return this.buildMode.createShapeTask(Objects.requireNonNull(this.world), pos, this.context);
+		return this.buildMode.createShapeTask(this.context, pos);
 	}
 
 	@Override
-	public boolean shouldBeSkipped(BlockPos pos)
+	public TaskAction getTaskActionFor(BlockPos pos)
 	{
-		return !this.generator.isBlockInShape(this.area, pos) || this.buildMode.wouldTaskBeInVain(Objects.requireNonNull(this.world), pos);
+		if(!this.generator.isBlockInShape(this.area, pos) || this.buildMode.wouldTaskBeInVain(this.getWorld(), pos))
+			return TaskAction.SKIP;
+		return super.getTaskActionFor(pos);
 	}
 }

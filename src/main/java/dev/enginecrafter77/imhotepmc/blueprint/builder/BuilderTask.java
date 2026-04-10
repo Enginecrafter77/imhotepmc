@@ -1,15 +1,12 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
-import dev.enginecrafter77.imhotepmc.util.inventory.ItemStackTransactionView;
+import dev.enginecrafter77.imhotepmc.util.transaction.Transaction;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface BuilderTask {
+public interface BuilderTask extends ITickable {
 	public BlockPos getPosition();
 	public World getWorld();
-	public ItemStackTransactionView getItemStackTransaction();
-	public int getEnergyRequired();
-
-	public boolean canPerformTask();
-	public void performTask();
+	public Transaction asTransaction();
 }

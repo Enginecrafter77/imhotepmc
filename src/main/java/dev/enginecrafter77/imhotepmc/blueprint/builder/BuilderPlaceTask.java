@@ -1,46 +1,39 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
-import dev.enginecrafter77.imhotepmc.util.energy.EnergyExtractTransaction;
-import dev.enginecrafter77.imhotepmc.util.energy.EnergyTransaction;
-import dev.enginecrafter77.imhotepmc.util.inventory.ItemStackExtractTransaction;
-import dev.enginecrafter77.imhotepmc.util.inventory.ItemStackTransaction;
+import dev.enginecrafter77.imhotepmc.ImhotepMod;
+import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransactionTemplate;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class BuilderPlaceTask extends AbstractPoweredBuilderTask {
+public class BuilderPlaceTask extends AbstractBuilderTask {
 	private final BuilderBlockPlacementDetails placementDetails;
-	private final IBlockState blockState;
-
-	@Nullable
-	private final TileEntity tile;
 
 	protected int updateFlags;
 
-	public BuilderPlaceTask(World world, BlockPos pos, BuilderBlockPlacementDetails details, BuilderContext context)
+	public BuilderPlaceTask(BuilderContext context, BlockPos pos, BuilderBlockPlacementDetails details)
 	{
-		super(world, pos, context);
+		super(context, pos);
 		this.placementDetails = details;
-		this.blockState = details.getTransformedBlockState();
-		this.tile = createTileEntity(world, this.blockState, details.getTileSavedData());
 		this.updateFlags = 3;
 	}
 
 	@Override
-	protected ItemStackTransaction createItemStackTransaction()
+	public ItemStackTransactionTemplate createItemStackTransactionTemplate()
 	{
-		return new ItemStackExtractTransaction(this.context.getBOMProvider().getBlockPlaceRequiredItems(this.world, this.pos, this.blockState, this.tile));
+		return ItemStackTransactionTemplate.builder()
+				.consumeAll(ImhotepMod.instance.getBuilderBomProvider().getBlockPlaceRequiredItems(this.getWorld(), this.pos, this.getBlockState(), this.getWorld().getTileEntity(this.pos)))
+				.build();
 	}
 
 	@Override
-	protected EnergyTransaction createEnergyTransaction()
+	public int getEnergyRequired()
 	{
-		return new EnergyExtractTransaction(1000);
+		return 1000;
 	}
 
 	public void setUpdateFlags(int updateFlags)
@@ -55,35 +48,29 @@ public class BuilderPlaceTask extends AbstractPoweredBuilderTask {
 
 	public IBlockState getBlockState()
 	{
-		return this.blockState;
-	}
-
-	@Nullable
-	public TileEntity getTileEntity()
-	{
-		return this.tile;
+		return this.placementDetails.getTransformedBlockState();
 	}
 
 	@Override
 	public void performTask()
 	{
-		super.performTask();
-		this.world.setBlockState(this.pos, this.blockState, this.updateFlags);
-		if(this.tile != null)
-			this.world.setTileEntity(this.pos, this.tile);
+		this.getWorld().setBlockState(this.pos, this.getBlockState(), this.updateFlags);
+		TileEntity tile = this.createTileEntity();
+		if(tile != null)
+			this.getWorld().setTileEntity(this.pos, tile);
 	}
 
 	@Nullable
-	private static TileEntity createTileEntity(World world, @Nullable IBlockState state, @Nullable NBTTagCompound tileSavedData)
+	private TileEntity createTileEntity()
 	{
-		if(state == null)
-			return null;
+		IBlockState state = this.getBlockState();
 		Block block = state.getBlock();
 
 		if(!block.hasTileEntity(state))
 			return null;
 
-		TileEntity tileEntity = block.createTileEntity(world, state);
+		NBTTagCompound tileSavedData = this.placementDetails.getTileSavedData();
+		TileEntity tileEntity = block.createTileEntity(this.getWorld(), state);
 		if(tileEntity != null && tileSavedData != null)
 			tileEntity.deserializeNBT(tileSavedData);
 		return tileEntity;
