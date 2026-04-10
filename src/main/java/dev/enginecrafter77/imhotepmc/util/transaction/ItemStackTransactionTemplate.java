@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ItemStackTransactionTemplate {
+	public static final ItemStackTransactionTemplate EMPTY = new ItemStackTransactionTemplate(Collections.emptyList(), Collections.emptyList());
+
 	private final Collection<ItemStack> consumed;
 	private final Collection<ItemStack> recovered;
 
@@ -24,6 +26,11 @@ public class ItemStackTransactionTemplate {
 	public Collection<ItemStack> getRecoveredItems()
 	{
 		return this.recovered;
+	}
+
+	public boolean isEmpty()
+	{
+		return this.consumed.isEmpty() && this.recovered.isEmpty();
 	}
 
 	public static ItemStackTransactionBuilder builder()
