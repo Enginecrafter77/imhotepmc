@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
+@Deprecated
 public class MatchingExtractItemStackTransaction implements ItemStackTransaction {
 	private final Predicate<ItemStack> predicate;
 

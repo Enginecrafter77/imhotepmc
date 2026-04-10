@@ -6,6 +6,7 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.Collection;
 import java.util.Collections;
 
+@Deprecated
 public final class NoopInventoryTransaction implements ItemStackTransaction {
 	private static final NoopInventoryTransaction INSTANCE = new NoopInventoryTransaction();
 

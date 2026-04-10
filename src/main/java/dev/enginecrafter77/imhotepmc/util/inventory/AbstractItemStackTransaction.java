@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public abstract class AbstractItemStackTransaction implements ItemStackTransaction {
 	private final Collection<ItemStack> transactionStacks;
 	private final List<SlotAssignment> slots;

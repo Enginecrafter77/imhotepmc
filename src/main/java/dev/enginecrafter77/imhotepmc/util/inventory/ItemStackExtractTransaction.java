@@ -6,6 +6,7 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
+@Deprecated
 public class ItemStackExtractTransaction extends AbstractItemStackTransaction {
 	public ItemStackExtractTransaction(Collection<ItemStack> stacks)
 	{
