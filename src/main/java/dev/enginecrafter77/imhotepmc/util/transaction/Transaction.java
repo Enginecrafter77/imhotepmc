@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.util.transaction;
 
+import java.util.Collection;
 import java.util.stream.Stream;
 
 public interface Transaction {
@@ -14,6 +15,23 @@ public interface Transaction {
 			return true;
 		}
 		return false;
+	}
+
+	public static Transaction compose(Collection<Transaction> parts)
+	{
+		return new Transaction() {
+			@Override
+			public boolean canCommit()
+			{
+				return parts.stream().allMatch(Transaction::canCommit);
+			}
+
+			@Override
+			public void commit()
+			{
+				parts.forEach(Transaction::commit);
+			}
+		};
 	}
 
 	public static Transaction compose(Transaction... parts)
