@@ -39,6 +39,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	private static final String NBT_KEY_BUILDER = "builder_state";
 	private static final String NBT_KEY_FACING = "facing";
 	private static final String NBT_KEY_PROJECTION = "projection";
+	private static final String NBT_KEY_SHARED = "shared_state";
 
 	private static final NBTBlueprintSerializer SERIALIZER = new LitematicaBlueprintSerializer();
 
@@ -58,7 +59,6 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 
 	private boolean projectionActive;
 
-	@Nonnull
 	private final SharedBuilderState sharedState;
 	private int lastSyncedStateHash;
 
@@ -187,7 +187,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	@SideOnly(Side.CLIENT)
 	public void onStateUpdateReceived(BuilderSharedStateUpdate update)
 	{
-		update.exportState(this.sharedState);
+		this.sharedState.set(update.getState());
 	}
 
 	@Override
@@ -215,8 +215,8 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 
 		if(this.lastSyncedStateHash != this.sharedState.hashCode())
 		{
-			BuilderSharedStateUpdate update = new BuilderSharedStateUpdate(this.getPos(), this.sharedState);
-			ImhotepMod.instance.getNetChannel().sendToAll(update);
+			BuilderSharedStateUpdate message = new BuilderSharedStateUpdate(this.getPos(), this.sharedState);
+			ImhotepMod.instance.getNetChannel().sendToAll(message);
 			this.lastSyncedStateHash = this.sharedState.hashCode();
 		}
 	}
@@ -262,7 +262,16 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	@Override
 	public NBTTagCompound getUpdateTag()
 	{
-		return this.serializeNBT();
+		NBTTagCompound tag = this.serializeNBT();
+		tag.setTag(NBT_KEY_SHARED, this.sharedState.serializeNBT());
+		return tag;
+	}
+
+	@Override
+	public void handleUpdateTag(NBTTagCompound tag)
+	{
+		this.sharedState.deserializeNBT(tag.getCompoundTag(NBT_KEY_SHARED));
+		super.handleUpdateTag(tag);
 	}
 
 	@Override

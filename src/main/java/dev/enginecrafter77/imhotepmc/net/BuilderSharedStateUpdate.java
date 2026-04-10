@@ -30,9 +30,9 @@ public class BuilderSharedStateUpdate implements IMessage {
 		return this.builderPos;
 	}
 
-	public void exportState(SharedBuilderState state)
+	public SharedBuilderState getState()
 	{
-		state.set(this.state);
+		return this.state;
 	}
 
 	@Override
