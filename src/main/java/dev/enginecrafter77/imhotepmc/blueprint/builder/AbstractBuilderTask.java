@@ -23,8 +23,13 @@ public abstract class AbstractBuilderTask implements BuilderTask {
 	@Nullable
 	private IBlockState propertyBlockState; // used for caching itemTransaction
 
+	private boolean requireItems;
+	private boolean requireEnergy;
+
 	public AbstractBuilderTask(BuilderContext context, BlockPos pos)
 	{
+		this.requireItems = true;
+		this.requireEnergy = true;
 		this.propertyBlockState = null;
 		this.context = context;
 		this.pos = pos;
@@ -34,9 +39,19 @@ public abstract class AbstractBuilderTask implements BuilderTask {
 	public abstract int getEnergyRequired();
 	public abstract void performTask();
 
+	public void setRequireItems(boolean requireItems)
+	{
+		this.requireItems = requireItems;
+	}
+
+	public void setRequireEnergy(boolean requireEnergy)
+	{
+		this.requireEnergy = requireEnergy;
+	}
+
 	public Stream<ItemStack> missingItems()
 	{
-		if(this.itemTransaction == null)
+		if(this.itemTransaction == null || !this.requireEnergy)
 			return Stream.empty();
 		return this.itemTransaction.mismatchedConsumes();
 	}
@@ -70,9 +85,10 @@ public abstract class AbstractBuilderTask implements BuilderTask {
 		this.itemTransaction.setDestination(this.context.getMaterialProvider());
 
 		IEnergyStorage storage = context.getEnergyStorage();
-		Transaction energy = new EnergyConsumeTransaction(storage, getEnergyRequired());
-		Transaction action = new BuilderActionTransaction();
-		return Transaction.compose(energy, this.itemTransaction, action);
+		Transaction item = this.requireItems ? this.itemTransaction : Transaction.PLACEHOLDER;
+		Transaction energy = this.requireEnergy ? new EnergyConsumeTransaction(storage, getEnergyRequired()) : Transaction.PLACEHOLDER;
+		Transaction action = Transaction.from(this::performTask);
+		return Transaction.compose(energy, item, action);
 	}
 
 	@Override
@@ -83,20 +99,6 @@ public abstract class AbstractBuilderTask implements BuilderTask {
 		{
 			this.onTargetBlockChanged();
 			this.propertyBlockState = state;
-		}
-	}
-
-	public class BuilderActionTransaction implements Transaction {
-		@Override
-		public boolean canCommit()
-		{
-			return true;
-		}
-
-		@Override
-		public void commit()
-		{
-			AbstractBuilderTask.this.performTask();
 		}
 	}
 }
