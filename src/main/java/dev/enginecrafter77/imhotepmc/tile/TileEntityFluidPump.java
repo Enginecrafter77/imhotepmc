@@ -156,7 +156,8 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 	private GraphBlockIterator initIterator()
 	{
 		return GraphBlockIterator.bfs()
-				.by(GraphBlockIterator.BlockExpandFunction.HPLANE.filter(this::canScanBlock))
+				.by(GraphBlockIterator.BlockExpandFunction.HPLANE)
+				.filter(this::canScanBlock)
 				.startingAt(this.getPipePos(this.pumpDepthTarget))
 				.build();
 	}

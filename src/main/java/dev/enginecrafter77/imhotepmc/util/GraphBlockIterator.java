@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import com.google.common.base.Predicates;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
@@ -11,19 +12,29 @@ public class GraphBlockIterator implements Iterator<BlockPos> {
 	private final GraphIterationMethod method;
 	private final BlockExpandFunction expandFunction;
 
+	private final Predicate<BlockPos> filter;
 	private final Set<BlockPos> explored; // acts also as the closed queue
 	private final Deque<BlockPos> open;
 
-	public GraphBlockIterator(GraphIterationMethod method, BlockExpandFunction expandFunction)
+	public GraphBlockIterator(GraphIterationMethod method, BlockExpandFunction expandFunction, @Nullable Predicate<BlockPos> filter)
 	{
+		if(filter == null)
+			filter = Predicates.alwaysTrue();
+
 		this.expandFunction = expandFunction;
 		this.method = method;
+		this.filter = filter;
 		this.explored = new TreeSet<>();
 		this.open = new LinkedList<>();
 	}
 
 	void prime(BlockPos start)
 	{
+		if(!this.filter.test(start))
+			return;
+		this.explored.clear();
+		this.open.clear();
+		this.explored.add(start);
 		this.open.add(start);
 	}
 
@@ -39,6 +50,7 @@ public class GraphBlockIterator implements Iterator<BlockPos> {
 		BlockPos next = this.method.pop(this.open);
 		this.expandFunction.expand(next)
 				.filter(b -> !this.explored.contains(b))
+				.filter(this.filter)
 				.forEach(b -> {
 					this.method.push(this.open, b);
 					this.explored.add(b);
@@ -118,11 +130,6 @@ public class GraphBlockIterator implements Iterator<BlockPos> {
 		);
 
 		public Stream<BlockPos> expand(BlockPos start);
-
-		public default BlockExpandFunction filter(Predicate<BlockPos> predicate)
-		{
-			return p -> this.expand(p).filter(predicate);
-		}
 	}
 
 	public static class GraphBlockIteratorBuilder
@@ -130,12 +137,15 @@ public class GraphBlockIterator implements Iterator<BlockPos> {
 		private GraphIterationMethod method;
 		private BlockExpandFunction expandFunction;
 		@Nullable
+		private Predicate<BlockPos> filter;
+		@Nullable
 		private BlockPos start;
 
 		public GraphBlockIteratorBuilder()
 		{
 			this.method = GraphIterationMethod.BFS;
 			this.expandFunction = BlockExpandFunction.ALL;
+			this.filter = null;
 			this.start = null;
 		}
 
@@ -151,6 +161,19 @@ public class GraphBlockIterator implements Iterator<BlockPos> {
 			return this;
 		}
 
+		public GraphBlockIteratorBuilder filter(Predicate<BlockPos> filter)
+		{
+			if(this.filter == null)
+			{
+				this.filter = filter;
+			}
+			else
+			{
+				this.filter = this.filter.and(filter);
+			}
+			return this;
+		}
+
 		public GraphBlockIteratorBuilder startingAt(BlockPos start)
 		{
 			this.start = start;
@@ -159,7 +182,7 @@ public class GraphBlockIterator implements Iterator<BlockPos> {
 
 		public GraphBlockIterator build()
 		{
-			GraphBlockIterator iterator = new GraphBlockIterator(this.method, this.expandFunction);
+			GraphBlockIterator iterator = new GraphBlockIterator(this.method, this.expandFunction, this.filter);
 			if(this.start != null)
 				iterator.prime(this.start);
 			return iterator;
