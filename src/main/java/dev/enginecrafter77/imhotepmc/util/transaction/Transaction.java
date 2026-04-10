@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 public interface Transaction {
+	/** An always-committable noop-committing transaction */
+	public static final Transaction PLACEHOLDER = Transaction.from(() -> {});
+
 	public boolean canCommit();
 	public void commit();
 
@@ -47,6 +50,23 @@ public interface Transaction {
 			public void commit()
 			{
 				Stream.of(parts).forEach(Transaction::commit);
+			}
+		};
+	}
+
+	public static Transaction from(Runnable action)
+	{
+		return new Transaction() {
+			@Override
+			public boolean canCommit()
+			{
+				return true;
+			}
+
+			@Override
+			public void commit()
+			{
+				action.run();
 			}
 		};
 	}
