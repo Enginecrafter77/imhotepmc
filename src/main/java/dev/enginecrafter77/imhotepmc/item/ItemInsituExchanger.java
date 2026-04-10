@@ -1,8 +1,12 @@
 package dev.enginecrafter77.imhotepmc.item;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
+import dev.enginecrafter77.imhotepmc.util.GraphBlockIterator;
 import dev.enginecrafter77.imhotepmc.util.ServerBackgroundTaskScheduler;
+import dev.enginecrafter77.imhotepmc.util.transaction.EnergyConsumeTransaction;
+import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransaction;
+import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransactionTemplate;
+import dev.enginecrafter77.imhotepmc.util.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -38,8 +42,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class ItemInsituExchanger extends Item {
 	private static final String NBT_KEY_ENERGY = "Energy";
@@ -312,7 +314,9 @@ public class ItemInsituExchanger extends Item {
 
 	public static class ConnectedReplaceTask extends ServerBackgroundTaskScheduler.ServerBackgroundTask
 	{
-		private final Queue<BlockPos> queued;
+		public static final int EFFECT_BLOCK_BREAK = 2001;
+		public static final int NO_LIMIT = -1;
+
 		private final World world;
 		private final Entity holder;
 
@@ -321,6 +325,15 @@ public class ItemInsituExchanger extends Item {
 
 		@Nullable
 		private final IEnergyStorage energyStorage;
+
+		@Nullable
+		private GraphBlockIterator graphIterator;
+
+		@Nullable
+		private ItemStackTransactionTemplate transactionTemplate;
+
+		@Nullable
+		private ItemStackTransaction itemStackTransaction;
 
 		private int blockLimit;
 		private int replacedBlocks;
@@ -333,22 +346,32 @@ public class ItemInsituExchanger extends Item {
 		{
 			this.holder = holder;
 			this.energyStorage = energyStorage;
-			this.queued = new LinkedBlockingQueue<BlockPos>();
 			this.world = world;
 			this.inventory = inventory;
 			this.distanceLimit = 64F;
-			this.blockLimit = -1;
+			this.blockLimit = NO_LIMIT;
 			this.replacedBlocks = 0;
+			this.origin = null;
 		}
 
 		public void setup(BlockPos origin, IBlockState replaceWith)
 		{
-			this.queued.clear();
-			this.queued.add(origin);
 			this.origin = origin;
 			this.replace = this.world.getBlockState(origin);
 			this.replacement = replaceWith;
 			this.replacedBlocks = 0;
+			this.graphIterator = GraphBlockIterator.bfs()
+					.by(GraphBlockIterator.BlockExpandFunction.ALL)
+					.filter(this::isBlockCandidateForReplacement)
+					.startingAt(origin)
+					.build();
+			this.transactionTemplate = ItemStackTransactionTemplate.builder()
+					.consume(new ItemStack(this.replacement.getBlock(), 1, this.replacement.getBlock().getMetaFromState(this.replacement)))
+					.recover(new ItemStack(this.replace.getBlock(), 1, this.replace.getBlock().getMetaFromState(this.replace)))
+					.build();
+			this.itemStackTransaction = new ItemStackTransaction(this.transactionTemplate);
+			this.itemStackTransaction.setSource(this.inventory);
+			this.itemStackTransaction.setDestination(this.inventory);
 		}
 
 		public void setDistanceLimit(float distanceLimit)
@@ -359,11 +382,6 @@ public class ItemInsituExchanger extends Item {
 		public void setBlockLimit(int blockLimit)
 		{
 			this.blockLimit = blockLimit;
-		}
-
-		public void removeBlockLimit()
-		{
-			this.blockLimit = -1;
 		}
 
 		public int getReplaceEnergyConsumed(BlockPos pos)
@@ -378,68 +396,44 @@ public class ItemInsituExchanger extends Item {
 			return Math.round(distanceMultiplier * baseReplaceCost);
 		}
 
+		private boolean hasReachedBlockLimit()
+		{
+			return this.blockLimit != NO_LIMIT && this.replacedBlocks >= this.blockLimit;
+		}
+
+		private Transaction getItemTransaction()
+		{
+			if(this.itemStackTransaction == null || this.inventory == null)
+				return Transaction.PLACEHOLDER;
+			this.itemStackTransaction.invalidate(); // force inventory rescan
+			return this.itemStackTransaction;
+		}
+
+		private Transaction getEnergyTransaction(BlockPos pos)
+		{
+			if(this.energyStorage == null)
+				return Transaction.PLACEHOLDER;
+			return new EnergyConsumeTransaction(this.energyStorage, this.getReplaceEnergyConsumed(pos));
+		}
+
 		@Override
 		public void update()
 		{
-			if(this.blockLimit != -1 && this.replacedBlocks >= this.blockLimit)
+			if(this.graphIterator == null)
+				return; // skip tick
+			if(!this.graphIterator.hasNext() || this.hasReachedBlockLimit())
 			{
 				this.markComplete();
 				return;
 			}
 
-			BlockPos pos;
-			do
-			{
-				if(this.queued.isEmpty())
-				{
-					this.markComplete();
-					return;
-				}
-				pos = this.queued.remove();
-			}
-			while(!this.isBlockCandidateForReplacement(pos));
-
-			ItemStack consume = new ItemStack(this.replacement.getBlock(), 1, this.replacement.getBlock().getMetaFromState(this.replacement));
-			ItemStack reclaim = new ItemStack(this.replace.getBlock(), 1, this.replace.getBlock().getMetaFromState(this.replace));
-			int consumeSlot = -1, reclaimSlot = -1;
-			if(this.inventory != null)
-			{
-				for(int slot = 0; slot < this.inventory.getSlots(); ++slot)
-				{
-					if(reclaimSlot == -1 && this.inventory.insertItem(slot, reclaim, true).isEmpty())
-						reclaimSlot = slot;
-
-					ItemStack wouldBeConsumed = this.inventory.extractItem(slot, consume.getCount(), true);
-					if(consumeSlot == -1 && ItemStack.areItemStacksEqual(wouldBeConsumed, consume))
-						consumeSlot = slot;
-				}
-
-				if(consumeSlot == -1 || reclaimSlot == -1)
-					return;
-			}
-
-			int requiredEnergy = this.getReplaceEnergyConsumed(pos);
-			if(this.energyStorage != null)
-			{
-				int disposableEnergy = this.energyStorage.extractEnergy(requiredEnergy, true);
-				if(disposableEnergy < requiredEnergy)
-					return;
-			}
-
-			if(this.inventory != null)
-			{
-				this.inventory.extractItem(consumeSlot, 1, false);
-				this.inventory.insertItem(reclaimSlot, reclaim, false);
-			}
-
-			if(this.energyStorage != null)
-				this.energyStorage.extractEnergy(requiredEnergy, false);
-
-			this.world.playEvent(2001, pos, Block.getStateId(this.replace));
-			this.world.setBlockState(pos, this.replacement);
-			++this.replacedBlocks;
-
-			BlockPosUtil.neighbors(pos).forEach(this.queued::add);
+			BlockPos pos = this.graphIterator.next();
+			Transaction replace = Transaction.from(() -> {
+				this.world.playEvent(EFFECT_BLOCK_BREAK, pos, Block.getStateId(this.replace));
+				this.world.setBlockState(pos, this.replacement);
+				++this.replacedBlocks;
+			});
+			Transaction.compose(this.getEnergyTransaction(pos), this.getItemTransaction(), replace).tryCommit();
 		}
 
 		private boolean isBlockCandidateForReplacement(BlockPos pos)
