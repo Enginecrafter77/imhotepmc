@@ -22,7 +22,7 @@ public class BlueprintPlacementRegistry {
 		@Override
 		public void registerProvider(BlueprintPlacementProvider placement)
 		{
-			LOGGER.info("Registering BlueprintPlacementProvider " + placement + " on client side");
+			LOGGER.info("Registering BlueprintPlacementProvider {} on client side", placement);
 			RenderBlueprintPlacements.INSTANCE.registerProvider(placement);
 		}
 

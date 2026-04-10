@@ -257,7 +257,7 @@ public class ImhotepMod {
                     }
                     catch(Exception exc)
                     {
-                        LOGGER.error("Error loading translation table from " + src, exc);
+                        LOGGER.error("Error loading translation table from {}", src, exc);
                     }
                 });
                 fs.close();
@@ -281,7 +281,7 @@ public class ImhotepMod {
                 }
                 catch(Exception exc)
                 {
-                    LOGGER.error("Unable to load blueprint translation table " + file.getName(), exc);
+                    LOGGER.error("Unable to load blueprint translation table {}", file.getName(), exc);
                 }
             }
 		}
@@ -312,7 +312,7 @@ public class ImhotepMod {
         try(InputStream is = Files.newInputStream(path))
         {
             BlueprintTranslationRuleCompiler compiler = new BlueprintTranslationRuleCompiler();
-            LOGGER.info("Loading blueprint translation table " + path.getFileName());
+            LOGGER.info("Loading blueprint translation table {}", path.getFileName());
             compiler.append(is);
             event.getBuilder().setTable(versionFrom, compiler.compile());
         }

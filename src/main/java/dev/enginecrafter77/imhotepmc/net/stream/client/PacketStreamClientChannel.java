@@ -67,14 +67,14 @@ public class PacketStreamClientChannel implements Closeable {
 		UUID transactionId = UUID.randomUUID();
 		this.transfers.put(transactionId, chunk);
 
-		LOGGER.info(String.format("Channel %s: Flush %d bytes (tr: %s)", this.channelID, chunk.getLength(), transactionId));
+		LOGGER.info("Channel {}: Flush {} bytes (tr: {})", this.channelID, chunk.getLength(), transactionId);
 		PacketStreamTransferMessage message = new PacketStreamTransferMessage(this.channelID, transactionId, chunk, ++this.transferLastOrdinal);
 		this.networkWrapper.sendToServer(message);
 	}
 
 	public void confirmTransaction(UUID transactionId)
 	{
-		LOGGER.info(String.format("Channel %s: CONFIRM %s", this.channelID, transactionId));
+		LOGGER.info("Channel {}: CONFIRM {}", this.channelID, transactionId);
 		PacketStreamChunk chunk = this.transfers.remove(transactionId);
 		if(chunk == null)
 			return;
@@ -98,7 +98,7 @@ public class PacketStreamClientChannel implements Closeable {
 	{
 		if(this.closing && this.transfers.isEmpty())
 		{
-			LOGGER.info(String.format("Channel %s: REQUESTING CLOSE", this.channelID));
+			LOGGER.info("Channel {}: REQUESTING CLOSE", this.channelID);
 			PacketStreamEndMessage msg = new PacketStreamEndMessage(this.channelID);
 			this.networkWrapper.sendToServer(msg);
 			this.buffer.release();

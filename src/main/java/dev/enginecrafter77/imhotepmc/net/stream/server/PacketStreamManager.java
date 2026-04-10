@@ -84,7 +84,7 @@ public class PacketStreamManager {
 	protected IMessage onStartMessageReceived(PacketStreamStartMessage message, MessageContext ctx)
 	{
 		UUID channelId = this.openChannel(ctx, message.getTopic());
-		LOGGER.info(String.format("Channel %s OPEN (topic:%s)", channelId, message.getTopic()));
+		LOGGER.info("Channel {} OPEN (topic:{})", channelId, message.getTopic());
 		return message.confirm(channelId);
 	}
 
@@ -92,7 +92,7 @@ public class PacketStreamManager {
 	{
 		PacketStreamServerChannel channel = this.getChannel(message.getChannelId());
 
-		LOGGER.info(String.format("Transfer %s chunk #%d (%s:%dB)", message.getChannelId(), message.getOrdinal(), message.getTransactionId(), message.getChunk().getLength()));
+		LOGGER.info("Transfer {} chunk #{} ({}:{}B)", message.getChannelId(), message.getOrdinal(), message.getTransactionId(), message.getChunk().getLength());
 
 		PacketStreamChunk chunk = message.getChunk();
 		channel.acceptData(ctx, chunk);
@@ -103,7 +103,7 @@ public class PacketStreamManager {
 
 	protected IMessage onEndMessageReceived(PacketStreamEndMessage message, MessageContext ctx)
 	{
-		LOGGER.info(String.format("Channel %s CLOSED", message.getChannelId()));
+		LOGGER.info("Channel {} CLOSED", message.getChannelId());
 		this.closeChannel(ctx, message.getChannelId());
 		return null;
 	}
