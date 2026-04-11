@@ -65,4 +65,18 @@ public class TexturePosition implements ReadableTexturePosition {
 	{
 		return this.maxV;
 	}
+
+	public static TexturePosition from(ReadableTexturePosition other)
+	{
+		TexturePosition obj = new TexturePosition();
+		obj.set(other);
+		return obj;
+	}
+
+	public static TexturePosition from(TextureAtlasSprite other)
+	{
+		TexturePosition obj = new TexturePosition();
+		obj.set(other);
+		return obj;
+	}
 }

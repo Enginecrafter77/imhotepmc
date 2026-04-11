@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.util.EnumFacing;
 
-public class RenderCustomSizedCube implements IBufferRenderable {
+public class RenderCustomSizedCube extends AbstractBufferRenderable {
 	private static final double V0 = -0.5D;
 	private static final double V1 = 0.5D;
 
