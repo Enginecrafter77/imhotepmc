@@ -6,48 +6,28 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 
 public class RenderEntityPrimedRestorationCharge extends RenderEntity {
+	private final RenderCustomSizedCube renderCube;
 	private final Vector3f tint;
-	private final RenderCube renderCube;
-
-	private final TextureAtlasSprite texUp;
-	private final TextureAtlasSprite texOther;
 
 	public RenderEntityPrimedRestorationCharge(RenderManager renderManagerIn)
 	{
 		super(renderManagerIn);
 		this.tint = new Vector3f();
-		this.renderCube = new RenderCube(this::getTextureOn);
+		this.renderCube = new RenderCustomSizedCube();
 
 		TextureMap map = Minecraft.getMinecraft().getTextureMapBlocks();
-		this.texUp = map.getAtlasSprite(ImhotepMod.MOD_ID + ":blocks/restoration_charge_top");
-		this.texOther = map.getAtlasSprite(ImhotepMod.MOD_ID + ":blocks/restoration_charge");
+		this.renderCube.setAllTextureUVs(TexturePosition.from(map.getAtlasSprite(ImhotepMod.MOD_ID + ":blocks/restoration_charge")));
+		this.renderCube.setTextureUV(EnumFacing.UP, TexturePosition.from(map.getAtlasSprite(ImhotepMod.MOD_ID + ":blocks/restoration_charge_top")));
 	}
 
-	protected void getTextureOn(EnumFacing face, TexturePosition texturePosition)
-	{
-		switch(face)
-		{
-		case UP:
-		case DOWN:
-			texturePosition.set(this.texUp);
-			break;
-		default:
-			texturePosition.set(this.texOther);
-			break;
-		}
-	}
-
-	@Nonnull
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity)
 	{
@@ -57,7 +37,7 @@ public class RenderEntityPrimedRestorationCharge extends RenderEntity {
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks)
 	{
-		Minecraft.getMinecraft().getTextureManager().bindTexture(this.getEntityTexture(entity));
+		this.bindEntityTexture(entity);
 		EntityPrimedRestorationCharge chargeEntity = (EntityPrimedRestorationCharge)entity;
 
 		if(chargeEntity.getFuse() % 10 > 5)
