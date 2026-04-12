@@ -9,6 +9,7 @@ import javax.vecmath.Tuple3i;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class Box3i {
 	private final Corners corners;
@@ -283,6 +284,11 @@ public class Box3i {
 		{
 			return new ArrayIterator<>(this.corners, 0, this.corners.length, 0);
 		}
+
+		public Stream<Point3i> stream()
+		{
+			return Arrays.stream(this.corners);
+		}
 	}
 
 	public class Edges implements Iterable<Edge3i>
@@ -325,6 +331,11 @@ public class Box3i {
 		public Iterator<Edge3i> iterator()
 		{
 			return new ArrayIterator<>(this.edges, 0, this.edges.length, 0);
+		}
+
+		public Stream<Edge3i> stream()
+		{
+			return Arrays.stream(this.edges);
 		}
 	}
 }
