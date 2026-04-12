@@ -1,27 +1,17 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import dev.enginecrafter77.imhotepmc.util.math.Edge3i;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public class BlockPosUtil {
 	@Nullable
 	public static Axis3d getSharedAxis(BlockPos b1, BlockPos b2)
 	{
-		if(Objects.equals(b1, b2))
-			return Axis3d.X;
-
-		if(b1.getX() == b2.getX() && b1.getZ() == b2.getZ())
-			return Axis3d.Y;
-		if(b1.getX() == b2.getX() && b1.getY() == b2.getY())
-			return Axis3d.Z;
-		if(b1.getY() == b2.getY() && b1.getZ() == b2.getZ())
-			return Axis3d.X;
-
-		return null;
+		return Edge3i.getConnectingEdgeAxis(b1.getX(), b1.getY(), b1.getZ(), b2.getX(), b2.getY(), b2.getZ());
 	}
 
 	public static Stream<BlockPos> neighbors(BlockPos pos)

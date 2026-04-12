@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @deprecated Use {@link dev.enginecrafter77.imhotepmc.util.math.Box3i}
+ */
+@Deprecated
 public abstract class BlockPosBox {
 	public abstract BlockPos getMinCorner();
 	public abstract Vec3i getSize();

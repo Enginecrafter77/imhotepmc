@@ -1,9 +1,10 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import dev.enginecrafter77.imhotepmc.util.math.Box3d;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
@@ -11,7 +12,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.ReadableDimension;
 import org.lwjgl.util.ReadableRectangle;
 
-import javax.vecmath.*;
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Tuple2d;
+import javax.vecmath.Tuple3d;
+import javax.vecmath.Vector3d;
 
 public class VecUtil {
 	public static void copyVec3d(Vec3d src, Tuple3d dest)
@@ -125,5 +129,15 @@ public class VecUtil {
 		interpolateEntityPosition(ent, dest, partialTicks);
 		dest.negate();
 		dest.add(src);
+	}
+
+	public static AxisAlignedBB boxToAABB(Box3d box)
+	{
+		return new AxisAlignedBB(box.start.x, box.start.y, box.start.z, box.end.x, box.end.y, box.end.z);
+	}
+
+	public static AxisAlignedBB boxToAABB(Box3i box)
+	{
+		return new AxisAlignedBB(box.start.x, box.start.y, box.start.z, box.end.x, box.end.y, box.end.z);
 	}
 }

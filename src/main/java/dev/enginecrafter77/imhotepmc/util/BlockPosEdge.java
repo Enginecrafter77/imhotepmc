@@ -6,6 +6,9 @@ import javax.annotation.Nullable;
 import javax.vecmath.Point3d;
 import java.util.Objects;
 
+/**
+ * @deprecated Use {@link dev.enginecrafter77.imhotepmc.util.math.Edge3i}
+ */
 public class BlockPosEdge {
 	private final BlockPos p1;
 	private final BlockPos p2;

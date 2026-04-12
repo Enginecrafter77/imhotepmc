@@ -9,6 +9,10 @@ import net.minecraftforge.common.util.INBTSerializable;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
+/**
+ * @deprecated Use {@link dev.enginecrafter77.imhotepmc.util.math.Box3i}
+ */
+@Deprecated
 public class BlockSelectionBox extends BlockPosBox implements INBTSerializable<NBTTagCompound> {
 	private static final String KEY_NBT_SOURCE_X = "x1";
 	private static final String KEY_NBT_SOURCE_Y = "y1";

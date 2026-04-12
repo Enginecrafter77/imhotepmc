@@ -6,6 +6,10 @@ import net.minecraft.util.math.BlockPos;
 import javax.vecmath.Point3d;
 import javax.vecmath.Tuple3d;
 
+/**
+ * @deprecated Use {@link dev.enginecrafter77.imhotepmc.util.math.Box3d}
+ */
+@Deprecated
 public class Box3d {
 	private final Point3d min;
 	private final Point3d max;

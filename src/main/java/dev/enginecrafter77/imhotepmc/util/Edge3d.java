@@ -5,6 +5,10 @@ import net.minecraft.util.math.Vec3d;
 import javax.vecmath.Point3d;
 import javax.vecmath.Tuple3d;
 
+/**
+ * @deprecated Use {@link dev.enginecrafter77.imhotepmc.util.math.Edge3d}
+ */
+@Deprecated
 public class Edge3d {
 	private final Point3d p1;
 	private final Point3d p2;
