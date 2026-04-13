@@ -192,6 +192,19 @@ public class Box3dTest {
 	}
 
 	@Test
+	public void setSize_NegativeSizeValue_SizesMatchAbsolute()
+	{
+		Box3d actual = new Box3d();
+		actual.set(3, 3, 3, 4, 4, 4);
+
+		actual.setSize(-2, -2, -2);
+
+		Assertions.assertEquals(2, actual.getSizeX());
+		Assertions.assertEquals(2, actual.getSizeY());
+		Assertions.assertEquals(2, actual.getSizeZ());
+	}
+
+	@Test
 	public void setSize_IrregularNegativeSizeValue_CoordinatesRearrange()
 	{
 		Box3d actual = new Box3d();
@@ -200,6 +213,19 @@ public class Box3dTest {
 		actual.setSize(-1, 2, -3);
 
 		assertBoxEquals(actual, 3, 4, 1, 4, 6, 4);
+	}
+
+	@Test
+	public void setSize_IrregularNegativeSizeValue_SizesMatchAbsolute()
+	{
+		Box3d actual = new Box3d();
+		actual.set(4, 4, 4, 4, 4, 4);
+
+		actual.setSize(-1, 2, -3);
+
+		Assertions.assertEquals(1, actual.getSizeX());
+		Assertions.assertEquals(2, actual.getSizeY());
+		Assertions.assertEquals(3, actual.getSizeZ());
 	}
 
 	@Test
