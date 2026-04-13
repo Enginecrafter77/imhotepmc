@@ -1,6 +1,5 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
-import com.google.common.collect.ImmutableList;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
@@ -12,8 +11,8 @@ import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderPlaceTask;
 import dev.enginecrafter77.imhotepmc.net.BuilderSharedStateUpdate;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementProvider;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
-import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -33,8 +32,6 @@ import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 
 public class TileEntityBuilder extends TileEntity implements ITickable, BlueprintPlacementProvider, BuilderContext {
 	private static final String NBT_KEY_BLUEPRINT = "blueprint";
@@ -43,12 +40,11 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	private static final String NBT_KEY_PROJECTION = "projection";
 	private static final String NBT_KEY_SHARED = "shared_state";
 
+	private static final Box3i NULL_BOX = new Box3i();
+
 	private static final NBTBlueprintSerializer SERIALIZER = new LitematicaBlueprintSerializer();
 
 	private final EnergyStorage energyStorage;
-
-	@Nonnull
-	private Collection<BlockPosEdge> buildAreaEdges;
 
 	@Nullable
 	private AxisAlignedBB boundingBox;
@@ -67,7 +63,6 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	public TileEntityBuilder()
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
-		this.buildAreaEdges = ImmutableList.of();
 		this.facing = EnumFacing.NORTH;
 		this.projectionActive = false;
 		this.boundingBox = null;
@@ -122,9 +117,11 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		this.facing = facing;
 	}
 
-	public Collection<BlockPosEdge> getBuildAreaEdges()
+	public Box3i getBuildArea()
 	{
-		return this.buildAreaEdges;
+		if(this.job == null)
+			return NULL_BOX;
+		return this.job.getPlacement().getBuildAreaBox();
 	}
 
 	protected BlueprintPlacement createPlacement(SchematicBlueprint blueprint, BlockPos builderPosition, EnumFacing builderFacing)
@@ -166,16 +163,10 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	{
 		if(job == null)
 		{
-			this.buildAreaEdges = Collections.emptyList();
 			this.boundingBox = new AxisAlignedBB(this.pos.getX(), this.pos.getY(), this.pos.getZ(), this.pos.getX() + 1D, this.pos.getY() + 1D, this.pos.getZ() + 1D);
 			return;
 		}
-
-		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStartSize(job.getPlacement().getOriginOffset(), job.getPlacement().getSize());
-		this.buildAreaEdges = box.edges();
-		box.include(this.getPos());
-		this.boundingBox = box.toAABB();
+		this.boundingBox = VecUtil.boxToAABB(job.getPlacement().getBuildAreaBox());
 	}
 
 	@Override

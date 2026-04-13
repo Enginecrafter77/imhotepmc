@@ -1,37 +1,35 @@
 package dev.enginecrafter77.imhotepmc.render;
 
 import dev.enginecrafter77.imhotepmc.tile.TileEntityArchitectTable;
-import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
-import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
-import dev.enginecrafter77.imhotepmc.util.Edge3d;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import dev.enginecrafter77.imhotepmc.util.math.Box3d;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.vecmath.Point3d;
 
 @SideOnly(Side.CLIENT)
 public class RenderArchitectTable extends TileEntitySpecialRenderer<TileEntityArchitectTable> {
-	private final RenderTape renderTape;
+	private final RenderTapeArea renderTapeArea;
 
-	private final Edge3d edge3d;
-	private final Point3d renderPoint;
-	private final Point3d midpoint;
+	private final Point3d boxRenderPoint;
+	private final Point3d boxCenter;
+	private final Box3d box;
 
 	public RenderArchitectTable()
 	{
-		this.renderTape = new RenderTape();
-		this.edge3d = new Edge3d();
-		this.midpoint = new Point3d();
-		this.renderPoint = new Point3d();
+		this.renderTapeArea = new RenderTapeArea();
+		this.boxRenderPoint = new Point3d();
+		this.boxCenter = new Point3d();
+		this.box = new Box3d();
 	}
 
 	@Override
-	public void render(@Nonnull TileEntityArchitectTable te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
+	public void render(TileEntityArchitectTable te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		super.render(te, x, y, z, partialTicks, destroyStage, alpha);
 
@@ -39,21 +37,13 @@ public class RenderArchitectTable extends TileEntitySpecialRenderer<TileEntityAr
 		if(viewer == null)
 			return;
 
-		this.renderTape.setTexture(RenderTape.TEXTURE);
-		this.renderTape.setRadius(0.0625D);
-		this.renderTape.setSegmentLength(1D);
+		Box3i s = te.getSelection();
+		this.box.set(s.start.x + 0.5D, s.start.y + 0.5D, s.start.z + 0.5D, s.end.x - 0.5D, s.end.y - 0.5D, s.end.z - 0.5D);
+		VecUtil.boxCenter(this.box, this.boxCenter);
+		VecUtil.calculateRenderPoint(viewer, this.boxCenter, this.boxRenderPoint, partialTicks);
 
 		this.setLightmapDisabled(true);
-		for(BlockPosEdge edge : te.getSelectionEdges())
-		{
-			this.edge3d.set(edge, BlockAnchor.CENTER, BlockAnchor.CENTER);
-			this.edge3d.midpoint(this.midpoint);
-
-			VecUtil.calculateRenderPoint(viewer, this.midpoint, this.renderPoint, partialTicks);
-
-			this.renderTape.setAnchors(this.edge3d.getFirstPoint(), this.edge3d.getSecondPoint());
-			this.renderTape.doRender(this.renderPoint, partialTicks);
-		}
+		this.renderTapeArea.doRender(this.boxRenderPoint, partialTicks);
 		this.setLightmapDisabled(false);
 	}
 }

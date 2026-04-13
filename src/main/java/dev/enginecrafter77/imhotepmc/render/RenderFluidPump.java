@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.render;
 
 import dev.enginecrafter77.imhotepmc.tile.TileEntityFluidPump;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,7 +26,9 @@ public class RenderFluidPump extends TileEntitySpecialRenderer<TileEntityFluidPu
 		this.pipeRender.setSegmentCount(segments);
 
 		this.setLightmapDisabled(true);
+		GlStateManager.pushMatrix();
 		this.pipeRender.doRender(x + 0.5D, y + pipeSegmentRetraction, z + 0.5D, partialTicks);
+		GlStateManager.popMatrix();
 		this.setLightmapDisabled(false);
 	}
 }

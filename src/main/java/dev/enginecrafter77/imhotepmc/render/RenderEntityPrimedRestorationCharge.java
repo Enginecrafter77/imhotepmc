@@ -55,7 +55,7 @@ public class RenderEntityPrimedRestorationCharge extends RenderEntity {
 		GlStateManager.pushMatrix();
 		GlStateManager.scale(entity.width * inflation, entity.height * inflation, entity.width * inflation);
 		GlStateManager.color(this.tint.x, this.tint.y, this.tint.z);
-		this.renderCube.doRender(partialTicks);
+		this.renderCube.doRender(0D, 0D, 0D, partialTicks);
 		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();
 	}

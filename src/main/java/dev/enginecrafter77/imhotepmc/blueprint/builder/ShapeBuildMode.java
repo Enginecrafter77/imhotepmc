@@ -2,7 +2,6 @@ package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import dev.enginecrafter77.imhotepmc.blueprint.NaturalVoxelIndexer;
 import dev.enginecrafter77.imhotepmc.blueprint.VoxelIndexer;
-import dev.enginecrafter77.imhotepmc.util.BlockPosBox;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -44,10 +43,8 @@ public enum ShapeBuildMode implements ShapeBuildStrategy {
 	}
 
 	@Override
-	public VoxelIndexer createVoxelIndexer(BlockPosBox box)
+	public VoxelIndexer createVoxelIndexer(BlockPos origin, Vec3i size)
 	{
-		BlockPos origin = box.getMinCorner();
-		Vec3i size = box.getSize();
 		switch(this)
 		{
 		case BUILD:

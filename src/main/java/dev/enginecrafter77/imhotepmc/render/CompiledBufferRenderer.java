@@ -5,6 +5,8 @@ import net.minecraft.client.renderer.BufferBuilder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/** @deprecated Use {@link TesselatorRenderable} */
+@Deprecated
 public abstract class CompiledBufferRenderer implements IAutoRenderable {
 	private final BufferBuilder bufferBuilder;
 

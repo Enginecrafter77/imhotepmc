@@ -1,11 +1,11 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
-import com.google.common.collect.ImmutableList;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.*;
-import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.VecNBTUtil;
+import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -14,15 +14,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 
 public class TileEntityArchitectTable extends TileEntity {
 	private static final String NBT_KEY_SELECTION = "selection";
@@ -31,13 +30,10 @@ public class TileEntityArchitectTable extends TileEntity {
 
 	private final ItemStackHandler inventory;
 
-	private final BlockSelectionBox selection;
+	private final Box3i selection;
 
 	@Nullable
 	private AxisAlignedBB renderBox;
-
-	@Nonnull
-	private Collection<BlockPosEdge> edges;
 
 	private boolean initialized;
 
@@ -45,23 +41,22 @@ public class TileEntityArchitectTable extends TileEntity {
 	{
 		this.renderBox = null;
 		this.inventory = new ItemStackHandler(1);
-		this.edges = ImmutableList.of();
-		this.selection = new BlockSelectionBox();
+		this.selection = new Box3i();
 		this.initialized = false;
 	}
 
-	public void getArea(BlockSelectionBox dest)
+	public Box3i getSelection()
 	{
-		dest.set(this.selection);
+		return this.selection;
 	}
 
 	public StructureBlueprint scanStructure()
 	{
-		BlockPos origin = this.selection.getMinCorner();
+		BlockPos origin = new BlockPos(this.selection.start.x, this.selection.start.y, this.selection.start.z);
 
 		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
-		blueprintEditor.setSize(this.selection.getSize());
-		for(BlockPos pos : this.selection.internalBlocks())
+		blueprintEditor.setSize(new Vec3i(this.selection.getSizeX(), this.selection.getSizeY(), this.selection.getSizeZ()));
+		for(BlockPos pos : BlockPos.MutableBlockPos.getAllInBoxMutable(this.selection.start.x, this.selection.start.y, this.selection.start.z, this.selection.end.x, this.selection.end.y, this.selection.end.z))
 		{
 			SavedTileState sts = SavedTileState.sample(this.world, pos);
 			blueprintEditor.addBlock(pos.subtract(origin), sts);
@@ -94,19 +89,9 @@ public class TileEntityArchitectTable extends TileEntity {
 		return this.initialized;
 	}
 
-	protected void onSelectionUpdated(BlockSelectionBox box)
+	protected void onSelectionUpdated()
 	{
-		this.edges = box.edges();
-
-		BlockSelectionBox rb = new BlockSelectionBox();
-		rb.set(box);
-		rb.include(this.getPos());
-		this.renderBox = rb.toAABB();
-	}
-
-	public Collection<BlockPosEdge> getSelectionEdges()
-	{
-		return this.edges;
+		this.renderBox = null;
 	}
 
 	@Override
@@ -130,12 +115,12 @@ public class TileEntityArchitectTable extends TileEntity {
 			if(group == null)
 				return;
 
-			group.select(this.selection);
+			VecUtil.boxCoveringBlocks(group.getDefiningCorners(), this.selection);
 			group.dismantle(this.world);
 			for(BlockPos corner : group.getDefiningCorners())
 				this.world.destroyBlock(corner, true);
 			this.initialized = true;
-			this.onSelectionUpdated(this.selection);
+			this.onSelectionUpdated();
 			this.markDirty();
 		});
 	}
@@ -145,29 +130,26 @@ public class TileEntityArchitectTable extends TileEntity {
 	public AxisAlignedBB getRenderBoundingBox()
 	{
 		if(this.renderBox == null)
-			return super.getRenderBoundingBox();
+			this.renderBox = VecUtil.boxToAABB(this.selection);
 		return this.renderBox;
 	}
 
 	@Override
-	public void readFromNBT(@Nonnull NBTTagCompound compound)
+	public void readFromNBT(NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
 		this.inventory.deserializeNBT(compound.getCompoundTag(NBT_KEY_INVENTORY));
-		this.selection.deserializeNBT(compound.getCompoundTag(NBT_KEY_SELECTION));
+		VecNBTUtil.deserializeBox3iFromNBT(compound.getTag(NBT_KEY_SELECTION), this.selection);
 		this.initialized = compound.getBoolean(NBT_KEY_INITIALIZED);
-
-		if(this.initialized)
-			this.onSelectionUpdated(this.selection);
+		this.onSelectionUpdated();
 	}
 
-	@Nonnull
 	@Override
-	public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound)
+	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
 		compound = super.writeToNBT(compound);
 		compound.setTag(NBT_KEY_INVENTORY, this.inventory.serializeNBT());
-		compound.setTag(NBT_KEY_SELECTION, this.selection.serializeNBT());
+		compound.setTag(NBT_KEY_SELECTION, VecNBTUtil.serializeBox3iToNBT(this.selection));
 		compound.setBoolean(NBT_KEY_INITIALIZED, this.initialized);
 		return compound;
 	}

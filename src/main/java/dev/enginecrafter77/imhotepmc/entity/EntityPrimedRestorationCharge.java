@@ -2,8 +2,9 @@ package dev.enginecrafter77.imhotepmc.entity;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.net.DisplayRestorationParticlesMessage;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
-import dev.enginecrafter77.imhotepmc.util.Box3d;
+import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import dev.enginecrafter77.imhotepmc.util.math.Box3d;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import dev.enginecrafter77.imhotepmc.world.ExplosionInstance;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -13,7 +14,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Point3d;
 import java.util.HashMap;
@@ -42,7 +42,6 @@ public class EntityPrimedRestorationCharge extends EntityPrimedExplosive {
 		this.explosionRadius = explosionRadius;
 	}
 
-	@Nonnull
 	protected IChunkGenerator getChunkGenerator()
 	{
 		if(this.generator == null)
@@ -68,11 +67,11 @@ public class EntityPrimedRestorationCharge extends EntityPrimedExplosive {
 			this.world.setBlockState(explodedBlock, regeneratedBlockState, 3);
 		}
 
-		BlockSelectionBox areaBox = explosion.getAffectedArea();
+		Box3i areaBox = explosion.getAffectedArea();
 		Box3d doubleBox = new Box3d();
 		doubleBox.set(areaBox);
 		Point3d center = new Point3d();
-		doubleBox.getCenter(center);
+		VecUtil.boxCenter(doubleBox, center);
 
 		NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), center.x, center.y, center.z, explosion.radius);
 		DisplayRestorationParticlesMessage msg = new DisplayRestorationParticlesMessage(areaBox, 64);

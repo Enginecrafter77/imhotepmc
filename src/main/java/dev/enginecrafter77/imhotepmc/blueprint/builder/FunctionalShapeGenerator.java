@@ -1,8 +1,9 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
 import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
-import dev.enginecrafter77.imhotepmc.util.Box3d;
+import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import dev.enginecrafter77.imhotepmc.util.math.Box3d;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.util.math.BlockPos;
 
 import javax.vecmath.Point3d;
@@ -25,16 +26,16 @@ public abstract class FunctionalShapeGenerator implements ShapeGenerator {
 
 	public abstract boolean isInShape(Point3d block, Point3d center, Tuple3d size);
 
-	public BlockAnchor getBlockAnchor(BlockSelectionBox area, BlockPos pos)
+	public BlockAnchor getBlockAnchor(Box3i area, BlockPos pos)
 	{
 		return BlockAnchor.CENTER;
 	}
 
 	@Override
-	public boolean isBlockInShape(BlockSelectionBox area, BlockPos pos)
+	public boolean isBlockInShape(Box3i area, BlockPos pos)
 	{
 		this.box.set(area);
-		this.box.getCenter(this.center);
+		VecUtil.boxCenter(this.box, this.center);
 		this.box.getSize(this.size);
 		this.getBlockAnchor(area, pos).anchorToBlock(pos, this.block);
 		return this.isInShape(this.block, this.center, this.size);

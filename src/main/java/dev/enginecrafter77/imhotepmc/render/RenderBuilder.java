@@ -1,10 +1,9 @@
 package dev.enginecrafter77.imhotepmc.render;
 
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
-import dev.enginecrafter77.imhotepmc.util.BlockAnchor;
-import dev.enginecrafter77.imhotepmc.util.BlockPosEdge;
-import dev.enginecrafter77.imhotepmc.util.Edge3d;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import dev.enginecrafter77.imhotepmc.util.math.Box3d;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -16,7 +15,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import org.lwjgl.util.Dimension;
 import org.lwjgl.util.Rectangle;
 
-import javax.annotation.Nonnull;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
@@ -25,11 +23,11 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 	private static final Rectangle SWITCH_RECT = new Rectangle(12, 10, 2, 3);
 	private static final Dimension FACE_DIM = new Dimension(16, 16);
 
-	private final RenderTape renderTape;
+	private final RenderTapeArea tapeArea;
 
-	private final Edge3d edge3d;
-	private final Point3d renderPoint;
-	private final Point3d midpoint;
+	private final Box3d markedBox;
+	private final Point3d boxCenter;
+	private final Point3d boxRenderPoint;
 
 	private final Point3d renderOrigin;
 
@@ -52,10 +50,10 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.switchOffset = new Point3d();
 		this.switchSize = new Vector2d();
 		this.itemRenderer = new ItemRenderHelper();
-		this.renderTape = new RenderTape();
-		this.edge3d = new Edge3d();
-		this.midpoint = new Point3d();
-		this.renderPoint = new Point3d();
+		this.tapeArea = new RenderTapeArea();
+		this.boxCenter = new Point3d();
+		this.markedBox = new Box3d();
+		this.boxRenderPoint = new Point3d();
 		this.faceOffset = new Vector3d();
 		this.itemDrawPos = new Point3d();
 
@@ -63,7 +61,7 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.switchOffset.z = 1D / 512D;
 	}
 
-	private void renderMissingItem(@Nonnull TileEntityBuilder te, double x, double y, double z, float partialTicks)
+	private void renderMissingItem(TileEntityBuilder te, double x, double y, double z, float partialTicks)
 	{
 		this.nameplateRender.setText(null);
 		ItemStack blocking = te.getSharedState().getMissingItems().stream().findFirst().orElse(null);
@@ -88,13 +86,19 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 	}
 
 	@Override
-	public void render(@Nonnull TileEntityBuilder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
+	public void render(TileEntityBuilder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		super.render(te, x, y, z, partialTicks, destroyStage, alpha);
 
 		Entity viewer = Minecraft.getMinecraft().getRenderViewEntity();
 		if(viewer == null)
 			return;
+
+		Box3i s = te.getBuildArea();
+		this.markedBox.set(s.start.x + 0.5D, s.start.y + 0.5D, s.start.z + 0.5D, s.end.x - 0.5D, s.end.y - 0.5D, s.end.z - 0.5D);
+		this.tapeArea.setBox(this.markedBox);
+		VecUtil.boxCenter(this.markedBox, this.boxCenter);
+		VecUtil.calculateRenderPoint(viewer, this.boxCenter, this.boxRenderPoint, partialTicks);
 
 		this.setLightmapDisabled(true);
 		this.renderMissingItem(te, x, y, z, partialTicks);
@@ -110,20 +114,7 @@ public class RenderBuilder extends TileEntitySpecialRenderer<TileEntityBuilder> 
 		this.renderSwitch.setRotationVector(this.faceOffset);
 		this.renderSwitch.doRender(this.switchRenderPoint, partialTicks);
 
-		this.renderTape.setTexture(RenderTape.TEXTURE);
-		this.renderTape.setRadius(0.0625D);
-		this.renderTape.setSegmentLength(1D);
-
-		for(BlockPosEdge edge : te.getBuildAreaEdges())
-		{
-			this.edge3d.set(edge, BlockAnchor.CENTER, BlockAnchor.CENTER);
-			this.edge3d.midpoint(this.midpoint);
-
-			VecUtil.calculateRenderPoint(viewer, this.midpoint, this.renderPoint, partialTicks);
-
-			this.renderTape.setAnchors(this.edge3d.getFirstPoint(), this.edge3d.getSecondPoint());
-			this.renderTape.doRender(this.renderPoint, partialTicks);
-		}
+		this.tapeArea.doRender(this.boxRenderPoint, partialTicks);
 		this.setLightmapDisabled(false);
 	}
 }

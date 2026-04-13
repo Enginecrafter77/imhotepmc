@@ -1,15 +1,14 @@
 package dev.enginecrafter77.imhotepmc.net;
 
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class DisplayRestorationParticlesMessage implements IMessage {
-	private final BlockSelectionBox box;
+	private final Box3i box;
 	private int count;
 
-	public DisplayRestorationParticlesMessage(BlockSelectionBox box, int count)
+	public DisplayRestorationParticlesMessage(Box3i box, int count)
 	{
 		this.box = box;
 		this.count = count;
@@ -17,11 +16,11 @@ public class DisplayRestorationParticlesMessage implements IMessage {
 
 	public DisplayRestorationParticlesMessage()
 	{
-		this.box = new BlockSelectionBox();
+		this.box = new Box3i();
 		this.count = 0;
 	}
 
-	public BlockSelectionBox getBox()
+	public Box3i getBox()
 	{
 		return this.box;
 	}
@@ -34,27 +33,24 @@ public class DisplayRestorationParticlesMessage implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
-		int mx = buf.readInt();
-		int my = buf.readInt();
-		int mz = buf.readInt();
-		int Mx = buf.readInt();
-		int My = buf.readInt();
-		int Mz = buf.readInt();
+		this.box.start.x = buf.readInt();
+		this.box.start.y = buf.readInt();
+		this.box.start.z = buf.readInt();
+		this.box.end.x = buf.readInt();
+		this.box.end.y = buf.readInt();
+		this.box.end.z = buf.readInt();
 		this.count = buf.readShort();
-		this.box.setStartEnd(new BlockPos(mx, my, mz), new BlockPos(Mx, My, Mz));
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf)
 	{
-		BlockPos min = this.box.getMinCorner();
-		BlockPos max = this.box.getMaxCorner();
-		buf.writeInt(min.getX());
-		buf.writeInt(min.getY());
-		buf.writeInt(min.getZ());
-		buf.writeInt(max.getX());
-		buf.writeInt(max.getY());
-		buf.writeInt(max.getZ());
+		buf.writeInt(this.box.start.x);
+		buf.writeInt(this.box.start.y);
+		buf.writeInt(this.box.start.z);
+		buf.writeInt(this.box.end.x);
+		buf.writeInt(this.box.end.y);
+		buf.writeInt(this.box.end.z);
 		buf.writeShort(this.count);
 	}
 }

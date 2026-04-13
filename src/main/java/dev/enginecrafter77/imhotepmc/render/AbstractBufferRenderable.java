@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 
+/** @deprecated Use {@link TesselatorRenderable} */
+@Deprecated
 public abstract class AbstractBufferRenderable implements IBufferRenderable, IAutoRenderable {
 	private VertexFormat format;
 	private int glMode;

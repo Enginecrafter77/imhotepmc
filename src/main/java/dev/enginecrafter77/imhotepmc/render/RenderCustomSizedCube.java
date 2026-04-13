@@ -1,15 +1,13 @@
 package dev.enginecrafter77.imhotepmc.render;
 
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.util.EnumFacing;
 
-public class RenderCustomSizedCube extends AbstractBufferRenderable {
+public class RenderCustomSizedCube extends TesselatorRenderable {
 	private static final double V0 = -0.5D;
 	private static final double V1 = 0.5D;
 
 	private final Vector3d size;
-	private final Vector3d offset;
 	private final TexturePosition[] texturePositions;
 	private final TexturePosition activePosition;
 
@@ -18,7 +16,6 @@ public class RenderCustomSizedCube extends AbstractBufferRenderable {
 		this.size = new Vector3d();
 		this.texturePositions = new TexturePosition[6];
 		this.activePosition = new TexturePosition();
-		this.offset = new Vector3d();
 
 		this.setSize(1D, 1D, 1D);
 		for(int i = 0; i < 6; ++i)
@@ -30,13 +27,6 @@ public class RenderCustomSizedCube extends AbstractBufferRenderable {
 		this.size.x = x;
 		this.size.y = y;
 		this.size.z = z;
-	}
-
-	public void setPosition(double x, double y, double z)
-	{
-		this.offset.x = x;
-		this.offset.y = y;
-		this.offset.z = z;
 	}
 
 	public void setTextureUV(EnumFacing facing, ReadableTexturePosition position)
@@ -59,17 +49,16 @@ public class RenderCustomSizedCube extends AbstractBufferRenderable {
 		this.activePosition.set(this.texturePositions[face.ordinal()]);
 	}
 
-	private BufferBuilder tPos(BufferBuilder bufferBuilder, double x, double y, double z)
+	private BufferBuilderWrapper tPos(BufferBuilderWrapper bufferBuilder, double x, double y, double z)
 	{
 		return bufferBuilder.pos(
-				x * this.size.x + this.offset.x,
-				y * this.size.y + this.offset.y,
-				z * this.size.z + this.offset.z
-		);
+				x * this.size.x,
+				y * this.size.y,
+				z * this.size.z);
 	}
 
 	@Override
-	public void render(BufferBuilder builder, float partialTicks)
+	public void renderIntoBuffer(BufferBuilderWrapper builder, float partialTicks)
 	{
 		this.activate(EnumFacing.DOWN);
 		this.tPos(builder, V1, V0, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();

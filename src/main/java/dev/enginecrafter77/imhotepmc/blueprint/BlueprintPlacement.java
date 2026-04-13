@@ -1,6 +1,7 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
@@ -15,7 +16,8 @@ public class BlueprintPlacement implements Blueprint {
 	private final BlockPos placementOrigin;
 	private final Rotation rotation;
 	private final Rotation complementRotation;
-	private final Vec3i rotatedSize;
+
+	private final Box3i buildAreaBox;
 
 	private final BlockPos naturalOrigin;
 	private final Vec3i naturalSize;
@@ -28,13 +30,13 @@ public class BlueprintPlacement implements Blueprint {
 		this.complementRotation = getRotationComplement(rotation);
 
 		this.placementOrigin = placementOrigin;
-		this.rotatedSize = this.rotateBlockPosition(new BlockPos(blueprint.getSize()));
+		Vec3i rotatedSize = this.rotateBlockPosition(new BlockPos(blueprint.getSize()));
 
-		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStartSize(this.placementOrigin, this.rotatedSize);
+		this.buildAreaBox = new Box3i();
+		VecUtil.symbolicAreaToBox(this.placementOrigin, rotatedSize, this.buildAreaBox);
 
-		this.naturalOrigin = box.getMinCorner();
-		this.naturalSize = box.getSize();
+		this.naturalOrigin = new BlockPos(this.buildAreaBox.start.x, this.buildAreaBox.start.y, this.buildAreaBox.start.z);
+		this.naturalSize = new Vec3i(this.buildAreaBox.getSizeX(), this.buildAreaBox.getSizeY(), this.buildAreaBox.getSizeZ());
 	}
 
 	public BlueprintPlacement withOrigin(BlockPos origin)
@@ -50,6 +52,11 @@ public class BlueprintPlacement implements Blueprint {
 	public BlueprintPlacement withFacing(EnumFacing facing)
 	{
 		return this.withRotation(getRotationFromFacing(facing));
+	}
+
+	public Box3i getBuildAreaBox()
+	{
+		return this.buildAreaBox;
 	}
 
 	public BlockPos getPlacementOrigin()
@@ -155,15 +162,15 @@ public class BlueprintPlacement implements Blueprint {
 	{
 		switch(facing.getOpposite())
 		{
-		default:
-		case NORTH:
-			return Rotation.NONE;
 		case SOUTH:
 			return Rotation.CLOCKWISE_180;
 		case WEST:
 			return Rotation.COUNTERCLOCKWISE_90;
 		case EAST:
 			return Rotation.CLOCKWISE_90;
+		case NORTH:
+		default:
+			return Rotation.NONE;
 		}
 	}
 

@@ -4,7 +4,9 @@ import com.google.common.base.Predicates;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderContext;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.ShapeBuildJob;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.VecNBTUtil;
+import dev.enginecrafter77.imhotepmc.util.VecUtil;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -32,7 +34,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 
 	private final EnergyStorage energyStorage;
 
-	private final BlockSelectionBox selectionBox;
+	private final Box3i selectionBox;
 
 	private boolean hasSearchedForArea;
 	private boolean hasArea;
@@ -46,7 +48,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 	public TileEntityTerraformer()
 	{
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
-		this.selectionBox = new BlockSelectionBox();
+		this.selectionBox = new Box3i();
 		this.job = null;
 		this.mode = TerraformMode.CLEAR;
 		this.hasSearchedForArea = false;
@@ -56,7 +58,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 	public void setMode(TerraformMode mode)
 	{
 		this.mode = mode;
-		this.onSettingsChanged(this.selectionBox, mode);
+		this.onSettingsChanged();
 	}
 
 	public TerraformMode getMode()
@@ -64,14 +66,14 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 		return this.mode;
 	}
 
-	protected void onSettingsChanged(BlockSelectionBox box, TerraformMode mode)
+	protected void onSettingsChanged()
 	{
 		if(!this.hasArea)
 		{
 			this.job = null;
 			return;
 		}
-		this.job = new ShapeBuildJob(this, box, mode.getShapeGenerator(), mode.getBuildStrategy());
+		this.job = new ShapeBuildJob(this, this.selectionBox, this.mode.getShapeGenerator(), this.mode.getBuildStrategy());
 	}
 
 	@Override
@@ -93,14 +95,13 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 					.orElse(null);
 			if(group != null)
 			{
-				group.select(this.selectionBox);
-				group.dismantle(this.world);
+				VecUtil.boxCoveringBlocks(group.getDefiningCorners(), this.selectionBox);
 				group.dropTapes(this.world);
+				group.dismantle(this.world);
 				for(BlockPos corner : group.getDefiningCorners())
 					this.world.destroyBlock(corner, true);
 				this.hasArea = true;
-
-				this.onSettingsChanged(this.selectionBox, this.mode);
+				this.onSettingsChanged();
 			}
 			this.hasSearchedForArea = true;
 		}
@@ -114,7 +115,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 	public void readFromNBT(NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
-		this.selectionBox.deserializeNBT(compound.getCompoundTag(NBT_KEY_AREA));
+		VecNBTUtil.deserializeBox3iFromNBT(compound.getTag(NBT_KEY_AREA), this.selectionBox);
 		this.mode = TerraformMode.values()[compound.getByte(NBT_KEY_MODE)];
 		this.hasArea = compound.getBoolean(NBT_KEY_HAS_AREA);
 		if(compound.hasKey(NBT_KEY_STATE))
@@ -132,7 +133,7 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
 		compound = super.writeToNBT(compound);
-		compound.setTag(NBT_KEY_AREA, this.selectionBox.serializeNBT());
+		compound.setTag(NBT_KEY_AREA, VecNBTUtil.serializeBox3iToNBT(this.selectionBox));
 		compound.setByte(NBT_KEY_MODE, (byte)this.mode.ordinal());
 		compound.setBoolean(NBT_KEY_HAS_AREA, this.hasArea);
 		if(this.job != null)

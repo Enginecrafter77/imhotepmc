@@ -2,10 +2,9 @@ package dev.enginecrafter77.imhotepmc.world;
 
 import dev.enginecrafter77.imhotepmc.blueprint.builder.EllipsoidShapeGenerator;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.ShapeGenerator;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
 import dev.enginecrafter77.imhotepmc.util.ShapedBlockPosIterator;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 
 public class ExplosionInstance {
 	public final BlockPos epicenter;
@@ -17,18 +16,23 @@ public class ExplosionInstance {
 		this.radius = radius;
 	}
 
-	public BlockSelectionBox getAffectedArea()
+	public Box3i getAffectedArea()
 	{
-		Vec3i offset = new Vec3i(this.radius, this.radius, this.radius);
-		BlockSelectionBox box = new BlockSelectionBox();
-		box.setStartEnd(this.epicenter.subtract(offset), this.epicenter.add(offset));
+		Box3i box = new Box3i();
+		box.set(
+				(int)Math.floor(this.epicenter.getX() - this.radius/2),
+				(int)Math.floor(this.epicenter.getY() - this.radius/2),
+				(int)Math.floor(this.epicenter.getZ() - this.radius/2),
+				(int)Math.ceil(this.epicenter.getX() + this.radius/2),
+				(int)Math.ceil(this.epicenter.getY() + this.radius/2),
+				(int)Math.ceil(this.epicenter.getZ() + this.radius/2)
+		);
 		return box;
 	}
 
 	public Iterable<BlockPos.MutableBlockPos> getExplodedBlocks()
 	{
-		BlockSelectionBox box = this.getAffectedArea();
 		ShapeGenerator shape = new EllipsoidShapeGenerator();
-		return ShapedBlockPosIterator.asIterable(box, shape);
+		return ShapedBlockPosIterator.asIterable(this.getAffectedArea(), shape);
 	}
 }

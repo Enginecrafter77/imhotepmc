@@ -5,6 +5,7 @@ import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
@@ -12,10 +13,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.ReadableDimension;
 import org.lwjgl.util.ReadableRectangle;
 
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Tuple2d;
-import javax.vecmath.Tuple3d;
-import javax.vecmath.Vector3d;
+import javax.vecmath.*;
+import java.util.Iterator;
 
 public class VecUtil {
 	public static void copyVec3d(Vec3d src, Tuple3d dest)
@@ -129,6 +128,45 @@ public class VecUtil {
 		interpolateEntityPosition(ent, dest, partialTicks);
 		dest.negate();
 		dest.add(src);
+	}
+
+	public static void boxCenter(Box3d box, Point3d out)
+	{
+		out.x = (box.start.x + box.end.x) * 0.5D;
+		out.y = (box.start.y + box.end.y) * 0.5D;
+		out.z = (box.start.z + box.end.z) * 0.5D;
+	}
+
+	/**
+	 * Sets box parameters so that it covers the area given by an origin point and the selection size.
+	 * This method takes precautions to properly handle cases where items of the size vector are negative.
+	 * Used to calculate blueprint bounding boxes from schematics.
+	 * @param origin The origin point
+	 * @param size The size of the enclosed area (can be negative to denote area spanning in axis-negative direction)
+	 * @param out The resultant box
+	 */
+	public static void symbolicAreaToBox(BlockPos origin, Vec3i size, Box3i out)
+	{
+		out.set(origin, origin);
+		if(size.getX() < 0)
+			out.start.x += 1;
+		if(size.getY() < 0)
+			out.start.y += 1;
+		if(size.getZ() < 0)
+			out.start.z += 1;
+		out.setSize(size.getX(), size.getY(), size.getZ());
+	}
+
+	public static void boxCoveringBlocks(Iterable<BlockPos> blocks, Box3i out)
+	{
+		out.set(0, 0, 0, 0, 0, 0);
+		Iterator<BlockPos> itr = blocks.iterator();
+		if(!itr.hasNext())
+			return;
+		BlockPos start = itr.next();
+		out.set(start.getX(), start.getY(), start.getZ(), start.getX()+1, start.getY()+1, start.getZ()+1);
+		while(itr.hasNext())
+			out.include(itr.next());
 	}
 
 	public static AxisAlignedBB boxToAABB(Box3d box)
