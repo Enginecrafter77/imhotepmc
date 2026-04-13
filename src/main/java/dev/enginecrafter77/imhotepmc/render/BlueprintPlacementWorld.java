@@ -2,7 +2,7 @@ package dev.enginecrafter77.imhotepmc.render;
 
 import com.google.common.collect.Maps;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -20,8 +20,6 @@ public class BlueprintPlacementWorld implements IBlockAccess {
 	private final World realWorld;
 	private final BlueprintPlacement placement;
 
-	private final BlockSelectionBox boundingBox;
-
 	private final Map<BlockPos, TileEntity> tileCache;
 	private final Map<BlockPos, IBlockState> blockStateCache;
 
@@ -31,9 +29,11 @@ public class BlueprintPlacementWorld implements IBlockAccess {
 		this.blockStateCache = Maps.newHashMap();
 		this.placement = placement;
 		this.realWorld = realWorld;
+	}
 
-		this.boundingBox = new BlockSelectionBox();
-		this.boundingBox.setStartSize(this.placement.getOriginOffset(), this.placement.getSize());
+	private Box3i getBoundingBox()
+	{
+		return this.placement.getBuildAreaBox();
 	}
 
 	@Nullable
@@ -57,7 +57,7 @@ public class BlueprintPlacementWorld implements IBlockAccess {
 	@Override
 	public TileEntity getTileEntity(BlockPos pos)
 	{
-		if(this.boundingBox.contains(pos))
+		if(this.getBoundingBox().contains(pos))
 			return this.tileCache.computeIfAbsent(pos, this::createTileForPos);
 		return this.realWorld.getTileEntity(pos);
 	}
@@ -72,7 +72,7 @@ public class BlueprintPlacementWorld implements IBlockAccess {
 	public IBlockState getBlockState(BlockPos pos)
 	{
 		IBlockState state = null;
-		if(this.boundingBox.contains(pos))
+		if(this.getBoundingBox().contains(pos))
 			state = this.blockStateCache.computeIfAbsent(pos, this::createBlockStateFor);
 
 		if(state == null)
