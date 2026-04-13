@@ -341,7 +341,7 @@ public class Box3dTest {
 	public void corners_KnownBox_EqualsKnownValues()
 	{
 		Box3d b1 = new Box3d();
-		b1.set(1, 1, 1, 5, 5, 5);
+		b1.set(1, 1, 1, 4, 4, 4);
 
 		assertElementCount(b1.corners(), 8);
 		assertPointExists(b1.corners(), 1, 1, 1);
@@ -358,7 +358,7 @@ public class Box3dTest {
 	public void edges_KnownBox_EqualsKnownValues()
 	{
 		Box3d b1 = new Box3d();
-		b1.set(1, 1, 1, 5, 5, 5);
+		b1.set(1, 1, 1, 4, 4, 4);
 
 		assertElementCount(b1.edges(), 12);
 		assertEdgeExists(b1.edges(), 1, 1, 1, 4, 1, 1);

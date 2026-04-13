@@ -289,14 +289,14 @@ public class Box3d {
 			if(this.validForHash == b.hashCode())
 				return;
 			this.corners[0].set(b.start.x, b.start.y, b.start.z);
-			this.corners[1].set(b.end.x-1, b.start.y, b.start.z);
-			this.corners[2].set(b.end.x-1, b.start.y, b.end.z-1);
-			this.corners[3].set(b.start.x, b.start.y, b.end.z-1);
+			this.corners[1].set(b.end.x, b.start.y, b.start.z);
+			this.corners[2].set(b.end.x, b.start.y, b.end.z);
+			this.corners[3].set(b.start.x, b.start.y, b.end.z);
 
-			this.corners[4].set(b.start.x, b.end.y-1, b.start.z);
-			this.corners[5].set(b.end.x-1, b.end.y-1, b.start.z);
-			this.corners[6].set(b.end.x-1, b.end.y-1, b.end.z-1);
-			this.corners[7].set(b.start.x, b.end.y-1, b.end.z-1);
+			this.corners[4].set(b.start.x, b.end.y, b.start.z);
+			this.corners[5].set(b.end.x, b.end.y, b.start.z);
+			this.corners[6].set(b.end.x, b.end.y, b.end.z);
+			this.corners[7].set(b.start.x, b.end.y, b.end.z);
 			this.validForHash = b.hashCode();
 		}
 
