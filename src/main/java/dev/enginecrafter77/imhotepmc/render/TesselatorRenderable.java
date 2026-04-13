@@ -159,6 +159,15 @@ public abstract class TesselatorRenderable implements IRenderable {
 			return this;
 		}
 
+		/**
+		 * Exposes the underlying {@link BufferBuilder} instance. Use only if you know what you're doing.
+		 * @return The underlying {@link BufferBuilder} instance.
+		 */
+		public BufferBuilder unwrap()
+		{
+			return this.buffer;
+		}
+
 		public void endVertex()
 		{
 			this.buffer.endVertex();

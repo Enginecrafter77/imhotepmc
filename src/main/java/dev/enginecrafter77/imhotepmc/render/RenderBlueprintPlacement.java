@@ -6,8 +6,6 @@ import dev.enginecrafter77.imhotepmc.blueprint.BlueprintVoxel;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -16,12 +14,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Point3d;
@@ -29,9 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class RenderBlueprintPlacement implements IAutoRenderable {
+public class RenderBlueprintPlacement extends TesselatorRenderable {
 	private final Point3d originPoint;
 	private final Point3d renderPoint;
+
+	private final List<BakedQuad> quadBuffer;
 
 	@Nullable
 	private BlueprintPlacement placement;
@@ -39,16 +37,15 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 	@Nullable
 	private BlueprintPlacementWorld placementWorld;
 
-	@Nullable
-	private CompiledVertexBuffer buffer;
-
 	public RenderBlueprintPlacement()
 	{
+		this.quadBuffer = new ArrayList<>(10); // 6 sides + 4 floating quads (face = null)
 		this.originPoint = new Point3d();
 		this.renderPoint = new Point3d();
 		this.placementWorld = null;
 		this.placement = null;
-		this.buffer = null;
+
+		this.setVertexFormat(DefaultVertexFormats.BLOCK);
 	}
 
 	public void setPlacement(@Nullable BlueprintPlacement placement)
@@ -56,44 +53,33 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 		if(placement == this.placement)
 			return; // Avoid unnecessarily invalidating the buffer
 
+		this.invalidate();
 		if(placement == null)
 		{
 			this.placement = null;
 			this.placementWorld = null;
-			this.buffer = null;
 			return;
 		}
 
 		this.placement = placement;
 		this.placementWorld = new BlueprintPlacementWorld(placement, Minecraft.getMinecraft().world);
-		VecUtil.copyVec3d(placement.getOriginOffset(), this.originPoint);
-		this.buffer = null;
+		this.originPoint.set(placement.getOriginOffset().getX(), placement.getOriginOffset().getY(), placement.getOriginOffset().getZ());
+		this.compile();
 	}
 
-	public void invalidate()
-	{
-		this.buffer = null;
-	}
-
-	protected CompiledVertexBuffer compileBuffer()
+	@Override
+	public void renderIntoBuffer(BufferBuilderWrapper bufferBuilder, float partialTicks)
 	{
 		if(this.placement == null || this.placementWorld == null)
-			throw new IllegalStateException();
-
-		Vec3i size = this.placement.getSize();
-		int volume = size.getX() * size.getY() * size.getZ();
-		BufferBuilder builder = new BufferBuilder(volume * 36);
-		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+			return;
 
 		// Assemble the pipeline (RecolorVertexTransformer -> VertexLighterFlat -> VertexBufferConsumer)
-		VertexBufferConsumer bufferConsumer = new VertexBufferConsumer(builder);
+		VertexBufferConsumer bufferConsumer = new VertexBufferConsumer(bufferBuilder.unwrap());
 		VertexLighterFlat lighter = new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors());
 		lighter.setParent(bufferConsumer);
 		lighter.setWorld(this.placementWorld);
 		RecolorVertexTransformer alphaTransformer = new RecolorVertexTransformer(lighter);
 		alphaTransformer.setTint(1F, 1F, 1F, 0.75F);
-
-		List<BakedQuad> quads = new ArrayList<BakedQuad>(10); // 6 sides + 4 floating quads (face = null)
 
 		BlueprintReader reader = this.placement.reader();
 		while(reader.hasNext())
@@ -104,26 +90,20 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 
 			lighter.setState(this.placementWorld.getBlockState(pos));
 
-			quads.clear();
-			this.collectQuads(pos, quads);
-
-			for(BakedQuad quad : quads)
+			this.collectQuads(pos);
+			for(BakedQuad quad : this.quadBuffer)
 			{
 				bufferConsumer.setOffset(offset);
 				lighter.setBlockPos(pos);
 				quad.pipe(alphaTransformer);
 			}
 		}
-
-		builder.finishDrawing();
-
-		return CompiledVertexBuffer.compile(builder);
 	}
 
-	protected void collectQuads(BlockPos pos, List<BakedQuad> dest)
+	protected void collectQuads(BlockPos pos)
 	{
-		if(this.placementWorld == null)
-			throw new IllegalStateException();
+		assert this.placementWorld != null;
+		this.quadBuffer.clear();
 
 		// Electric Boogaloo
 		IBlockState state = this.placementWorld.getBlockState(pos);
@@ -140,31 +120,26 @@ public class RenderBlueprintPlacement implements IAutoRenderable {
 			if(!state.shouldSideBeRendered(this.placementWorld, pos, face))
 				continue;
 			List<BakedQuad> sideQuads = model.getQuads(state, face, 0L);
-			dest.addAll(sideQuads);
+			this.quadBuffer.addAll(sideQuads);
 		}
 
 		List<BakedQuad> floatingQuads = model.getQuads(state, null, 0L);
-		dest.addAll(floatingQuads);
+		this.quadBuffer.addAll(floatingQuads);
 	}
 
 	@Override
-	public void doRender(float partialTicks)
+	public void doRender(double x, double y, double z, float partialTicks)
 	{
-		if(this.placement == null)
-			return;
+		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		super.doRender(x, y, z, partialTicks);
+	}
 
+	public void renderInWorld(float partialTicks)
+	{
 		Entity viewer = Minecraft.getMinecraft().getRenderViewEntity();
 		if(viewer == null)
 			return;
 		VecUtil.calculateRenderPoint(viewer, this.originPoint, this.renderPoint, partialTicks);
-
-		if(this.buffer == null)
-			this.buffer = this.compileBuffer();
-
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.renderPoint.x, this.renderPoint.y, this.renderPoint.z);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		this.buffer.draw();
-		GlStateManager.popMatrix();
+		this.doRender(this.renderPoint.x, this.renderPoint.y, this.renderPoint.z, partialTicks);
 	}
 }
