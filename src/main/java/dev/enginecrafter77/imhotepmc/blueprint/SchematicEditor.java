@@ -5,7 +5,7 @@ import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.BlueprintTranslation;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.DataVersionTranslationTable;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.TranslationNotAvailableException;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
@@ -56,24 +56,24 @@ public class SchematicEditor {
 		}
 
 		SchematicBlueprint.SchematicRegionBlueprint offsetBlueprint = new SchematicBlueprint.SchematicRegionBlueprint(blueprint, offset);
-		BlockSelectionBox newRegionBox = new BlockSelectionBox();
+		Box3i newRegionBox = new Box3i();
 		offsetBlueprint.computeBoundingBox(newRegionBox);
 
-		BlockSelectionBox totalBox = new BlockSelectionBox();
+		Box3i totalBox = new Box3i();
 
-		BlockSelectionBox regionBox = new BlockSelectionBox();
+		Box3i regionBox = new Box3i();
 		for(SchematicBlueprint.SchematicRegionBlueprint region : this.regions.values())
 		{
 			region.computeBoundingBox(regionBox);
 			regionBox.intersect(newRegionBox);
-			if(regionBox.getVolume() > 0)
+			if(regionBox.volume() > 0)
 				throw new IllegalArgumentException("Regions cannot overlap!");
 			totalBox.union(regionBox);
 		}
 		totalBox.union(newRegionBox);
 
 		this.regions.put(name, offsetBlueprint);
-		this.size = totalBox.getSize();
+		this.size = new Vec3i(totalBox.getSizeX(), totalBox.getSizeY(), totalBox.getSizeZ());
 		this.blockCount += offsetBlueprint.getDefinedBlockCount();
 
 		return this;

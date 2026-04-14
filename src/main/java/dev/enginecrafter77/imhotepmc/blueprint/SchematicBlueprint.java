@@ -1,7 +1,7 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import com.google.common.collect.ImmutableSet;
-import dev.enginecrafter77.imhotepmc.util.BlockSelectionBox;
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -42,7 +42,6 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		return this.regions.keySet();
 	}
 
-	@Nonnull
 	public SchematicRegionBlueprint getRegion(String name)
 	{
 		SchematicRegionBlueprint blueprint = this.regions.get(name);
@@ -60,7 +59,7 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 	@Override
 	public BlueprintEntry getBlockAt(BlockPos position)
 	{
-		BlockSelectionBox box = new BlockSelectionBox();
+		Box3i box = new Box3i();
 		for(SchematicRegionBlueprint blueprint : this.regions.values())
 		{
 			blueprint.computeBoundingBox(box);
@@ -91,7 +90,6 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 		return Objects.equals(this.metadata, other.metadata) && Objects.equals(this.regions, other.regions);
 	}
 
-	@Nonnull
 	@Override
 	public BlueprintReader reader()
 	{
@@ -138,9 +136,9 @@ public class SchematicBlueprint extends SchematicMetadataWrapper implements Blue
 			return this.structureBlueprint;
 		}
 
-		public void computeBoundingBox(BlockSelectionBox box)
+		public void computeBoundingBox(Box3i box)
 		{
-			box.setStartSize(this.getOriginOffset(), this.getSize());
+			box.set(this.getOriginOffset(), this.getOriginOffset().add(this.getSize()));
 		}
 
 		@Override
