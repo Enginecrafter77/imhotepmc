@@ -2,6 +2,9 @@ package dev.enginecrafter77.imhotepmc.tile;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.*;
+import dev.enginecrafter77.imhotepmc.marker.AreaMarkHandler;
+import dev.enginecrafter77.imhotepmc.marker.CapabilityAreaMarker;
+import dev.enginecrafter77.imhotepmc.marker.MarkedArea;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.VecNBTUtil;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
@@ -98,27 +101,20 @@ public class TileEntityArchitectTable extends TileEntity {
 	public void onLoad()
 	{
 		super.onLoad();
-
-		if(this.initialized)
-			return;
-
 		BlockPosUtil.neighbors(this.getPos()).forEach((BlockPos neighbor) -> {
 			if(this.initialized)
 				return;
 
-			TileEntity tile = this.world.getTileEntity(neighbor);
-			if(!(tile instanceof IAreaMarker))
-				return;
-			IAreaMarker marker = (IAreaMarker)tile;
-
-			AreaMarkGroup group = marker.getCurrentMarkGroup();
-			if(group == null)
+			AreaMarkHandler handler = this.world.getCapability(CapabilityAreaMarker.AREA_HANDLER, null);
+			if(handler == null)
 				return;
 
-			VecUtil.boxCoveringBlocks(group.getDefiningCorners(), this.selection);
-			group.dismantle(this.world);
-			for(BlockPos corner : group.getDefiningCorners())
-				this.world.destroyBlock(corner, true);
+			MarkedArea area = handler.getAreaAnchoredAt(neighbor);
+			if(area == null)
+				return;
+
+			this.selection.set(area.getMarkedAreaBox());
+			handler.dismantle(area.getId());
 			this.initialized = true;
 			this.onSelectionUpdated();
 			this.markDirty();

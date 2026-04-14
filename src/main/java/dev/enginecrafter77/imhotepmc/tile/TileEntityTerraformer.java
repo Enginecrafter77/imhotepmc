@@ -1,11 +1,12 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
-import com.google.common.base.Predicates;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderContext;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.ShapeBuildJob;
+import dev.enginecrafter77.imhotepmc.marker.AreaMarkHandler;
+import dev.enginecrafter77.imhotepmc.marker.CapabilityAreaMarker;
+import dev.enginecrafter77.imhotepmc.marker.MarkedArea;
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import dev.enginecrafter77.imhotepmc.util.VecNBTUtil;
-import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -24,7 +25,6 @@ import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class TileEntityTerraformer extends TileEntity implements ITickable, BuilderContext {
 	private static final String NBT_KEY_AREA = "area";
@@ -82,31 +82,29 @@ public class TileEntityTerraformer extends TileEntity implements ITickable, Buil
 		if(this.world.isRemote)
 			return;
 
-		if(!this.hasArea && !this.hasSearchedForArea)
+		if(!this.hasSearchedForArea)
 		{
-			AreaMarkGroup group = BlockPosUtil.neighbors(this.getPos())
-					.map(this.world::getTileEntity)
-					.filter(Objects::nonNull)
-					.filter(Predicates.instanceOf(IAreaMarker.class))
-					.map(IAreaMarker.class::cast)
-					.map(IAreaMarker::getCurrentMarkGroup)
-					.filter(Objects::nonNull)
-					.findFirst()
-					.orElse(null);
-			if(group != null)
-			{
-				VecUtil.boxCoveringBlocks(group.getDefiningCorners(), this.selectionBox);
-				group.dropTapes(this.world);
-				group.dismantle(this.world);
-				for(BlockPos corner : group.getDefiningCorners())
-					this.world.destroyBlock(corner, true);
+			BlockPosUtil.neighbors(this.getPos()).forEach(neighbor -> {
+				if(this.hasArea)
+					return;
+
+				AreaMarkHandler handler = this.world.getCapability(CapabilityAreaMarker.AREA_HANDLER, null);
+				if(handler == null)
+					return;
+				MarkedArea area = handler.getAreaAnchoredAt(neighbor);
+				if(area == null)
+					return;
+
+				this.selectionBox.set(area.getMarkedAreaBox());
+				handler.dismantle(area.getId());
 				this.hasArea = true;
 				this.onSettingsChanged();
-			}
+				this.markDirty();
+			});
 			this.hasSearchedForArea = true;
 		}
 
-		if(this.job == null)
+		if(!this.hasArea || this.job == null)
 			return;
 		this.job.update();
 	}

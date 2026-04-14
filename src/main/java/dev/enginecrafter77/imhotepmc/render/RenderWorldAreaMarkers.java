@@ -1,10 +1,10 @@
 package dev.enginecrafter77.imhotepmc.render;
 
-import dev.enginecrafter77.imhotepmc.tile.AreaMarkGroup;
+import dev.enginecrafter77.imhotepmc.marker.AreaMarkHandler;
+import dev.enginecrafter77.imhotepmc.marker.CapabilityAreaMarker;
+import dev.enginecrafter77.imhotepmc.marker.MarkedArea;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import dev.enginecrafter77.imhotepmc.util.math.Box3d;
-import dev.enginecrafter77.imhotepmc.util.math.Box3i;
-import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
@@ -23,7 +23,6 @@ public class RenderWorldAreaMarkers {
 	private static final Point3d PT_ZERO = new Point3d(0, 0, 0);
 
 	private final RenderTapeArea renderTape;
-	private final Box3i blockBox;
 	private final Box3d tapeBox;
 	private final Point3d boxCenter;
 	private final Point3d boxRenderPoint;
@@ -31,7 +30,6 @@ public class RenderWorldAreaMarkers {
 	public RenderWorldAreaMarkers()
 	{
 		this.renderTape = new RenderTapeArea();
-		this.blockBox = new Box3i();
 		this.tapeBox = new Box3d();
 		this.boxRenderPoint = new Point3d();
 		this.boxCenter = new Point3d();
@@ -45,15 +43,13 @@ public class RenderWorldAreaMarkers {
 			return;
 
 		WorldClient world = Minecraft.getMinecraft().world;
-		AreaMarkDatabase db = AreaMarkDatabase.getDefault(world);
-		if(db == null)
+		AreaMarkHandler handler = world.getCapability(CapabilityAreaMarker.AREA_HANDLER, null);
+		if(handler == null)
 			return;
 
-		for(AreaMarkGroup grp : db.getGroups())
+		for(MarkedArea instance : handler.allAreas())
 		{
-			VecUtil.boxCoveringBlocks(grp.getDefiningCorners(), this.blockBox);
-
-			this.tapeBox.set(this.blockBox);
+			this.tapeBox.set(instance.getMarkedAreaBox());
 			this.tapeBox.translate(0.5D, 0.5D, 0.5D);
 			this.tapeBox.grow(-1D, -1D, -1D);
 			VecUtil.boxCenter(this.tapeBox, this.boxCenter);

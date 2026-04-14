@@ -4,10 +4,13 @@ import com.google.common.collect.ImmutableMap;
 import dev.enginecrafter77.imhotepmc.block.*;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
-import dev.enginecrafter77.imhotepmc.cap.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.entity.EntityPrimedRestorationCharge;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
 import dev.enginecrafter77.imhotepmc.item.*;
+import dev.enginecrafter77.imhotepmc.marker.CapabilityAreaMarker;
+import dev.enginecrafter77.imhotepmc.marker.WorldStoredAreaMarkHandler;
+import dev.enginecrafter77.imhotepmc.marker.sync.AreaUpdateMessage;
+import dev.enginecrafter77.imhotepmc.marker.sync.AreaUpdateRequest;
 import dev.enginecrafter77.imhotepmc.net.*;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamWrapper;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
@@ -16,7 +19,6 @@ import dev.enginecrafter77.imhotepmc.render.*;
 import dev.enginecrafter77.imhotepmc.tile.*;
 import dev.enginecrafter77.imhotepmc.util.ServerBackgroundTaskScheduler;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
-import dev.enginecrafter77.imhotepmc.world.AreaMarkDatabase;
 import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -154,11 +156,12 @@ public class ImhotepMod {
         this.netChannel.registerMessage(BlueprintSampleMessageHandler.class, BlueprintSampleMessage.class, 0, Side.SERVER);
         this.netChannel.registerMessage(BuilderDwellUpdateHandler.class, BuilderSharedStateUpdate.class, 1, Side.CLIENT);
 		this.netChannel.registerMessage(DisplayRestorationParticlesHandler.class, DisplayRestorationParticlesMessage.class, 2, Side.CLIENT);
-        this.worldDataSyncHandler.register(AreaMarkDatabase.class, ImhotepMod.MOD_ID + ":area_markers");
+		this.netChannel.registerMessage(WorldStoredAreaMarkHandler.AreaUpdateHandler.class, AreaUpdateMessage.class, 3, Side.CLIENT);
+		this.netChannel.registerMessage(WorldStoredAreaMarkHandler.AreaRequestHandler.class, AreaUpdateRequest.class, 4, Side.SERVER);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
 
-        CapabilityAreaMarker.register();
+		CapabilityAreaMarker.register();
         MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
     }
 

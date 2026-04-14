@@ -1,7 +1,9 @@
 package dev.enginecrafter77.imhotepmc.block;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.tile.AreaMarkGroup;
+import dev.enginecrafter77.imhotepmc.marker.AreaMarkHandler;
+import dev.enginecrafter77.imhotepmc.marker.CapabilityAreaMarker;
+import dev.enginecrafter77.imhotepmc.marker.MarkedArea;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityAreaMarker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -10,8 +12,6 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -55,9 +55,6 @@ public class BlockAreaMarker extends Block {
 	{
 		switch(state.getValue(FACING))
 		{
-		default:
-		case UP:
-			return UP_AABB;
 		case DOWN:
 			return DOWN_AABB;
 		case NORTH:
@@ -68,6 +65,9 @@ public class BlockAreaMarker extends Block {
 			return EAST_AABB;
 		case WEST:
 			return WEST_AABB;
+		case UP:
+		default:
+			return UP_AABB;
 		}
 	}
 
@@ -105,21 +105,14 @@ public class BlockAreaMarker extends Block {
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
 	{
-		TileEntityAreaMarker marker = (TileEntityAreaMarker)worldIn.getTileEntity(pos);
-		if(marker != null)
-		{
-			AreaMarkGroup group = marker.getCurrentMarkGroup();
-			if(group != null)
-			{
-				ItemStack tape = new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, group.getUsedTapeCount());
-				EntityItem item = new EntityItem(worldIn);
-				item.setItem(tape);
-				item.setPosition(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-				worldIn.spawnEntity(item);
-				group.dismantle(worldIn);
-				group.dropTapes(worldIn);
-			}
-		}
+		AreaMarkHandler handler = worldIn.getCapability(CapabilityAreaMarker.AREA_HANDLER, null);
+		if(handler == null)
+			return;
+		MarkedArea area = handler.getAreaAnchoredAt(pos);
+		// infinite recursion will be avoided by this check - after pass 1 of dismantling (unlinking), the area will be null
+		if(area == null)
+			return;
+		handler.dismantle(area.getId());
 		super.breakBlock(worldIn, pos, state);
 	}
 

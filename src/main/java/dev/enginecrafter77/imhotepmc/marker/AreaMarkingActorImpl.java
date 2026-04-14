@@ -1,14 +1,14 @@
-package dev.enginecrafter77.imhotepmc.cap;
+package dev.enginecrafter77.imhotepmc.marker;
 
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 
-public class AreaMarkingEntityImpl implements AreaMarkingEntity {
+public class AreaMarkingActorImpl implements AreaMarkingActor {
 	@Nullable
 	private BlockPos linkingPosition;
 
-	public AreaMarkingEntityImpl()
+	public AreaMarkingActorImpl()
 	{
 		this.linkingPosition = null;
 	}
