@@ -41,6 +41,7 @@ public class RenderArchitectTable extends TileEntitySpecialRenderer<TileEntityAr
 		this.box.set(s.start.x + 0.5D, s.start.y + 0.5D, s.start.z + 0.5D, s.end.x - 0.5D, s.end.y - 0.5D, s.end.z - 0.5D);
 		VecUtil.boxCenter(this.box, this.boxCenter);
 		VecUtil.calculateRenderPoint(viewer, this.boxCenter, this.boxRenderPoint, partialTicks);
+		this.renderTapeArea.setBox(this.box);
 
 		this.setLightmapDisabled(true);
 		this.renderTapeArea.doRender(this.boxRenderPoint, partialTicks);
