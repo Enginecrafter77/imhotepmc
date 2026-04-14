@@ -59,10 +59,10 @@ public class TileEntityArchitectTable extends TileEntity {
 
 		BlueprintEditor blueprintEditor = StructureBlueprint.begin();
 		blueprintEditor.setSize(new Vec3i(this.selection.getSizeX(), this.selection.getSizeY(), this.selection.getSizeZ()));
-		for(BlockPos pos : BlockPos.MutableBlockPos.getAllInBoxMutable(this.selection.start.x, this.selection.start.y, this.selection.start.z, this.selection.end.x, this.selection.end.y, this.selection.end.z))
+		for(BlockPos.MutableBlockPos pos : BlockPosUtil.blocksInBox(this.selection))
 		{
 			SavedTileState sts = SavedTileState.sample(this.world, pos);
-			blueprintEditor.addBlock(pos.subtract(origin), sts);
+			blueprintEditor.addBlock(pos.toImmutable().subtract(origin), sts);
 		}
 		return blueprintEditor.build();
 	}

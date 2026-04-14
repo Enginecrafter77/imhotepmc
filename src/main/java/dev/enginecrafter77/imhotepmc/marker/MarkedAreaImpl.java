@@ -96,8 +96,7 @@ public class MarkedAreaImpl implements MarkedArea, INBTSerializable<NBTTagCompou
 
 	public static MarkedAreaImpl create(BlockPos first, BlockPos second)
 	{
-		if(Objects.equals(first, second) || BlockPosUtil.getSharedAxis(first, second) == null)
-			throw new IllegalArgumentException();
+		assert !Objects.equals(first, second) && BlockPosUtil.getSharedAxis(first, second) != null;
 		MarkedAreaImpl group = new MarkedAreaImpl(UUID.randomUUID());
 		group.expand(first, false);
 		group.expand(second, false);

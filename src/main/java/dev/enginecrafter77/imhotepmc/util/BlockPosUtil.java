@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import dev.enginecrafter77.imhotepmc.util.math.Edge3i;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
@@ -32,5 +33,10 @@ public class BlockPosUtil {
 		int y = buf.readInt();
 		int z = buf.readInt();
 		return new BlockPos(x, y, z);
+	}
+
+	public static Iterable<BlockPos.MutableBlockPos> blocksInBox(Box3i box)
+	{
+		return BlockPos.getAllInBoxMutable(box.start.x, box.start.y, box.start.z, box.end.x-1, box.end.y-1, box.end.z-1);
 	}
 }

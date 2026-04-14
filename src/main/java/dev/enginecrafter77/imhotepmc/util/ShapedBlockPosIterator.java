@@ -18,7 +18,7 @@ public class ShapedBlockPosIterator implements Iterator<BlockPos.MutableBlockPos
 
 	public ShapedBlockPosIterator(Box3i box, ShapeGenerator generator)
 	{
-		this.fullVolumeIterator = BlockPos.MutableBlockPos.getAllInBoxMutable(box.start.x, box.start.y, box.start.z, box.end.x, box.end.y, box.end.z).iterator();
+		this.fullVolumeIterator = BlockPosUtil.blocksInBox(box).iterator();
 		this.box = box;
 		this.generator = generator;
 		this.lastPosition = new BlockPos.MutableBlockPos();

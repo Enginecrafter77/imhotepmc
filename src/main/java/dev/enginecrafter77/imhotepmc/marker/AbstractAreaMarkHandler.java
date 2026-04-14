@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.marker;
 
+import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
@@ -72,6 +73,8 @@ public abstract class AbstractAreaMarkHandler implements AreaMarkHandler {
 		case 0: // both are null
 			if(!simulate)
 			{
+				if(BlockPosUtil.getSharedAxis(first.getMarkerPosition(), second.getMarkerPosition()) == null)
+					return AreaExpandResult.NO_CONNECTING_AXIS;
 				MarkedAreaImpl group = MarkedAreaImpl.create(first.getMarkerPosition(), second.getMarkerPosition());
 				first.setAreaId(group.getId());
 				second.setAreaId(group.getId());
