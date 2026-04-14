@@ -21,7 +21,7 @@ public class TapeLinkingRenderHandler {
 	@SideOnly(Side.CLIENT)
 	public void onRenderWorldLast(RenderWorldLastEvent event)
 	{
-		this.render.render(event);
+		this.render.doRender(event.getPartialTicks());
 	}
 
 	public RenderPlayerTapeLinking getRender()

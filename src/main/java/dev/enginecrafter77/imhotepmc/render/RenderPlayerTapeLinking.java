@@ -6,8 +6,6 @@ import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,7 +18,7 @@ import javax.vecmath.Vector3d;
 public class RenderPlayerTapeLinking {
 	private static final Vector3d HAND_POSITION = new Vector3d(0.375D, 0.75D, -0.0625D);
 
-	private final RenderTape tapeRender;
+	private final RenderTapeFast tapeRender;
 	private final Point3d anchorPoint1;
 	private final Point3d anchorPoint2;
 	private final Point3d renderPoint;
@@ -32,7 +30,7 @@ public class RenderPlayerTapeLinking {
 	public RenderPlayerTapeLinking()
 	{
 		this.handRotationMatrix = new Matrix3d();
-		this.tapeRender = new RenderTape();
+		this.tapeRender = new RenderTapeFast();
 		this.anchorPoint1 = new Point3d();
 		this.anchorPoint2 = new Point3d();
 		this.renderPoint = new Point3d();
@@ -40,8 +38,7 @@ public class RenderPlayerTapeLinking {
 		this.midPoint = new Point3d();
 	}
 
-	@SubscribeEvent
-	public void render(RenderWorldLastEvent event)
+	public void doRender(float partialTicks)
 	{
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		AreaMarkingActor actor = player.getCapability(CapabilityAreaMarker.AREA_MARKING_ACTOR, null);
@@ -53,7 +50,7 @@ public class RenderPlayerTapeLinking {
 			return;
 
 		this.anchorPoint1.set(link.getX() + 0.5D, link.getY() + 0.5D, link.getZ() + 0.5D);
-		VecUtil.interpolateEntityPosition(player, this.anchorPoint2, event.getPartialTicks());
+		VecUtil.interpolateEntityPosition(player, this.anchorPoint2, partialTicks);
 
 		this.handOffset.set(HAND_POSITION);
 		this.handRotationMatrix.setIdentity();
@@ -63,10 +60,9 @@ public class RenderPlayerTapeLinking {
 		this.anchorPoint2.add(this.handOffset);
 
 		VecUtil.midpoint(this.anchorPoint1, this.anchorPoint2, this.midPoint);
-		VecUtil.calculateRenderPoint(player, this.midPoint, this.renderPoint, event.getPartialTicks());
+		VecUtil.calculateRenderPoint(player, this.midPoint, this.renderPoint, partialTicks);
 
-		this.tapeRender.setTexture(RenderTape.TEXTURE);
-		this.tapeRender.setAnchors(this.anchorPoint1, this.anchorPoint2);
-		this.tapeRender.doRender(this.renderPoint.x, this.renderPoint.y, this.renderPoint.z, event.getPartialTicks());
+		this.tapeRender.setEdge(this.anchorPoint1, this.anchorPoint2);
+		this.tapeRender.doRender(this.renderPoint.x, this.renderPoint.y, this.renderPoint.z, partialTicks);
 	}
 }
