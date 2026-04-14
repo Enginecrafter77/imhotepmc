@@ -216,6 +216,19 @@ public class Box3iTest {
 	}
 
 	@Test
+	public void setSize_WithAddedSize_EqualsEndAddedBox()
+	{
+		Box3i expected = new Box3i();
+		expected.set(0, 0, 0, 0, 0, 0);
+		expected.setSize(5, 5, 5);
+
+		Box3i actual = new Box3i();
+		actual.set(0, 0, 0, 5, 5, 5);
+
+		Assertions.assertEquals(expected, actual);
+	}
+
+	@Test
 	public void grow_KnownBoxByKnownValues_EqualsKnown()
 	{
 		Box3i actual = new Box3i();

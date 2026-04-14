@@ -229,6 +229,19 @@ public class Box3dTest {
 	}
 
 	@Test
+	public void setSize_WithAddedSize_EqualsEndAddedBox()
+	{
+		Box3d expected = new Box3d();
+		expected.set(0, 0, 0, 0, 0, 0);
+		expected.setSize(5, 5, 5);
+
+		Box3d actual = new Box3d();
+		actual.set(0, 0, 0, 5, 5, 5);
+
+		Assertions.assertEquals(expected, actual);
+	}
+
+	@Test
 	public void grow_KnownBoxByKnownValues_EqualsKnown()
 	{
 		Box3d actual = new Box3d();
