@@ -268,7 +268,7 @@ public class Box3d {
 
 	public class Corners implements Iterable<Point3d>
 	{
-		private final Point3d[] corners;
+		final Point3d[] corners;
 		private int validForHash;
 
 		public Corners()

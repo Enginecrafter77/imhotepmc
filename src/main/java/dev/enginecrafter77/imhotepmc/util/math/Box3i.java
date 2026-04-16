@@ -246,7 +246,7 @@ public class Box3i {
 
 	public class Corners implements Iterable<Point3i>
 	{
-		private final Point3i[] corners;
+		final Point3i[] corners;
 		private int validForHash;
 
 		public Corners()
