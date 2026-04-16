@@ -53,6 +53,8 @@ public class CapabilityAreaMarker {
 	@SideOnly(Side.CLIENT)
 	public static void onClientWorldLoadedEvent(EntityJoinWorldEvent event)
 	{
+		if(!event.getEntity().hasCapability(AREA_MARKING_ACTOR, null))
+			return;
 		ImhotepMod.instance.getNetChannel().sendToServer(new AreaUpdateRequest());
 	}
 
