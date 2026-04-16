@@ -49,6 +49,13 @@ public class WorldStoredAreaMarkHandler extends AbstractAreaMarkHandler {
 	@Override
 	protected void onAreaCreated(MarkedAreaImpl area)
 	{
+		/*
+		 * this right here should only be done on server -- running this on both sides results
+		 * in each side generating a different UUID for the zone, which results in two areas
+		 * being created. Let the client skip this part and receive the update from the server.
+		 */
+		if(this.world.isRemote)
+			return;
 		super.onAreaCreated(area);
 		this.broadcastAreaUpdate(area, AreaUpdateEventType.CREATE);
 	}
@@ -99,9 +106,44 @@ public class WorldStoredAreaMarkHandler extends AbstractAreaMarkHandler {
 		if(existing == null)
 		{
 			this.groups.put(from.getId(), from);
+			this.writeArea(from);
 			return;
 		}
+		this.wipeArea(existing);
 		existing.set(from);
+		this.writeArea(existing);
+	}
+
+	/**
+	 * Writes the area ID to all the area's anchors.
+	 * @param from The area to write
+	 */
+	@SideOnly(Side.CLIENT)
+	void writeArea(MarkedAreaImpl from)
+	{
+		for(BlockPos pos : from.getDefiningMembers())
+		{
+			MarkingAnchor anchor = this.getAnchorAt(pos);
+			if(anchor == null)
+				continue;
+			anchor.setAreaId(from.getId());
+		}
+	}
+
+	/**
+	 * Wipes the area ID (sets it to <code>null</code>) from all the area's anchors.
+	 * @param from The area to write
+	 */
+	@SideOnly(Side.CLIENT)
+	void wipeArea(MarkedAreaImpl from)
+	{
+		for(BlockPos pos : from.getDefiningMembers())
+		{
+			MarkingAnchor anchor = this.getAnchorAt(pos);
+			if(anchor == null)
+				continue;
+			anchor.setAreaId(null);
+		}
 	}
 
 	public static class Wrapper implements ICapabilitySerializable<NBTTagCompound>
@@ -198,7 +240,7 @@ public class WorldStoredAreaMarkHandler extends AbstractAreaMarkHandler {
 					handler.onAreaCreated(area);
 					break;
 				case REMOVE:
-					handler.groups.remove(area.getId());
+					handler.wipeArea(area);
 					handler.onAreaRemoved(area);
 					break;
 				}

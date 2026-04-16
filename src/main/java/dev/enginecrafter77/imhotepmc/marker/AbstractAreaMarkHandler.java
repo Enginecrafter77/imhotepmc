@@ -17,21 +17,38 @@ public abstract class AbstractAreaMarkHandler implements AreaMarkHandler {
 		this.groups = new HashMap<>();
 	}
 
-	protected void onAreaCreated(MarkedAreaImpl area) {}
-	protected void onAreaRemoved(MarkedAreaImpl area) {}
+	/**
+	 * Called when a new area is created. Generally, this happens as
+	 * part of the {@link #connect(AreaMarkingActor, MarkingAnchor, MarkingAnchor, boolean)} call.
+	 * The area is <b>NOT</b> yet added to the internal registry, which is what this method does by default.
+	 * Thus, it is important that you keep the super call to this method
+	 * if you want to have the group be added to the internal registry.
+	 * @param area The area that was just created
+	 */
+	protected void onAreaCreated(MarkedAreaImpl area)
+	{
+		this.groups.put(area.getId(), area);
+	}
+
+	/**
+	 * Called when an area is about to be removed. Generally, this happens as
+	 * part of the {@link #dismantle(UUID)} call, or a call to {@link #disconnect(MarkingAnchor)}
+	 * that would leave the zone empty. By default, this method removes the area from
+	 * the internal registry. It is important that when overriding this method, you keep
+	 * the call to the superclass method if you wish to have the area removed from the internal registry.
+	 * @param area The area to be removed
+	 */
+	protected void onAreaRemoved(MarkedAreaImpl area)
+	{
+		this.groups.remove(area.getId());
+	}
+
+	/**
+	 * Called when an area is updated, generally when area changes its shape as
+	 * a result of adding or removing a defining corner.
+	 * @param area The area that was updated
+	 */
 	protected void onAreaUpdated(MarkedAreaImpl area) {}
-
-	private void registerArea(MarkedAreaImpl group)
-	{
-		this.groups.put(group.getId(), group);
-		this.onAreaCreated(group);
-	}
-
-	private void unregisterArea(MarkedAreaImpl group)
-	{
-		this.groups.remove(group.getId());
-		this.onAreaRemoved(group);
-	}
 
 	@Nullable
 	@Override
@@ -80,7 +97,7 @@ public abstract class AbstractAreaMarkHandler implements AreaMarkHandler {
 				MarkedAreaImpl group = MarkedAreaImpl.create(first.getMarkerPosition(), second.getMarkerPosition());
 				first.setAreaId(group.getId());
 				second.setAreaId(group.getId());
-				this.registerArea(group);
+				this.onAreaCreated(group);
 			}
 			return AreaExpandResult.SUCCESS;
 		case 1: // i1 != null && i2 == null
@@ -114,7 +131,9 @@ public abstract class AbstractAreaMarkHandler implements AreaMarkHandler {
 		group.remove(first.getMarkerPosition());
 
 		if(group.isEmpty())
-			this.unregisterArea(group);
+			this.onAreaRemoved(group);
+		else
+			this.onAreaUpdated(group);
 	}
 
 	@Override
@@ -141,7 +160,7 @@ public abstract class AbstractAreaMarkHandler implements AreaMarkHandler {
 				continue; //TODO warning
 			marker.dismantle();
 		}
-		this.unregisterArea(group);
+		this.onAreaRemoved(group);
 		return true;
 	}
 
