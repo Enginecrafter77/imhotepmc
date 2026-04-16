@@ -34,7 +34,8 @@ public class CompiledVertexBuffer {
 		for(int elementIndex = 0; elementIndex < list.size(); ++elementIndex)
 		{
 			VertexFormatElement vertexformatelement = list.get(elementIndex);
-			this.bytebuffer.position(this.vertexformat.getOffset(elementIndex));
+			//noinspection RedundantCast (https://stackoverflow.com/questions/61267495/exception-in-thread-main-java-lang-nosuchmethoderror-java-nio-bytebuffer-flip)
+			((Buffer)this.bytebuffer).position(this.vertexformat.getOffset(elementIndex));
 			vertexformatelement.getUsage().preDraw(this.vertexformat, elementIndex, vertexStride, this.bytebuffer);
 		}
 
