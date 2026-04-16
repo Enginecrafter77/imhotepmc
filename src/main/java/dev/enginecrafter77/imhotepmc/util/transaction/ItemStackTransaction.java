@@ -46,7 +46,7 @@ public class ItemStackTransaction implements Transaction {
 
 	public Stream<ItemStack> mismatchedRecovers()
 	{
-		return this.consumeSlots.stream().filter(SlotAssignment::isMissing).map(SlotAssignment::getStack);
+		return this.recoverSlots.stream().filter(SlotAssignment::isMissing).map(SlotAssignment::getStack);
 	}
 
 	private void matchSlots()
@@ -114,10 +114,13 @@ public class ItemStackTransaction implements Transaction {
 	{
 		assert this.source != null;
 		assert this.destination != null;
+		this.update(); // last ditch effort to save the situation
+		assert this.mismatched == 0;
 		for(SlotAssignment ca : this.consumeSlots)
 			ca.consumeFrom(this.source);
 		for(SlotAssignment ra : this.recoverSlots)
 			ra.insertInto(this.destination);
+		this.invalidate(); // the transaction can now be recycled
 	}
 
 	public static class SlotAssignment
