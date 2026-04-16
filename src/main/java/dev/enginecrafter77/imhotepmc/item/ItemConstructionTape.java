@@ -2,10 +2,12 @@ package dev.enginecrafter77.imhotepmc.item;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.marker.*;
+import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import dev.enginecrafter77.imhotepmc.util.math.Edge3i;
 import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransaction;
 import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransactionTemplate;
 import dev.enginecrafter77.imhotepmc.util.transaction.Transaction;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -105,6 +108,26 @@ public class ItemConstructionTape extends Item {
 			return out.length();
 		else
 			return -1;
+	}
+
+	@SubscribeEvent
+	public static void onAreaDismantled(AreaDismantleEvent.Post event)
+	{
+		if(!event.wasSuccessful())
+			return;
+		if(event.getWorld().isRemote)
+			return;
+
+		VecUtil.boxDefiningEdges(event.getArea().getMarkedAreaBox()).forEach(e -> {
+			EntityItem itemEntity = new EntityItem(event.getWorld());
+			itemEntity.setPosition(
+					(e.p1.x + e.p2.x) / 2D,
+					(e.p1.y + e.p2.y) / 2D,
+					(e.p1.z + e.p2.z) / 2D
+			);
+			itemEntity.setItem(new ItemStack(ImhotepMod.ITEM_CONSTRUCTION_TAPE, e.length()));
+			event.getWorld().spawnEntity(itemEntity);
+		});
 	}
 
 	@Nullable

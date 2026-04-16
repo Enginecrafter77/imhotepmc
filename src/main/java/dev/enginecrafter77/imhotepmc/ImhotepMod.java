@@ -163,6 +163,7 @@ public class ImhotepMod {
 
 		CapabilityAreaMarker.register();
         MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
+		MinecraftForge.EVENT_BUS.register(ItemConstructionTape.class);
     }
 
     @Mod.EventHandler

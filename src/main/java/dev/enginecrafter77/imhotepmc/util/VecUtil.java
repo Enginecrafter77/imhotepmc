@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.util;
 
 import dev.enginecrafter77.imhotepmc.util.math.Box3d;
 import dev.enginecrafter77.imhotepmc.util.math.Box3i;
+import dev.enginecrafter77.imhotepmc.util.math.Edge3i;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -14,7 +15,9 @@ import org.lwjgl.util.ReadableDimension;
 import org.lwjgl.util.ReadableRectangle;
 
 import javax.vecmath.*;
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 public class VecUtil {
 	public static void copyVec3d(Vec3d src, Tuple3d dest)
@@ -177,5 +180,14 @@ public class VecUtil {
 	public static AxisAlignedBB boxToAABB(Box3i box)
 	{
 		return new AxisAlignedBB(box.start.x, box.start.y, box.start.z, box.end.x, box.end.y, box.end.z);
+	}
+
+	public static Stream<Edge3i> boxDefiningEdges(Box3i box)
+	{
+		EnumSet<Axis3d> seenAxes = EnumSet.noneOf(Axis3d.class);
+		return box.edges()
+				.stream()
+				.filter(e -> e.length() > 0)
+				.filter(e -> seenAxes.add(e.getConnectingAxis()));
 	}
 }
