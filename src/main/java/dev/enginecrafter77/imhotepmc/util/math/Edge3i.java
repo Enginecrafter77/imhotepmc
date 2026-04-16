@@ -63,6 +63,8 @@ public class Edge3i {
 
 	public int length()
 	{
+		if(Objects.equals(this.p1, this.p2))
+			return 0;
 		switch(this.getConnectingAxis())
 		{
 		case X:
