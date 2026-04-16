@@ -21,6 +21,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -99,7 +101,7 @@ public class WorldStoredAreaMarkHandler extends AbstractAreaMarkHandler {
 			this.groups.put(from.getId(), from);
 			return;
 		}
-		existing.setArea(from);
+		existing.set(from);
 	}
 
 	public static class Wrapper implements ICapabilitySerializable<NBTTagCompound>
@@ -142,10 +144,13 @@ public class WorldStoredAreaMarkHandler extends AbstractAreaMarkHandler {
 	// server-side
 	public static class AreaRequestHandler implements IMessageHandler<AreaUpdateRequest, AreaUpdateMessage>
 	{
+		private static final Logger LOG = LogManager.getLogger(AreaRequestHandler.class);
+
 		@Nullable
 		@Override
 		public AreaUpdateMessage onMessage(AreaUpdateRequest message, MessageContext ctx)
 		{
+			LOG.debug("Received {}", message);
 			EntityPlayerMP player = ctx.getServerHandler().player;
 			WorldServer world = player.getServerWorld();
 
@@ -164,10 +169,13 @@ public class WorldStoredAreaMarkHandler extends AbstractAreaMarkHandler {
 	// client-side
 	public static class AreaUpdateHandler implements IMessageHandler<AreaUpdateMessage, IMessage>
 	{
+		private static final Logger LOG = LogManager.getLogger(AreaUpdateHandler.class);
+
 		@Nullable
 		@Override
 		public IMessage onMessage(AreaUpdateMessage message, MessageContext ctx)
 		{
+			LOG.debug("Received {}", message);
 			WorldStoredAreaMarkHandler handler = (WorldStoredAreaMarkHandler)Minecraft.getMinecraft().world.getCapability(CapabilityAreaMarker.AREA_HANDLER, null);
 			if(handler == null)
 				return null;
@@ -175,22 +183,23 @@ public class WorldStoredAreaMarkHandler extends AbstractAreaMarkHandler {
 				handler.groups.clear();
 			for(AreaUpdateMessagePart part : message.getParts())
 			{
-				switch(part.eventType)
+				MarkedAreaImpl area = part.getArea();
+				switch(part.getEventType())
 				{
 				case SYNC:
-					handler.upsertArea(part.group);
+					handler.upsertArea(area);
 					break;
 				case UPDATE:
-					handler.upsertArea(part.group);
-					handler.onAreaUpdated(part.group);
+					handler.upsertArea(area);
+					handler.onAreaUpdated(area);
 					break;
 				case CREATE:
-					handler.upsertArea(part.group);
-					handler.onAreaCreated(part.group);
+					handler.upsertArea(area);
+					handler.onAreaCreated(area);
 					break;
 				case REMOVE:
-					handler.groups.remove(part.group.getId());
-					handler.onAreaRemoved(part.group);
+					handler.groups.remove(area.getId());
+					handler.onAreaRemoved(area);
 					break;
 				}
 			}

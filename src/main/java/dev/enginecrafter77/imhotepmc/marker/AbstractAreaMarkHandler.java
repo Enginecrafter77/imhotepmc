@@ -1,7 +1,9 @@
 package dev.enginecrafter77.imhotepmc.marker;
 
 import dev.enginecrafter77.imhotepmc.util.BlockPosUtil;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
@@ -147,24 +149,25 @@ public abstract class AbstractAreaMarkHandler implements AreaMarkHandler {
 	public void deserializeNBT(NBTTagCompound nbt)
 	{
 		this.groups.clear();
-		for(String key : nbt.getKeySet())
+		NBTTagList list = nbt.getTagList("areas", 10);
+		for(NBTBase baseTag : list)
 		{
-			UUID id = UUID.fromString(key);
-			MarkedAreaImpl grp = new MarkedAreaImpl(id);
-			grp.deserializeNBT(nbt.getCompoundTag(key));
-			this.groups.put(id, grp);
+			NBTTagCompound areaTag = (NBTTagCompound)baseTag;
+			MarkedAreaImpl grp = new MarkedAreaImpl();
+			grp.deserializeNBT(areaTag);
+			this.groups.put(grp.getId(), grp);
 		}
 	}
 
 	@Override
 	public NBTTagCompound serializeNBT()
 	{
+		NBTTagList list = new NBTTagList();
+		for(MarkedAreaImpl entry : this.groups.values())
+			list.appendTag(entry.serializeNBT());
+
 		NBTTagCompound compound = new NBTTagCompound();
-		for(Map.Entry<UUID, MarkedAreaImpl> entry : this.groups.entrySet())
-		{
-			NBTTagCompound tag = entry.getValue().serializeNBT();
-			compound.setTag(entry.getKey().toString(), tag);
-		}
+		compound.setTag("areas", list);
 		return compound;
 	}
 }

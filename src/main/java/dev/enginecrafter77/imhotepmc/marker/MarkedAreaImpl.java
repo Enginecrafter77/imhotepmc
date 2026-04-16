@@ -8,15 +8,19 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
 public class MarkedAreaImpl implements MarkedArea, INBTSerializable<NBTTagCompound> {
+	private static final String NBT_KEY_ID = "id";
 	private static final String NBT_KEY_CORNERS = "corners";
 
 	private final AreaMarkBox area;
-	private final UUID id;
+
+	@Nonnull
+	private UUID id;
 
 	public MarkedAreaImpl(UUID id)
 	{
@@ -47,8 +51,9 @@ public class MarkedAreaImpl implements MarkedArea, INBTSerializable<NBTTagCompou
 		return this.area.getBox();
 	}
 
-	public void setArea(MarkedAreaImpl other)
+	public void set(MarkedAreaImpl other)
 	{
+		this.id = other.id;
 		this.area.set(other.area);
 	}
 
@@ -83,12 +88,16 @@ public class MarkedAreaImpl implements MarkedArea, INBTSerializable<NBTTagCompou
 		for(BlockPos pos : this.area.getDefiningCorners())
 			list.appendTag(NBTUtil.createPosTag(pos));
 		tag.setTag(NBT_KEY_CORNERS, list);
+		tag.setUniqueId(NBT_KEY_ID, this.id);
 		return tag;
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt)
 	{
+		UUID readId = nbt.getUniqueId(NBT_KEY_ID);
+		if(readId != null)
+			this.id = readId;
 		NBTTagList list = nbt.getTagList(NBT_KEY_CORNERS, 10);
 		for(int i = 0; i < list.tagCount(); ++i)
 			this.area.add(NBTUtil.getPosFromTag(list.getCompoundTagAt(i)));

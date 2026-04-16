@@ -2,13 +2,11 @@ package dev.enginecrafter77.imhotepmc.marker.sync;
 
 import dev.enginecrafter77.imhotepmc.marker.MarkedAreaImpl;
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class AreaUpdateMessage implements IMessage {
 	private final List<AreaUpdateMessagePart> parts;
@@ -49,8 +47,7 @@ public class AreaUpdateMessage implements IMessage {
 		for(int i = 0; i < size; ++i)
 		{
 			AreaUpdateMessagePart part = new AreaUpdateMessagePart();
-			part.eventType = AreaUpdateEventType.values()[buf.readByte()];
-			part.group.deserializeNBT(Objects.requireNonNull(ByteBufUtils.readTag(buf)));
+			part.fromBytes(buf);
 			this.parts.add(part);
 		}
 	}
@@ -60,10 +57,17 @@ public class AreaUpdateMessage implements IMessage {
 	{
 		buf.writeBoolean(this.reset);
 		buf.writeInt(this.parts.size());
-		for(AreaUpdateMessagePart part : this.parts)
-		{
-			buf.writeByte(part.eventType.ordinal());
-			ByteBufUtils.writeTag(buf, part.group.serializeNBT());
-		}
+		this.parts.forEach(p -> p.toBytes(buf));
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder("AreaUpdateMessage(");
+		if(this.reset)
+			sb.append("RST+");
+		sb.append(this.parts);
+		sb.append(')');
+		return sb.toString();
 	}
 }
