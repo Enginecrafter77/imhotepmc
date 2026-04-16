@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "imhotepmc:items/insitu_exchanger_active"
+	"layer0": "imhotepmc:items/insitu_exchanger",
+    "layer1": "imhotepmc:items/insitu_exchanger_bolts"
   }
 }
