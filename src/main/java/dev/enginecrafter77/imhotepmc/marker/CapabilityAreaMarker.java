@@ -4,12 +4,10 @@ import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.marker.sync.AreaUpdateRequest;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,14 +17,11 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
-import java.util.Optional;
 
 public class CapabilityAreaMarker {
 	private static final ResourceLocation PLAYER_CAP_ID = new ResourceLocation(ImhotepMod.MOD_ID, "area_marker");
@@ -52,47 +47,6 @@ public class CapabilityAreaMarker {
 	public static void onWorldCapabilityAttach(AttachCapabilitiesEvent<World> event)
 	{
 		event.addCapability(WORLD_CAP_ID, new WorldStoredAreaMarkHandler.Wrapper(event.getObject()));
-	}
-
-	@SubscribeEvent
-	public static void onInteractEvent(PlayerInteractEvent.RightClickBlock event)
-	{
-		if(event.getHand() != EnumHand.MAIN_HAND)
-			return;
-
-		ItemStack held = event.getItemStack();
-		if(held.getItem() != ImhotepMod.ITEM_CONSTRUCTION_TAPE)
-			return;
-
-		AreaMarkHandler handler = event.getWorld().getCapability(AREA_HANDLER, null);
-		if(handler == null)
-			return; //TODO warn
-
-		AreaMarkingActor actor = event.getEntityPlayer().getCapability(AREA_MARKING_ACTOR, null);
-		if(actor == null)
-			return;
-
-		MarkingAnchor linkingFrom = Optional.ofNullable(actor.getCurrentLinkingPosition()).map(handler::getAnchorAt).orElse(null);
-		MarkingAnchor linkingTo = handler.getAnchorAt(event.getPos());
-
-		if(linkingFrom == null)
-		{
-			if(linkingTo == null)
-				return; // player tried linking a non-marker
-			actor.setCurrentLinkingPosition(linkingTo.getMarkerPosition());
-		}
-		else
-		{
-			// player clicked a non-marker block OR clicked the same marker
-			if(linkingTo == null || Objects.equals(linkingFrom, linkingTo))
-			{
-				actor.setCurrentLinkingPosition(null);
-				return;
-			}
-
-			handler.connect(actor, linkingFrom, linkingTo, false);
-			actor.setCurrentLinkingPosition(null);
-		}
 	}
 
 	@SubscribeEvent

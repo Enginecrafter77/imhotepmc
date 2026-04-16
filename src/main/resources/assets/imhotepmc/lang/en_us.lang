@@ -19,6 +19,11 @@ label.terraformer.mode=Mode
 label.energy.fill=%d / %d RF
 
 message.missing_block.text=Missing Block
+message.not_enough_tape.text=Not enough tape
+message.anchors_not_aligned.text=Anchors are not on one axis
+message.anchors_not_contributing.text=Anchor would not expand selection
+message.anchors_already_connected.text=Anchors already connected
+message.conflicting_mark_zones.text=Cannot connect 2 separate marking areas
 
 desc.insitu_exchanger.0=Left-clicking a block changes it
 desc.insitu_exchanger.1=to the one held in off hand.
