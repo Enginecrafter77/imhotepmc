@@ -71,10 +71,10 @@ public abstract class AbstractAreaMarkHandler implements AreaMarkHandler {
 		switch(mask)
 		{
 		case 0: // both are null
+			if(BlockPosUtil.getSharedAxis(first.getMarkerPosition(), second.getMarkerPosition()) == null)
+				return AreaExpandResult.NO_CONNECTING_AXIS;
 			if(!simulate)
 			{
-				if(BlockPosUtil.getSharedAxis(first.getMarkerPosition(), second.getMarkerPosition()) == null)
-					return AreaExpandResult.NO_CONNECTING_AXIS;
 				MarkedAreaImpl group = MarkedAreaImpl.create(first.getMarkerPosition(), second.getMarkerPosition());
 				first.setAreaId(group.getId());
 				second.setAreaId(group.getId());
