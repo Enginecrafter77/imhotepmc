@@ -82,16 +82,46 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 		return (this.currentIndex + 1) >= this.getIndexLimit();
 	}
 
+	private boolean isProcessingDeferred()
+	{
+		return this.currentIndex >= this.indexer.getVolume();
+	}
+
+	/**
+	 * Computes a real index that falls into the volume of the internal indexer.
+	 * <ul>
+	 *     <li>If the current index falls within the indexer's range, the current index is returned.</li>
+	 *     <li>
+	 *         If the current index is greater than or equal to the indexer's volume, then the index is assumed to be of a deferred block.
+	 *         <ul>
+	 *             <li>The position in the deferred array is then given as <code>i-V</code>, <code>i</code> being current index and <code>V</code> being indexer volume.</li>
+	 *             <li>The deferred index is used to look up the real index inside the deferred items array</li>
+	 *         </ul>
+	 *     </li>
+	 * </ul>
+	 * @return A real index falling into the volume of the internal indexer.
+	 */
+	private int getRealIndex()
+	{
+		if(!this.isProcessingDeferred())
+			return this.currentIndex;
+		int realIndex = this.currentIndex - this.indexer.getVolume();
+		return this.deferred.getInt(realIndex);
+	}
+
 	protected void advanceIndex()
 	{
 		while((this.currentIndex + 1) < this.getIndexLimit())
 		{
 			++this.currentIndex;
-			BlockPos pos = this.indexer.fromIndex(this.currentIndex);
+			int realIndex = this.getRealIndex();
+			BlockPos pos = this.indexer.fromIndex(realIndex);
 			switch(this.getTaskActionFor(pos))
 			{
 			case DEFER:
-				this.deferred.add(this.currentIndex);
+				if(this.isProcessingDeferred())
+					return; // refuse to defer anymore
+				this.deferred.add(realIndex);
 			case SKIP:
 				continue;
 			case PROCEED:
@@ -102,10 +132,7 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 
 	private BuilderTask createActiveTask()
 	{
-		int taskIndex = this.currentIndex;
-		if(taskIndex >= this.indexer.getVolume())
-			taskIndex = this.deferred.getInt(taskIndex - this.indexer.getVolume());
-		BlockPos pos = this.indexer.fromIndex(taskIndex);
+		BlockPos pos = this.indexer.fromIndex(this.getRealIndex());
 		return this.createTask(pos);
 	}
 
@@ -113,7 +140,12 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 	public void update()
 	{
 		if(this.isDone())
+		{
+			// cleanup deferred (to avoid storing it further in NBT)
+			this.currentIndex = this.indexer.getVolume();
+			this.deferred.clear();
 			return;
+		}
 
 		if(this.advanceTaskNextRound)
 		{
