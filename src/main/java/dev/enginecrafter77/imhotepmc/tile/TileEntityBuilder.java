@@ -7,7 +7,6 @@ import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BlueprintBuildJob;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderContext;
-import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderPlaceTask;
 import dev.enginecrafter77.imhotepmc.net.BuilderSharedStateUpdate;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementProvider;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
@@ -201,15 +200,9 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	{
 		if(this.world.isRemote || this.job == null)
 			return;
+		IBlockState above = this.world.getBlockState(this.getPos().up());
+		this.job.setRequireItems(above.getBlock() != ImhotepMod.BLOCK_CREATIVE_BUILD_CACHE);
 		this.job.update();
-
-		// bypass item requirements if block above is creative build cache
-		BuilderPlaceTask task = (BuilderPlaceTask)this.job.getCurrentTask();
-		if(task != null)
-		{
-			IBlockState above = this.world.getBlockState(this.getPos().up());
-			task.setRequireItems(above.getBlock() != ImhotepMod.BLOCK_CREATIVE_BUILD_CACHE);
-		}
 
 		this.sharedState.setMissingItemsFrom(this.job.currentlyMissingItems());
 		this.sharedState.setPowered(true);

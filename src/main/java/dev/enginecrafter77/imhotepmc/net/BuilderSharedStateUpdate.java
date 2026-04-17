@@ -52,4 +52,10 @@ public class BuilderSharedStateUpdate implements IMessage {
 		BlockPosUtil.writeToByteBuf(buf, this.builderPos);
 		ByteBufUtils.writeTag(buf, this.state.serializeNBT());
 	}
+
+	@Override
+	public String toString()
+	{
+		return String.format("Update(%s:%s)", this.builderPos, this.state);
+	}
 }

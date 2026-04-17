@@ -102,4 +102,10 @@ public class SharedBuilderState implements INBTSerializable<NBTTagCompound> {
 		for(NBTBase missingItemBaseTag : nbt.getTagList(NBT_KEY_MI, 10))
 			this.missingItems.add(new ItemStack((NBTTagCompound)missingItemBaseTag));
 	}
+
+	@Override
+	public String toString()
+	{
+		return String.format("SharedBuilderState(P:%b,MI:%s)", this.powered, this.missingItems);
+	}
 }

@@ -13,10 +13,36 @@ import java.util.stream.Stream;
 public class BlueprintBuildJob extends StructureBuildJob {
 	private final BlueprintPlacement placement;
 
+	private boolean requireEnergy;
+	private boolean requireItems;
+
 	public BlueprintBuildJob(BuilderContext context, BlueprintPlacement placement)
 	{
 		super(context, placement.getOriginOffset(), placement.getSize());
 		this.placement = placement;
+		this.requireEnergy = true;
+		this.requireItems = true;
+	}
+
+	public void setRequireEnergy(boolean requireEnergy)
+	{
+		this.requireEnergy = requireEnergy;
+		this.propagateSettingsToActiveTask();
+	}
+
+	public void setRequireItems(boolean requireItems)
+	{
+		this.requireItems = requireItems;
+		this.propagateSettingsToActiveTask();
+	}
+
+	private void propagateSettingsToActiveTask()
+	{
+		AbstractBuilderTask task = (AbstractBuilderTask)this.getCurrentTask();
+		if(task == null)
+			return;
+		task.setRequireEnergy(this.requireEnergy);
+		task.setRequireItems(this.requireItems);
 	}
 
 	public BlueprintPlacement getPlacement()
@@ -29,7 +55,10 @@ public class BlueprintBuildJob extends StructureBuildJob {
 	{
 		BlueprintEntry entry = this.placement.getBlockAt(pos);
 		BuilderBlockPlacementDetails details = BuilderBlockPlacementDetails.fromBlueprintEntry(entry);
-		return new BuilderPlaceTask(this.context, pos, details);
+		BuilderPlaceTask task = new BuilderPlaceTask(this.context, pos, details);
+		task.setRequireEnergy(this.requireEnergy);
+		task.setRequireItems(this.requireItems);
+		return task;
 	}
 
 	public Stream<ItemStack> currentlyMissingItems()

@@ -19,6 +19,7 @@ public class BuilderDwellUpdateHandler implements IMessageHandler<BuilderSharedS
 	@Override
 	public IMessage onMessage(BuilderSharedStateUpdate message, MessageContext ctx)
 	{
+		LOGGER.debug("Received {}", message);
 		WorldClient world = Minecraft.getMinecraft().world;
 		TileEntity tile = world.getTileEntity(message.getBuilderPos());
 		if(!(tile instanceof TileEntityBuilder))
