@@ -10,6 +10,7 @@ import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderContext;
 import dev.enginecrafter77.imhotepmc.net.BuilderSharedStateUpdate;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementProvider;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
+import dev.enginecrafter77.imhotepmc.util.TickModulator;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import dev.enginecrafter77.imhotepmc.util.math.Box3i;
 import net.minecraft.block.state.IBlockState;
@@ -43,6 +44,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 
 	private static final NBTBlueprintSerializer SERIALIZER = new LitematicaBlueprintSerializer();
 
+	private final TickModulator tickModulator;
 	private final EnergyStorage energyStorage;
 
 	@Nullable
@@ -61,6 +63,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 
 	public TileEntityBuilder()
 	{
+		this.tickModulator = new TickModulator(this::onWorkTick);
 		this.energyStorage = new EnergyStorage(16000, 1000, 1000);
 		this.facing = EnumFacing.NORTH;
 		this.projectionActive = false;
@@ -68,6 +71,8 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		this.job = null;
 		this.sharedState = new SharedBuilderState();
 		this.lastSyncedStateHash = 0;
+
+		this.tickModulator.setTickRate(1.0F);
 	}
 
 	@Nullable
@@ -195,8 +200,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		BlueprintPlacementRegistry.proxy.registerProvider(this);
 	}
 
-	@Override
-	public void update()
+	private void onWorkTick()
 	{
 		if(this.world.isRemote || this.job == null)
 			return;
@@ -206,6 +210,14 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 
 		this.sharedState.setMissingItemsFrom(this.job.currentlyMissingItems());
 		this.sharedState.setPowered(true);
+	}
+
+	@Override
+	public void update()
+	{
+		if(this.world.isRemote || this.job == null)
+			return;
+		this.tickModulator.update();
 
 		if(this.lastSyncedStateHash != this.sharedState.hashCode())
 		{
