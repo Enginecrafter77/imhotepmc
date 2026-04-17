@@ -18,6 +18,10 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 	private static final String NBT_KEY_DEFERRED = "deferred";
 	private static final String NBT_KEY_INDEX = "index";
 
+	private static final int DEFER_MASK_INDEX = 0x0FFFFFFF;
+	private static final int MAX_BUILD_VOLUME = 0x0FFFFFFF; // the maximum value representable by bits in DEFER_MAX_INDEX
+	private static final int MAX_GENERATION = 16;
+
 	protected final BuilderContext context;
 	protected final BlockPos buildOrigin;
 	protected final Vec3i buildSize;
@@ -30,8 +34,11 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 	private boolean advanceTaskNextRound;
 	private int currentIndex;
 
+	private int deferGenerationLimit;
+
 	public StructureBuildJob(BuilderContext context, BlockPos buildOrigin, Vec3i buildSize, VoxelIndexer indexer)
 	{
+		assert indexer.getVolume() < MAX_BUILD_VOLUME;
 		this.deferred = new IntArrayList();
 		this.buildOrigin = buildOrigin;
 		this.buildSize = buildSize;
@@ -40,6 +47,7 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 		this.advanceTaskNextRound = true;
 		this.currentTask = null;
 		this.currentIndex = -1;
+		this.deferGenerationLimit = MAX_GENERATION;
 	}
 
 	public StructureBuildJob(BuilderContext context, BlockPos buildOrigin, Vec3i buildSize)
@@ -49,7 +57,7 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 
 	public abstract BuilderTask createTask(BlockPos pos);
 
-	public TaskAction getTaskActionFor(BlockPos pos)
+	public TaskAction getTaskActionFor(BlockPos pos, int generation)
 	{
 		return TaskAction.PROCEED;
 	}
@@ -58,6 +66,16 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 	public BuilderTask getCurrentTask()
 	{
 		return this.currentTask;
+	}
+
+	/**
+	 * Sets the defer limit, i.e. the maximum number of times an index can be deferred before it is forcibly processed.
+	 * @param deferGenerationLimit The defer generation limit, or 0 to disable deferring entirely.
+	 */
+	public void setDeferGenerationLimit(int deferGenerationLimit)
+	{
+		assert deferGenerationLimit < MAX_GENERATION;
+		this.deferGenerationLimit = deferGenerationLimit;
 	}
 
 	protected World getWorld()
@@ -82,9 +100,10 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 		return (this.currentIndex + 1) >= this.getIndexLimit();
 	}
 
-	private boolean isProcessingDeferred()
+	/** @return True if the job is processing natural indexes (i.e. within the indexer's volume), false if it's processing deferred indexes. */
+	private boolean isProcessingNatural()
 	{
-		return this.currentIndex >= this.indexer.getVolume();
+		return this.currentIndex < this.indexer.getVolume();
 	}
 
 	/**
@@ -103,25 +122,44 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 	 */
 	private int getRealIndex()
 	{
-		if(!this.isProcessingDeferred())
+		if(this.isProcessingNatural())
 			return this.currentIndex;
-		int realIndex = this.currentIndex - this.indexer.getVolume();
-		return this.deferred.getInt(realIndex);
+		int deferredIndex = this.currentIndex - this.indexer.getVolume();
+		return deferredValueIndex(this.deferred.getInt(deferredIndex));
 	}
 
-	protected void advanceIndex()
+	/**
+	 * Returns the current index's generation.
+	 * The generation is defined as follows:
+	 * <ul>
+	 *     <li>Indexes lower than the indexer's volume are always generation 0</li>
+	 *     <li>Deferred block's generation is always one more than the generation of index that deferred it</li>
+	 *     <li>Generation cannot be higher than 16</li>
+	 * </ul>
+	 * @return The generation of the current index
+	 */
+	private int getCurrentGeneration()
+	{
+		if(this.isProcessingNatural())
+			return 0;
+		int deferredIndex = this.currentIndex - this.indexer.getVolume();
+		return deferredValueGeneration(this.deferred.getInt(deferredIndex));
+	}
+
+	private void advanceIndex()
 	{
 		while((this.currentIndex + 1) < this.getIndexLimit())
 		{
 			++this.currentIndex;
 			int realIndex = this.getRealIndex();
+			int generation = this.getCurrentGeneration();
 			BlockPos pos = this.indexer.fromIndex(realIndex);
-			switch(this.getTaskActionFor(pos))
+			switch(this.getTaskActionFor(pos, generation))
 			{
 			case DEFER:
-				if(this.isProcessingDeferred())
-					return; // refuse to defer anymore
-				this.deferred.add(realIndex);
+				if(generation >= this.deferGenerationLimit)
+					return; // defer generation limit reached
+				this.deferred.add(makeDeferredValue(realIndex, generation+1));
 			case SKIP:
 				continue;
 			case PROCEED:
@@ -181,6 +219,25 @@ public abstract class StructureBuildJob implements SaveableStateHolder<NBTTagCom
 		this.deferred.addElements(0, tag.getIntArray(NBT_KEY_DEFERRED));
 		this.currentIndex = tag.getInteger(NBT_KEY_INDEX);
 		this.advanceTaskNextRound = false;
+	}
+
+	private static int deferredValueIndex(int val)
+	{
+		return val & DEFER_MASK_INDEX;
+	}
+
+	private static int deferredValueGeneration(int val)
+	{
+		// add 1 so we can use the whole 4 bits of generation to represent all 17 generations (0=non-deferred, 1=first deferred...)
+		return ((val >> 28) & 0x0F) + 1;
+	}
+
+	private static int makeDeferredValue(int index, int generation)
+	{
+		assert generation > 0;
+		assert generation <= MAX_GENERATION;
+		--generation;
+		return ((generation & 0x0F) << 28) | index;
 	}
 
 	public static enum TaskAction {

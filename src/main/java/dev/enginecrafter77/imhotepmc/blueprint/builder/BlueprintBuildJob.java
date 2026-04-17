@@ -72,7 +72,7 @@ public class BlueprintBuildJob extends StructureBuildJob {
 	}
 
 	@Override
-	public TaskAction getTaskActionFor(BlockPos pos)
+	public TaskAction getTaskActionFor(BlockPos pos, int generation)
 	{
 		IBlockState currentBlock = this.getWorld().getBlockState(pos);
 		BlueprintEntry entry = this.placement.getBlockAt(pos);

@@ -34,11 +34,11 @@ public class ShapeBuildJob extends StructureBuildJob {
 	}
 
 	@Override
-	public TaskAction getTaskActionFor(BlockPos pos)
+	public TaskAction getTaskActionFor(BlockPos pos, int generation)
 	{
 		if(!this.generator.isBlockInShape(this.area, pos) || this.buildMode.wouldTaskBeInVain(this.getWorld(), pos))
 			return TaskAction.SKIP;
-		return super.getTaskActionFor(pos);
+		return super.getTaskActionFor(pos, generation);
 	}
 
 	private static BlockPos boxOrigin(Box3i box)
