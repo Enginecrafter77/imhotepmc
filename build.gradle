@@ -1,3 +1,5 @@
+import com.gtnewhorizons.retrofuturagradle.minecraft.RunMinecraftTask
+
 plugins {
 	id 'dev.enginecrafter77.githubrelease'
 	id 'com.matthewprenger.cursegradle'
@@ -18,7 +20,15 @@ minecraft {
 	mcpMappingChannel = 'stable'
 	mcpMappingVersion = '39'
 	username = System.getenv("MINECRAFT_USERNAME") ?: "Steve"
-	extraRunJvmArguments.add("-ea")
+	extraRunJvmArguments = ["-ea", "-Dforge.logging.console.level=debug"]
+}
+
+tasks.named("runClient", RunMinecraftTask.class) {
+	workingDir = "run"
+}
+
+tasks.named("runServer", RunMinecraftTask.class) {
+	workingDir = "run/server"
 }
 
 repositories {
