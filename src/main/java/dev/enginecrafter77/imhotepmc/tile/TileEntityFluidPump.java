@@ -139,13 +139,11 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 		IFluidHandler handler = this.getFluidHandlerForBlock(pos);
 		if(handler == null)
 			return false;
-		FluidStack currentTankContents = this.fluidBuffer.getFluid();
-		if(currentTankContents == null)
-			return true;
 		FluidStack pumpContents = handler.drain(Fluid.BUCKET_VOLUME, false);
 		if(pumpContents == null)
 			return false;
-		return pumpContents.getFluid() == currentTankContents.getFluid();
+		FluidStack currentTankContents = this.fluidBuffer.getFluid();
+		return currentTankContents == null || pumpContents.getFluid() == currentTankContents.getFluid();
 	}
 
 	private BlockPos getPipePos(int depth)
