@@ -1,0 +1,42 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "thermalexpansion"
+		}
+	],
+	"pattern": [
+		"GPG",
+		"CFC",
+		"SBS"
+	],
+	"key": {
+		"G": {
+			"item": "thermalfoundation:material",
+			"data": 289
+		},
+		"P": {
+			"item": "thermalfoundation:material",
+			"data": 320
+		},
+		"C": {
+			"item": "thermalfoundation:material",
+			"data": 513
+		},
+		"F": {
+			"item": "thermalexpansion:frame",
+			"data": 64
+		},
+		"S": {
+			"item": "thermalfoundation:material",
+			"data": 352
+		},
+		"B": {
+			"item": "minecraft:bucket"
+		}
+	},
+	"result": {
+		"item": "imhotepmc:fluid_pump"
+	}
+}

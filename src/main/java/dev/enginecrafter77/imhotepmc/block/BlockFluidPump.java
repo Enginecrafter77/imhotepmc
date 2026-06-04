@@ -17,6 +17,7 @@ public class BlockFluidPump extends Block {
 		super(Material.IRON);
 		this.setRegistryName(new ResourceLocation(ImhotepMod.MOD_ID, "fluid_pump"));
 		this.setTranslationKey("fluid_pump");
+		this.setCreativeTab(ImhotepMod.CREATIVE_TAB);
 	}
 
 	@Override

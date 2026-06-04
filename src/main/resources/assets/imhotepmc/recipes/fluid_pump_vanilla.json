@@ -1,0 +1,40 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:not",
+			"value": {
+				"type": "forge:mod_loaded",
+				"modid": "thermalexpansion"
+			}
+		}
+	],
+	"pattern": [
+		"ICI",
+		"RFR",
+		"HBH"
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:iron_ingot"
+		},
+		"C": {
+			"item": "minecraft:clay"
+		},
+		"R": {
+			"item": "minecraft:redstone"
+		},
+		"F": {
+			"item": "imhotepmc:machine_hull"
+		},
+		"H": {
+			"item": "minecraft:hopper"
+		},
+		"B": {
+			"item": "minecraft:bucket"
+		}
+	},
+	"result": {
+		"item": "imhotepmc:fluid_pump"
+	}
+}
