@@ -416,6 +416,13 @@ public class ItemInsituExchanger extends Item {
 			return new EnergyConsumeTransaction(this.energyStorage, this.getReplaceEnergyConsumed(pos));
 		}
 
+		private void replaceBlock(BlockPos pos)
+		{
+			this.world.playEvent(EFFECT_BLOCK_BREAK, pos, Block.getStateId(this.replace));
+			this.world.setBlockState(pos, this.replacement);
+			++this.replacedBlocks;
+		}
+
 		@Override
 		public void update()
 		{
@@ -428,12 +435,18 @@ public class ItemInsituExchanger extends Item {
 			}
 
 			BlockPos pos = this.graphIterator.next();
-			Transaction replace = Transaction.from(() -> {
-				this.world.playEvent(EFFECT_BLOCK_BREAK, pos, Block.getStateId(this.replace));
-				this.world.setBlockState(pos, this.replacement);
-				++this.replacedBlocks;
-			});
-			Transaction.compose(this.getEnergyTransaction(pos), this.getItemTransaction(), replace).tryCommit();
+			Transaction energyDrain = this.getEnergyTransaction(pos);
+			Transaction itemTransaction = this.getItemTransaction();
+
+			if(!energyDrain.canCommit() || !itemTransaction.canCommit())
+			{
+				this.markComplete();
+				return;
+			}
+
+			energyDrain.commit();
+			itemTransaction.commit();
+			this.replaceBlock(pos);
 		}
 
 		private boolean isBlockCandidateForReplacement(BlockPos pos)
