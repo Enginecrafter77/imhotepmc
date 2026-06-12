@@ -2,16 +2,16 @@ package dev.enginecrafter77.imhotepmc.util;
 
 import dev.enginecrafter77.imhotepmc.util.scheduler.EnqueuedTickedTask;
 import dev.enginecrafter77.imhotepmc.util.scheduler.TickedTask;
-import dev.enginecrafter77.imhotepmc.util.scheduler.TickedTaskScheduler;
+import dev.enginecrafter77.imhotepmc.util.scheduler.TickedTaskSchedulerImpl;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class ServerBackgroundTaskScheduler {
-	private final TickedTaskScheduler scheduler;
+	private final TickedTaskSchedulerImpl scheduler;
 
 	public ServerBackgroundTaskScheduler()
 	{
-		this.scheduler = new TickedTaskScheduler();
+		this.scheduler = new TickedTaskSchedulerImpl();
 	}
 
 	public void dropAllTasks()
