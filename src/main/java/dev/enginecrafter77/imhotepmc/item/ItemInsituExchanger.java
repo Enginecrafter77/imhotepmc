@@ -92,7 +92,7 @@ public class ItemInsituExchanger extends Item {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if(worldIn.isRemote || hand != EnumHand.MAIN_HAND)
+		if(hand != EnumHand.MAIN_HAND)
 			return EnumActionResult.SUCCESS;
 
 		ItemStack exchangerStack = player.getHeldItem(EnumHand.MAIN_HAND);
@@ -117,7 +117,7 @@ public class ItemInsituExchanger extends Item {
 		ConnectedReplaceTask task = new ConnectedReplaceTask(worldIn, player, energyStorage, inv);
 		task.setup(pos, replacement);
 
-		ImhotepMod.instance.getBackgroundTaskScheduler().enqueue(task)
+		ImhotepMod.getWorldTaskScheduler(worldIn).enqueue(task)
 				.whenStarted(() -> this.onExchangeStart(exchangerStack))
 				.whenComplete(r -> this.onExchangeStop(exchangerStack));
 
@@ -240,8 +240,6 @@ public class ItemInsituExchanger extends Item {
 	{
 		EntityPlayer player = event.getEntityPlayer();
 		World worldIn = player.world;
-		if(worldIn.isRemote)
-			return;
 
 		ItemInsituExchanger instance = ImhotepMod.ITEM_INSITU_EXCHANGER;
 		ItemStack exchangerStack = player.getHeldItem(EnumHand.MAIN_HAND);

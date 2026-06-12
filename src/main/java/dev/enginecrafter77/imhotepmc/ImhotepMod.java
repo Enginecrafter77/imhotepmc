@@ -6,7 +6,10 @@ import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
 import dev.enginecrafter77.imhotepmc.entity.EntityPrimedRestorationCharge;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
-import dev.enginecrafter77.imhotepmc.item.*;
+import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
+import dev.enginecrafter77.imhotepmc.item.ItemInsituExchanger;
+import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
+import dev.enginecrafter77.imhotepmc.item.ItemShapeCard;
 import dev.enginecrafter77.imhotepmc.marker.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.marker.WorldStoredAreaMarkHandler;
 import dev.enginecrafter77.imhotepmc.marker.sync.AreaUpdateMessage;
@@ -17,8 +20,9 @@ import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
 import dev.enginecrafter77.imhotepmc.render.*;
 import dev.enginecrafter77.imhotepmc.tile.*;
-import dev.enginecrafter77.imhotepmc.util.ServerBackgroundTaskScheduler;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
+import dev.enginecrafter77.imhotepmc.util.scheduler.CapabilityTickedTaskScheduler;
+import dev.enginecrafter77.imhotepmc.util.scheduler.TickedTaskScheduler;
 import dev.enginecrafter77.imhotepmc.world.sync.WorldDataSyncHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -29,6 +33,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,7 +43,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -52,7 +56,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,7 +80,6 @@ public class ImhotepMod {
     public static final String MOD_ID = "imhotepmc";
 
     public static CreativeTabs CREATIVE_TAB = new CreativeTabs(MOD_ID) {
-        @Nonnull
         @Override
         public ItemStack createIcon()
         {
@@ -113,8 +115,6 @@ public class ImhotepMod {
     private PacketStreamWrapper packetStreamer;
     private WorldDataSyncHandler worldDataSyncHandler;
 
-    private ServerBackgroundTaskScheduler backgroundTaskScheduler;
-
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
@@ -138,8 +138,6 @@ public class ImhotepMod {
         this.registerTileEntities();
         this.initializeContent();
 
-        this.backgroundTaskScheduler = new ServerBackgroundTaskScheduler();
-        MinecraftForge.EVENT_BUS.register(this.backgroundTaskScheduler);
         MinecraftForge.EVENT_BUS.register(ItemInsituExchanger.class);
 
         this.builderBomProvider = new DefaultBOMProvider();
@@ -162,6 +160,7 @@ public class ImhotepMod {
         NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
 
 		CapabilityAreaMarker.register();
+		CapabilityTickedTaskScheduler.register();
         MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
 		MinecraftForge.EVENT_BUS.register(ItemConstructionTape.class);
     }
@@ -193,12 +192,6 @@ public class ImhotepMod {
         RenderBlueprintPlacements.register();
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityPrimedRestorationCharge.class, RenderEntityPrimedRestorationCharge::new);
-    }
-
-    @Mod.EventHandler
-    public void onServerStarting(FMLServerStartingEvent event)
-    {
-        this.backgroundTaskScheduler.dropAllTasks();
     }
 
     public File getSchematicsDir()
@@ -236,10 +229,10 @@ public class ImhotepMod {
         return this.versionTranslator;
     }
 
-    public ServerBackgroundTaskScheduler getBackgroundTaskScheduler()
-    {
-        return this.backgroundTaskScheduler;
-    }
+	public static TickedTaskScheduler getWorldTaskScheduler(World world)
+	{
+		return Objects.requireNonNull(world.getCapability(CapabilityTickedTaskScheduler.CAPABILITY, null));
+	}
 
     private static final Pattern BTT_FILENAME_PATTERN = Pattern.compile("D([0-9]+).btt");
 
