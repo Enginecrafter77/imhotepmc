@@ -2,7 +2,7 @@ package dev.enginecrafter77.imhotepmc.item;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.util.GraphBlockIterator;
-import dev.enginecrafter77.imhotepmc.util.ServerBackgroundTaskScheduler;
+import dev.enginecrafter77.imhotepmc.util.scheduler.TickedTask;
 import dev.enginecrafter77.imhotepmc.util.transaction.EnergyConsumeTransaction;
 import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransaction;
 import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransactionTemplate;
@@ -313,7 +313,7 @@ public class ItemInsituExchanger extends Item {
 		}
 	}
 
-	public static class ConnectedReplaceTask extends ServerBackgroundTaskScheduler.ResultlessBackgroundTask
+	public static class ConnectedReplaceTask extends TickedTask.Resultless
 	{
 		public static final int EFFECT_BLOCK_BREAK = 2001;
 		public static final int NO_LIMIT = -1;
