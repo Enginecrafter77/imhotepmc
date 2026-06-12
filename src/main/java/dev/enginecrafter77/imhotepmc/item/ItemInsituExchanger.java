@@ -116,9 +116,10 @@ public class ItemInsituExchanger extends Item {
 		@Nullable IItemHandler inv = player.isCreative() ? null : player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		ConnectedReplaceTask task = new ConnectedReplaceTask(worldIn, player, energyStorage, inv);
 		task.setup(pos, replacement);
-		task.setOnStartCallback(() -> this.onExchangeStart(exchangerStack));
-		task.setOnCompleteCallback(() -> this.onExchangeStop(exchangerStack));
-		ImhotepMod.instance.getBackgroundTaskScheduler().enqueue(task);
+
+		ImhotepMod.instance.getBackgroundTaskScheduler().enqueue(task)
+				.whenStarted(() -> this.onExchangeStart(exchangerStack))
+				.whenComplete(r -> this.onExchangeStop(exchangerStack));
 
 		return EnumActionResult.SUCCESS;
 	}
@@ -312,7 +313,7 @@ public class ItemInsituExchanger extends Item {
 		}
 	}
 
-	public static class ConnectedReplaceTask extends ServerBackgroundTaskScheduler.ServerBackgroundTask
+	public static class ConnectedReplaceTask extends ServerBackgroundTaskScheduler.ResultlessBackgroundTask
 	{
 		public static final int EFFECT_BLOCK_BREAK = 2001;
 		public static final int NO_LIMIT = -1;
@@ -430,7 +431,7 @@ public class ItemInsituExchanger extends Item {
 				return; // skip tick
 			if(!this.graphIterator.hasNext() || this.hasReachedBlockLimit())
 			{
-				this.markComplete();
+				this.complete();
 				return;
 			}
 
@@ -440,7 +441,7 @@ public class ItemInsituExchanger extends Item {
 
 			if(!energyDrain.canCommit() || !itemTransaction.canCommit())
 			{
-				this.markComplete();
+				this.complete();
 				return;
 			}
 

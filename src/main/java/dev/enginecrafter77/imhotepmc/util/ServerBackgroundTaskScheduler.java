@@ -10,15 +10,20 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 public class ServerBackgroundTaskScheduler {
 	private static final Logger LOGGER = LogManager.getLogger(ServerBackgroundTaskScheduler.class);
 
-	private final List<ServerBackgroundTask> tasks;
+	private final List<EnqueuedBackgroundTask<?>> tasks;
 
 	public ServerBackgroundTaskScheduler()
 	{
-		this.tasks = new ArrayList<ServerBackgroundTask>();
+		this.tasks = new ArrayList<EnqueuedBackgroundTask<?>>();
 	}
 
 	public void dropAllTasks()
@@ -26,21 +31,23 @@ public class ServerBackgroundTaskScheduler {
 		this.tasks.clear();
 	}
 
-	public void enqueue(ServerBackgroundTask task)
+	public <T> EnqueuedBackgroundTask<T> enqueue(ServerBackgroundTask<T> task)
 	{
-		this.tasks.add(task);
+		EnqueuedBackgroundTask<T> enqTask = new EnqueuedBackgroundTask<T>(task);
+		this.tasks.add(enqTask);
+		return enqTask;
 	}
 
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event)
 	{
-		Iterator<ServerBackgroundTask> itr = this.tasks.iterator();
+		Iterator<EnqueuedBackgroundTask<?>> itr = this.tasks.iterator();
 		while(itr.hasNext())
 		{
-			ServerBackgroundTask task = itr.next();
+			EnqueuedBackgroundTask<?> task = itr.next();
 			try
 			{
-				task.tick();
+				task.update();
 			}
 			catch(Throwable error)
 			{
@@ -49,79 +56,188 @@ public class ServerBackgroundTaskScheduler {
 				continue;
 			}
 
-			if(task.isComplete())
+			if(task.isDone())
 				itr.remove();
 		}
 	}
 
-	public static abstract class ServerBackgroundTask implements ITickable
-	{
+	public static abstract class ServerBackgroundTask<T> implements ITickable {
 		@Nullable
-		private Runnable onStartCallback;
-		@Nullable
-		private Runnable onCompleteCallback;
-
-		private boolean started;
-		private boolean complete;
+		private Result<T> result;
 
 		public ServerBackgroundTask()
 		{
-			this.started = false;
-			this.complete = false;
+			this.result = null;
 		}
 
-		public void reset()
+		protected void onStart() {}
+
+		protected void onCancelled() {}
+
+		protected final void terminate(Result<T> result)
 		{
-			this.complete = false;
-			this.started = false;
+			this.result = result;
 		}
 
-		public void setOnStartCallback(@Nullable Runnable onStartCallback)
+		protected final boolean isTerminated()
+		{
+			return this.result != null;
+		}
+
+		public Result<T> runBlocking()
+		{
+			while(this.result == null)
+				this.update();
+			return this.result;
+		}
+	}
+
+	public static abstract class ResultlessBackgroundTask extends ServerBackgroundTask<Object> {
+		protected final void complete()
+		{
+			this.terminate(Result.ok(new Object()));
+		}
+	}
+
+	public static class EnqueuedBackgroundTask<T> implements ITickable, Future<T>
+	{
+		private final ServerBackgroundTask<T> task;
+
+		@Nullable
+		private Runnable onStartCallback;
+
+		@Nullable
+		private Consumer<Result<T>> onCompleteCallback;
+
+		private boolean started;
+		private boolean cancelled;
+
+		private final Lock resultLock;
+		private final Condition resultPublishedCondition;
+
+		public EnqueuedBackgroundTask(ServerBackgroundTask<T> task)
+		{
+			this.task = task;
+			this.started = false;
+			this.cancelled = false;
+			this.resultLock = new ReentrantLock();
+			this.resultPublishedCondition = this.resultLock.newCondition();
+		}
+
+		public EnqueuedBackgroundTask<T> whenStarted(Runnable onStartCallback)
 		{
 			this.onStartCallback = onStartCallback;
+			if(this.started)
+				onStartCallback.run();
+			return this;
 		}
 
-		public void setOnCompleteCallback(@Nullable Runnable onCompleteCallback)
+		public EnqueuedBackgroundTask<T> whenComplete(Consumer<Result<T>> onCompleteCallback)
 		{
 			this.onCompleteCallback = onCompleteCallback;
+			if(this.isDone())
+				onCompleteCallback.accept(this.task.result);
+			return this;
 		}
 
-		public boolean isStarted()
+		private void onStarted()
 		{
-			return this.started;
+			this.task.onStart();
+			if(this.onStartCallback != null)
+				this.onStartCallback.run();
 		}
 
-		public boolean isComplete()
+		@Override
+		public boolean cancel(boolean mayInterruptIfRunning)
 		{
-			return this.complete;
+			this.resultLock.lock();
+			if(this.isDone())
+			{
+				this.resultLock.unlock();
+				return false;
+			}
+			this.cancelled = true;
+			this.task.result = Result.err(new CancellationException());
+			this.resultPublishedCondition.signalAll();
+			this.resultLock.unlock();
+			return true;
 		}
 
-		protected void markComplete()
+		@Override
+		public boolean isCancelled()
 		{
-			this.complete = true;
+			return this.cancelled;
 		}
 
-		protected void tick()
+		@Override
+		public boolean isDone()
 		{
-			if(this.complete)
+			return this.task.result != null;
+		}
+
+		@Override
+		public void update()
+		{
+			if(this.isDone())
 				return;
+
+			this.resultLock.lock();
 			if(!this.started)
 			{
 				this.started = true;
-				if(this.onStartCallback != null)
-					this.onStartCallback.run();
+				this.onStarted();
 			}
 
-			this.update();
+			try
+			{
+				this.task.update();
+			}
+			catch(Throwable err)
+			{
+				this.task.terminate(Result.err(err));
+			}
 
-			if(this.complete && this.onCompleteCallback != null)
-				this.onCompleteCallback.run();
+			if(this.isDone())
+			{
+				this.resultPublishedCondition.signalAll();
+				if(this.onCompleteCallback != null)
+				{
+					assert this.task.result != null;
+					this.onCompleteCallback.accept(this.task.result);
+				}
+			}
+			this.resultLock.unlock();
 		}
 
-		public void runBlocking()
+		@Override
+		public T get() throws InterruptedException, ExecutionException
 		{
-			while(!this.isComplete())
-				this.tick();
+			this.resultLock.lock();
+			while(!this.isDone())
+				this.resultPublishedCondition.await();
+			Result<T> res = this.task.result;
+			this.resultLock.unlock();
+
+			assert res != null;
+			if(res.err().isPresent())
+				throw new ExecutionException(res.err().get());
+			return res.unwrap();
+		}
+
+		@Override
+		public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException
+		{
+			this.resultLock.lock();
+			boolean expired = this.resultPublishedCondition.await(timeout, unit);
+			Result<T> res = this.task.result;
+			this.resultLock.unlock();
+
+			if(expired)
+				throw new TimeoutException();
+			assert res != null;
+			if(res.err().isPresent())
+				throw new ExecutionException(res.err().get());
+			return res.unwrap();
 		}
 	}
 }
