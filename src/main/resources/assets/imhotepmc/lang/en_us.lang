@@ -9,6 +9,7 @@ tile.machine_hull.name=Machine Hull
 tile.creative_build_cache.name=Creative Builder Cache
 tile.restoration_charge.name=Restoration Charge
 tile.fluid_pump.name=Fluid Pump
+tile.cave_filler.name=Cave Filler
 
 item.schematic_blueprint.name=Schematic Blueprint
 item.construction_tape.name=Construction Tape

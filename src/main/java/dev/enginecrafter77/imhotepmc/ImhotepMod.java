@@ -188,6 +188,7 @@ public class ImhotepMod {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBuilder.class, new RenderBuilder());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTerraformer.class, new RenderTerraformer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFluidPump.class, new RenderFluidPump());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCaveFiller.class, new RenderCaveFiller());
         RenderWorldAreaMarkers.register();
         TapeLinkingRenderHandler.register();
         RenderBlueprintPlacements.register();
@@ -435,5 +436,6 @@ public class ImhotepMod {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_CREATIVE_BUILD_CACHE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "creative_build_cache"), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_RESTORATION_CHARGE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "restoration_charge"), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_FLUID_PUMP), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "fluid_pump"), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_CAVE_FILLER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "cave_filler"), "inventory"));
     }
 }
