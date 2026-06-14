@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
+import dev.enginecrafter77.imhotepmc.ImhotepConfig;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
@@ -72,7 +73,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 		this.sharedState = new SharedBuilderState();
 		this.lastSyncedStateHash = 0;
 
-		this.tickModulator.setTickRate(1.0F);
+		this.tickModulator.setTickRate((float)ImhotepConfig.general.builderPlaceRate);
 	}
 
 	@Nullable

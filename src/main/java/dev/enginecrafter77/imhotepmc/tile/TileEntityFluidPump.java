@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
+import dev.enginecrafter77.imhotepmc.ImhotepConfig;
 import dev.enginecrafter77.imhotepmc.util.GraphBlockIterator;
 import dev.enginecrafter77.imhotepmc.util.TickModulator;
 import dev.enginecrafter77.imhotepmc.util.transaction.EnergyConsumeTransaction;
@@ -53,7 +54,7 @@ public class TileEntityFluidPump extends TileEntity implements ITickable {
 		this.pipeExtension = 0F;
 		this.done = false;
 
-		this.pumpActionModulator.setTickRate(0.25F);
+		this.pumpActionModulator.setTickRate((float)ImhotepConfig.general.fluidPumpRate);
 	}
 
 	public float getPipeExtension()

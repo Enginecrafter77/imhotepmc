@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
+import dev.enginecrafter77.imhotepmc.ImhotepConfig;
 import dev.enginecrafter77.imhotepmc.util.transaction.EnergyConsumeTransaction;
 import dev.enginecrafter77.imhotepmc.util.transaction.Transaction;
 import net.minecraft.block.Block;
@@ -111,7 +112,7 @@ public class BuilderTemplateTask implements BuilderTask {
 
 		public TemplatedPlaceTransaction()
 		{
-			this.energyTransaction = new EnergyConsumeTransaction(BuilderTemplateTask.this.getContext().getEnergyStorage(), 1000);
+			this.energyTransaction = new EnergyConsumeTransaction(BuilderTemplateTask.this.getContext().getEnergyStorage(), ImhotepConfig.energy.terraformerPlaceCost);
 			this.material = null;
 		}
 

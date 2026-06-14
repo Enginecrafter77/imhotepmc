@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
+import dev.enginecrafter77.imhotepmc.ImhotepConfig;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.util.EnumWorldEvent;
 import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransactionTemplate;
@@ -25,7 +26,7 @@ public class BuilderClearTask extends AbstractBuilderTask {
 	public int getEnergyRequired()
 	{
 		float hardness = this.getBlockToBreak().getBlockHardness(this.getWorld(), this.pos);
-		return Math.round(Math.min(500F, hardness * 100F));
+		return (int)Math.round(Math.min(ImhotepConfig.energy.terraformerClearCost, hardness * ImhotepConfig.energy.terraformerClearHardnessFactor));
 	}
 
 	public IBlockState getBlockToBreak()

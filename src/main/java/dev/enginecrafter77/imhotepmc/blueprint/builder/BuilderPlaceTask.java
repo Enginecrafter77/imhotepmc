@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.blueprint.builder;
 
+import dev.enginecrafter77.imhotepmc.ImhotepConfig;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.util.transaction.ItemStackTransactionTemplate;
 import net.minecraft.block.Block;
@@ -33,7 +34,7 @@ public class BuilderPlaceTask extends AbstractBuilderTask {
 	@Override
 	public int getEnergyRequired()
 	{
-		return 1000;
+		return ImhotepConfig.energy.builderPlaceCost;
 	}
 
 	public void setUpdateFlags(int updateFlags)
