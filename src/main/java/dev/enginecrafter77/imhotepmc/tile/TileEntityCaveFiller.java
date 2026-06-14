@@ -58,8 +58,8 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable {
 
 		this.itemFetchTransaction.setFilter(TileEntityCaveFiller::canFillUsing);
 		this.itemFetchTransaction.setExtractAmount(1);
-		this.scanModulator.setTickRate(64.0F);
-		this.fillModulator.setTickRate(32.0F);
+		this.scanModulator.setTickRate((float)ImhotepConfig.general.caveFillerScanRate);
+		this.fillModulator.setTickRate((float)ImhotepConfig.general.caveFillerFillRate);
 
 		this.reset();
 	}

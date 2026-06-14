@@ -47,6 +47,10 @@ config.imhotepmc.general=General
 config.imhotepmc.general.tooltip=General config
 config.imhotepmc.general.cave_filler_max_blocks=Cave filler max blocks
 config.imhotepmc.general.cave_filler_max_blocks.tooltip=The maximum number of cave blocks the cave filler is allowed to scan.
+config.imhotepmc.general.cave_filler_scan_rate=Cave filler scan rate
+config.imhotepmc.general.cave_filler_scan_rate.tooltip=The average number of blocks scanned per tick by the cave filler.
+config.imhotepmc.general.cave_filler_fill_rate=Cave filler fill rate
+config.imhotepmc.general.cave_filler_fill_rate.tooltip=The average number of blocks filled per tick by the cave filler.
 
 config.imhotepmc.energy=Energy
 config.imhotepmc.energy.tooltip=Machine energy costs
