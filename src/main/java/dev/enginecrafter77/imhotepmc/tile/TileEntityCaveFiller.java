@@ -53,8 +53,8 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable {
 		this.scanModulator = new TickModulator(this::scanNextBlock);
 		this.fillModulator = new TickModulator(this::fillOneBlock);
 		this.itemFetchTransaction = new MatchingItemExtractTransaction();
-		this.scanEnergyConsume = new EnergyConsumeTransaction(this.battery, 1);
-		this.fillEnergyConsume = new EnergyConsumeTransaction(this.battery, 20);
+		this.scanEnergyConsume = new EnergyConsumeTransaction(this.battery, ImhotepConfig.energy.caveFillerScanCost);
+		this.fillEnergyConsume = new EnergyConsumeTransaction(this.battery, ImhotepConfig.energy.caveFillerFillCost);
 
 		this.itemFetchTransaction.setFilter(TileEntityCaveFiller::canFillUsing);
 		this.itemFetchTransaction.setExtractAmount(1);
@@ -121,7 +121,7 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable {
 		if(this.state != State.SCANNING)
 			return;
 		assert this.scanningIterator != null;
-		if(!this.scanningIterator.hasNext() || this.caveModel.size() >= ImhotepConfig.caveFillerMaxBlocks)
+		if(!this.scanningIterator.hasNext() || this.caveModel.size() >= ImhotepConfig.general.caveFillerMaxBlocks)
 		{
 			this.state = State.FILLING;
 			return;

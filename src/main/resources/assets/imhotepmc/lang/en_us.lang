@@ -43,5 +43,14 @@ shape.ellipsoid.name=Sphere
 shape.pyramid.name=Pyramid
 shape.dome.name=Dome
 
-config.imhotepmc.general.cave_filler_max_blocks=Cave Filler Max Blocks
+config.imhotepmc.general=General
+config.imhotepmc.general.tooltip=General config
+config.imhotepmc.general.cave_filler_max_blocks=Cave filler max blocks
 config.imhotepmc.general.cave_filler_max_blocks.tooltip=The maximum number of cave blocks the cave filler is allowed to scan.
+
+config.imhotepmc.energy=Energy
+config.imhotepmc.energy.tooltip=Machine energy costs
+config.imhotepmc.energy.cave_filler_scan=Cave filler scan
+config.imhotepmc.energy.cave_filler_scan.tooltip=The cost of cave filler scanning 1 block
+config.imhotepmc.energy.cave_filler_fill=Cave filler fill
+config.imhotepmc.energy.cave_filler_fill.tooltip=The cost of cave filler filling 1 block
