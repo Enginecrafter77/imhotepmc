@@ -23,6 +23,10 @@ minecraft {
 	extraRunJvmArguments = ["-ea", "-Dforge.logging.console.level=debug"]
 }
 
+tasks.deobfuscateMergedJarToSrg.configure {
+	accessTransformerFiles.from("src/main/resources/imhotepmc_at.cfg")
+}
+
 tasks.named("runClient", RunMinecraftTask.class) {
 	workingDir = "run"
 }

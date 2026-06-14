@@ -1,17 +1,12 @@
 package dev.enginecrafter77.imhotepmc.blueprint;
 
 import com.google.common.collect.ImmutableBiMap;
-import dev.enginecrafter77.imhotepmc.util.LocalReflectionHelper;
 import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializable<NBTTagLongArray> {
-	private static final Field NLA_DATA_FIELD = LocalReflectionHelper.findField(NBTTagLongArray.class, "data", "field_193587_b");
-
 	private final ImmutableBiMap<T, Integer> palette;
 
 	private final int bitsPerEntry;
@@ -59,7 +54,7 @@ public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializabl
 		return this.entryCount;
 	}
 
-	public void set(int index, @Nonnull T value)
+	public void set(int index, T value)
 	{
 		// I don't really feel confident reproducing this, so I copied it from https://github.com/maruohon/litematica/blob/08423854c5b647e4268633bc5b511d1c50a27f38/src/main/java/litematica/schematic/container/LitematicaBitArray.java
 		Integer paletteIndex = this.palette.get(value);
@@ -80,7 +75,6 @@ public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializabl
 		}
 	}
 
-	@Nonnull
 	public T get(int index)
 	{
 		// I don't really feel confident reproducing this, so I copied it from https://github.com/maruohon/litematica/blob/08423854c5b647e4268633bc5b511d1c50a27f38/src/main/java/litematica/schematic/container/LitematicaBitArray.java
@@ -106,7 +100,6 @@ public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializabl
 		return value;
 	}
 
-	@Nonnull
 	public CompactPalettedBitVector<T> copy()
 	{
 		CompactPalettedBitVector<T> copy = new CompactPalettedBitVector<T>(this.palette);
@@ -114,7 +107,6 @@ public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializabl
 		return copy;
 	}
 
-	@Nonnull
 	@Override
 	public Iterator<T> iterator()
 	{
@@ -130,15 +122,7 @@ public class CompactPalettedBitVector<T> implements Iterable<T>, INBTSerializabl
 	@Override
 	public void deserializeNBT(NBTTagLongArray nbt)
 	{
-		try
-		{
-			long[] storedArr = (long[])NLA_DATA_FIELD.get(nbt);
-			this.setArray(storedArr);
-		}
-		catch(IllegalAccessException exc)
-		{
-			throw new RuntimeException("Extraction of data array from NBT failed", exc);
-		}
+		this.setArray(nbt.data);
 	}
 
 	@Override
