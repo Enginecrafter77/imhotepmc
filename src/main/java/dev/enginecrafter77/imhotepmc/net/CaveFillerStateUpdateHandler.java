@@ -2,7 +2,6 @@ package dev.enginecrafter77.imhotepmc.net;
 
 import dev.enginecrafter77.imhotepmc.tile.TileEntityCaveFiller;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -14,8 +13,7 @@ public class CaveFillerStateUpdateHandler implements IMessageHandler<CaveFillerS
 	@Override
 	public IMessage onMessage(CaveFillerStateUpdate message, MessageContext ctx)
 	{
-		World world = Minecraft.getMinecraft().world;
-		TileEntityCaveFiller filler = (TileEntityCaveFiller)world.getTileEntity(message.getTileEntityPosition());
+		TileEntityCaveFiller filler = (TileEntityCaveFiller)Minecraft.getMinecraft().world.getTileEntity(message.getTileEntityPosition());
 		if(filler == null)
 			return null;
 		filler.handleClientStateUpdate(message);
