@@ -42,3 +42,6 @@ shape.clear.name=Clear
 shape.ellipsoid.name=Sphere
 shape.pyramid.name=Pyramid
 shape.dome.name=Dome
+
+config.imhotepmc.general.cave_filler_max_blocks=Cave Filler Max Blocks
+config.imhotepmc.general.cave_filler_max_blocks.tooltip=The maximum number of cave blocks the cave filler is allowed to scan.

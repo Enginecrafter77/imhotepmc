@@ -1,5 +1,6 @@
 package dev.enginecrafter77.imhotepmc.tile;
 
+import dev.enginecrafter77.imhotepmc.ImhotepConfig;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.net.CaveFillerStateUpdate;
 import dev.enginecrafter77.imhotepmc.util.GraphBlockIterator;
@@ -120,7 +121,7 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable {
 		if(this.state != State.SCANNING)
 			return;
 		assert this.scanningIterator != null;
-		if(!this.scanningIterator.hasNext())
+		if(!this.scanningIterator.hasNext() || this.caveModel.size() >= ImhotepConfig.caveFillerMaxBlocks)
 		{
 			this.state = State.FILLING;
 			return;
