@@ -10,8 +10,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -94,31 +92,17 @@ public class BlockCaveFiller extends Block {
 			return false;
 		if(playerIn.isSneaking())
 		{
-			tile.stop();
+			tile.reset();
 			return true;
 		}
 
 		ItemStack item = playerIn.getHeldItem(hand);
 		if(item.isEmpty())
 		{
-			tile.setActive(!tile.isActive());
-		}
-		else if(item.getItem() == Items.STICK)
-		{
-			tile.scan();
-		}
-		else if(item.getItem() == Items.PAPER)
-		{
 			if(!worldIn.isRemote)
 			{
 				playerIn.sendMessage(new TextComponentString(String.format("State: %s, Cave model blocks: %d, Filled blocks: %d", tile.getState().name(), tile.getCaveModel().size(), tile.getFilledBlocks())));
 			}
-		}
-		else if(item.getItem() instanceof ItemBlock)
-		{
-			Block blk = ((ItemBlock)item.getItem()).getBlock();
-			tile.setFillBlock(blk.getDefaultState());
-			tile.fill();
 		}
 		return true;
 	}

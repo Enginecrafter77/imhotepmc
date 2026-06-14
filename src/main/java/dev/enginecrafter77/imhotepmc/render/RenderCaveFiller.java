@@ -7,6 +7,7 @@ import dev.enginecrafter77.imhotepmc.util.math.Rect2d;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
@@ -34,30 +35,41 @@ public class RenderCaveFiller extends TileEntitySpecialRenderer<TileEntityCaveFi
 		this.iconRender.setSurfaceRectangle(CONTROL_DISPLAY_RECT);
 	}
 
-	@Nullable
-	private TextureSlice[] getActiveAnimation(TileEntityCaveFiller te)
+	private TextureSlice getAnimationFrame(World world, TextureSlice[] animation, int period)
 	{
-		switch(te.getState())
-		{
-		case SCANNING:
-			return IC_SCAN;
-		case FILLING:
-			return IC_FILL;
-		default:
-			return null;
-		}
+		int animationTicks = (int)(world.getWorldTime() % period);
+		int ticksPerFrame = period / animation.length;
+		int frame = animationTicks / ticksPerFrame;
+		return animation[frame];
 	}
 
 	@Nullable
 	private TextureSlice getCurrentStateIcon(TileEntityCaveFiller te)
 	{
-		TextureSlice[] animation = this.getActiveAnimation(te);
-		if(animation == null)
-			return null;
+		switch(te.getError())
+		{
+		case INSUFFICIENT_POWER:
+			return StatusIcons.NO_POWER;
+		case NO_AVAILABLE_BLOCK:
+			return StatusIcons.NO_BLOCKS;
+		default:
+			break;
+		}
 
-		int animationTicks = (int)(te.getWorld().getWorldTime() % 20);
-		int animationFrame = animationTicks / 5;
-		return animation[animationFrame];
+		if(!te.isActive())
+			return StatusIcons.PAUSED;
+
+		switch(te.getState())
+		{
+		case SCANNING:
+			return getAnimationFrame(te.getWorld(), IC_SCAN, 20);
+		case FILLING:
+			return getAnimationFrame(te.getWorld(), IC_FILL, 20);
+		case DONE:
+			return StatusIcons.DONE;
+		default:
+			return null;
+		}
 	}
 
 	@Override

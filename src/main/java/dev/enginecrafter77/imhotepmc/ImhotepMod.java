@@ -157,6 +157,7 @@ public class ImhotepMod {
 		this.netChannel.registerMessage(DisplayRestorationParticlesHandler.class, DisplayRestorationParticlesMessage.class, 2, Side.CLIENT);
 		this.netChannel.registerMessage(WorldStoredAreaMarkHandler.AreaUpdateHandler.class, AreaUpdateMessage.class, 3, Side.CLIENT);
 		this.netChannel.registerMessage(WorldStoredAreaMarkHandler.AreaRequestHandler.class, AreaUpdateRequest.class, 4, Side.SERVER);
+		this.netChannel.registerMessage(CaveFillerStateUpdateHandler.class, CaveFillerStateUpdate.class, 5, Side.CLIENT);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
 
