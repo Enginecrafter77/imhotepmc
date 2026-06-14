@@ -1,7 +1,9 @@
 package dev.enginecrafter77.imhotepmc.block;
 
+import cofh.api.block.IDismantleable;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityTerraformer;
+import dev.enginecrafter77.imhotepmc.util.DismantleHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -18,10 +20,13 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
-public class BlockTerraformer extends Block {
+@Optional.Interface(iface = "cofh.api.block.IDismantleable", modid = "cofhcore")
+public class BlockTerraformer extends Block implements IDismantleable {
 	private static final PropertyDirection FACING = BlockHorizontal.FACING;
 
 	public BlockTerraformer()
@@ -94,6 +99,19 @@ public class BlockTerraformer extends Block {
 		if(tile == null)
 			return false;
 		tile.setMode(ImhotepMod.ITEM_SHAPE_CARD.getMode(stack));
+		return true;
+	}
+
+	@Override
+	public ArrayList<ItemStack> dismantleBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player, boolean returnDrops)
+	{
+		world.removeTileEntity(pos);
+		return DismantleHelper.dismantle(world, pos, returnDrops).drop(this).go();
+	}
+
+	@Override
+	public boolean canDismantle(World world, BlockPos pos, IBlockState state, EntityPlayer player)
+	{
 		return true;
 	}
 }

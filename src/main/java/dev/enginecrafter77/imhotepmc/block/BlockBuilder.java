@@ -1,8 +1,10 @@
 package dev.enginecrafter77.imhotepmc.block;
 
+import cofh.api.block.IDismantleable;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.blueprint.SchematicBlueprint;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityBuilder;
+import dev.enginecrafter77.imhotepmc.util.DismantleHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -18,10 +20,13 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
-public class BlockBuilder extends Block {
+@Optional.Interface(iface = "cofh.api.block.IDismantleable", modid = "cofhcore")
+public class BlockBuilder extends Block implements IDismantleable {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
 	public BlockBuilder()
@@ -110,6 +115,19 @@ public class BlockBuilder extends Block {
 		}
 
 		tile.setProjectionActive(!tile.isProjectionActive());
+		return true;
+	}
+
+	@Override
+	public ArrayList<ItemStack> dismantleBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player, boolean returnDrops)
+	{
+		world.removeTileEntity(pos);
+		return DismantleHelper.dismantle(world, pos, returnDrops).drop(this).go();
+	}
+
+	@Override
+	public boolean canDismantle(World world, BlockPos pos, IBlockState state, EntityPlayer player)
+	{
 		return true;
 	}
 }

@@ -1,7 +1,9 @@
 package dev.enginecrafter77.imhotepmc.block;
 
+import cofh.api.block.IDismantleable;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.tile.TileEntityCaveFiller;
+import dev.enginecrafter77.imhotepmc.util.DismantleHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -12,14 +14,19 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
-public class BlockCaveFiller extends Block {
+@Optional.Interface(iface = "cofh.api.block.IDismantleable", modid = "cofhcore")
+public class BlockCaveFiller extends Block implements IDismantleable {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
 	public BlockCaveFiller()
@@ -85,25 +92,15 @@ public class BlockCaveFiller extends Block {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public ArrayList<ItemStack> dismantleBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player, boolean returnDrops)
 	{
-		TileEntityCaveFiller tile = (TileEntityCaveFiller)worldIn.getTileEntity(pos);
-		if(tile == null)
-			return false;
-		if(playerIn.isSneaking())
-		{
-			tile.reset();
-			return true;
-		}
+		world.removeTileEntity(pos);
+		return DismantleHelper.dismantle(world, pos, returnDrops).drop(this).go();
+	}
 
-		ItemStack item = playerIn.getHeldItem(hand);
-		if(item.isEmpty())
-		{
-			if(!worldIn.isRemote)
-			{
-				playerIn.sendMessage(new TextComponentString(String.format("State: %s, Cave model blocks: %d, Filled blocks: %d", tile.getState().name(), tile.getCaveModel().size(), tile.getFilledBlocks())));
-			}
-		}
+	@Override
+	public boolean canDismantle(World world, BlockPos pos, IBlockState state, EntityPlayer player)
+	{
 		return true;
 	}
 }
