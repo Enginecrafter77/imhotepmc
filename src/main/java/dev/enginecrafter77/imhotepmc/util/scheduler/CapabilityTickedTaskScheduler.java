@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.util.scheduler;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.marker.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -15,6 +16,8 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
@@ -36,6 +39,21 @@ public class CapabilityTickedTaskScheduler {
 		if(CAPABILITY == null)
 			return;
 		TickedTaskSchedulerImpl scheduler = (TickedTaskSchedulerImpl) event.world.getCapability(CAPABILITY, null);
+		if(scheduler == null)
+			return;
+		scheduler.update();
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public static void onRenderTick(TickEvent.RenderTickEvent event)
+	{
+		if(CAPABILITY == null)
+			return;
+		@Nullable World world = Minecraft.getMinecraft().world;
+		if(world == null)
+			return;
+		TickedTaskSchedulerImpl scheduler = (TickedTaskSchedulerImpl) world.getCapability(CAPABILITY, null);
 		if(scheduler == null)
 			return;
 		scheduler.update();

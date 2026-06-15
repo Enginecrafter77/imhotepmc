@@ -6,10 +6,7 @@ import dev.enginecrafter77.imhotepmc.blueprint.builder.DefaultBOMProvider;
 import dev.enginecrafter77.imhotepmc.blueprint.translate.*;
 import dev.enginecrafter77.imhotepmc.entity.EntityPrimedRestorationCharge;
 import dev.enginecrafter77.imhotepmc.gui.ImhotepGUIHandler;
-import dev.enginecrafter77.imhotepmc.item.ItemConstructionTape;
-import dev.enginecrafter77.imhotepmc.item.ItemInsituExchanger;
-import dev.enginecrafter77.imhotepmc.item.ItemSchematicBlueprint;
-import dev.enginecrafter77.imhotepmc.item.ItemShapeCard;
+import dev.enginecrafter77.imhotepmc.item.*;
 import dev.enginecrafter77.imhotepmc.marker.CapabilityAreaMarker;
 import dev.enginecrafter77.imhotepmc.marker.WorldStoredAreaMarkHandler;
 import dev.enginecrafter77.imhotepmc.marker.sync.AreaUpdateMessage;
@@ -103,6 +100,7 @@ public class ImhotepMod {
     public static ItemShapeCard ITEM_SHAPE_CARD;
     public static BlockCreativeBuildCache BLOCK_CREATIVE_BUILD_CACHE;
     public static ItemInsituExchanger ITEM_INSITU_EXCHANGER;
+	public static ItemRadarGlasses ITEM_RADAR_GLASSES;
 	public static BlockFluidPump BLOCK_FLUID_PUMP;
 	public static BlockCaveFiller BLOCK_CAVE_FILLER;
 
@@ -163,6 +161,7 @@ public class ImhotepMod {
 
 		CapabilityAreaMarker.register();
 		CapabilityTickedTaskScheduler.register();
+		ItemRadarGlasses.register();
         MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
 		MinecraftForge.EVENT_BUS.register(ItemConstructionTape.class);
     }
@@ -193,6 +192,7 @@ public class ImhotepMod {
         RenderWorldAreaMarkers.register();
         TapeLinkingRenderHandler.register();
         RenderBlueprintPlacements.register();
+		RenderRadarEchoes.register();
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityPrimedRestorationCharge.class, RenderEntityPrimedRestorationCharge::new);
     }
@@ -331,6 +331,7 @@ public class ImhotepMod {
         BLOCK_MACHINE_HULL = new BlockMachineHull();
         BLOCK_CREATIVE_BUILD_CACHE = new BlockCreativeBuildCache();
         ITEM_INSITU_EXCHANGER = new ItemInsituExchanger();
+		ITEM_RADAR_GLASSES = new ItemRadarGlasses();
 		BLOCK_RESTORATION_CHARGE = new BlockRestorationCharge();
 		BLOCK_FLUID_PUMP = new BlockFluidPump();
 		BLOCK_CAVE_FILLER = new BlockCaveFiller();
@@ -375,6 +376,7 @@ public class ImhotepMod {
         reg.register(ITEM_CONSTRUCTION_TAPE);
         reg.register(ITEM_SHAPE_CARD);
         reg.register(ITEM_INSITU_EXCHANGER);
+		reg.register(ITEM_RADAR_GLASSES);
         this.registerItemBlock(reg, BLOCK_BLUEPRINT_LIBRARY);
         this.registerItemBlock(reg, BLOCK_AREA_MARKER);
         this.registerItemBlock(reg, BLOCK_BUILDER);
