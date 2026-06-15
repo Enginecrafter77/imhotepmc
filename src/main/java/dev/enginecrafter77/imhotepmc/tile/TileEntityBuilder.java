@@ -2,6 +2,7 @@ package dev.enginecrafter77.imhotepmc.tile;
 
 import dev.enginecrafter77.imhotepmc.ImhotepConfig;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
+import dev.enginecrafter77.imhotepmc.ImhotepProxy;
 import dev.enginecrafter77.imhotepmc.blueprint.BlueprintPlacement;
 import dev.enginecrafter77.imhotepmc.blueprint.LitematicaBlueprintSerializer;
 import dev.enginecrafter77.imhotepmc.blueprint.NBTBlueprintSerializer;
@@ -10,7 +11,6 @@ import dev.enginecrafter77.imhotepmc.blueprint.builder.BlueprintBuildJob;
 import dev.enginecrafter77.imhotepmc.blueprint.builder.BuilderContext;
 import dev.enginecrafter77.imhotepmc.net.BuilderSharedStateUpdate;
 import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementProvider;
-import dev.enginecrafter77.imhotepmc.render.BlueprintPlacementRegistry;
 import dev.enginecrafter77.imhotepmc.util.TickModulator;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import dev.enginecrafter77.imhotepmc.util.math.Box3i;
@@ -198,7 +198,7 @@ public class TileEntityBuilder extends TileEntity implements ITickable, Blueprin
 	public void onLoad()
 	{
 		super.onLoad();
-		BlueprintPlacementRegistry.proxy.registerProvider(this);
+		ImhotepProxy.INSTANCE.registerBlueprintPlacementProvider(this);
 	}
 
 	private void onWorkTick()
