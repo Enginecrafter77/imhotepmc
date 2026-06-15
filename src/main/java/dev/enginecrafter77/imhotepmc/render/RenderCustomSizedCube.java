@@ -3,6 +3,9 @@ package dev.enginecrafter77.imhotepmc.render;
 import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.util.EnumFacing;
 
+import java.util.Collection;
+import java.util.EnumSet;
+
 public class RenderCustomSizedCube extends TesselatorRenderable {
 	private static final double V0 = -0.5D;
 	private static final double V1 = 0.5D;
@@ -10,12 +13,14 @@ public class RenderCustomSizedCube extends TesselatorRenderable {
 	private final Vector3d size;
 	private final TexturePosition[] texturePositions;
 	private final TexturePosition activePosition;
+	private final EnumSet<EnumFacing> renderedSides;
 
 	public RenderCustomSizedCube()
 	{
 		this.size = new Vector3d();
 		this.texturePositions = new TexturePosition[6];
 		this.activePosition = new TexturePosition();
+		this.renderedSides = EnumSet.allOf(EnumFacing.class);
 
 		this.setSize(1D, 1D, 1D);
 		for(int i = 0; i < 6; ++i)
@@ -27,6 +32,12 @@ public class RenderCustomSizedCube extends TesselatorRenderable {
 		this.size.x = x;
 		this.size.y = y;
 		this.size.z = z;
+	}
+
+	public void setRenderedSides(Collection<EnumFacing> sides)
+	{
+		this.renderedSides.clear();
+		this.renderedSides.addAll(sides);
 	}
 
 	public void setTextureUV(EnumFacing facing, ReadableTexturePosition position)
@@ -57,43 +68,54 @@ public class RenderCustomSizedCube extends TesselatorRenderable {
 				z * this.size.z);
 	}
 
+	private void renderSide(BufferBuilderWrapper builder, EnumFacing side)
+	{
+		this.activate(side);
+		switch(side)
+		{
+		case DOWN:
+			this.tPos(builder, V1, V0, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
+			this.tPos(builder, V0, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V0, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V1, V0, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+			break;
+		case UP:
+			this.tPos(builder, V1, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
+			this.tPos(builder, V0, V1, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V0, V1, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V1, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+			break;
+		case NORTH:
+			this.tPos(builder, V0, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
+			this.tPos(builder, V0, V0, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V0, V0, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V0, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+			break;
+		case SOUTH:
+			this.tPos(builder, V1, V1, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
+			this.tPos(builder, V1, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V1, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V1, V1, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+			break;
+		case WEST:
+			this.tPos(builder, V1, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
+			this.tPos(builder, V1, V0, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V0, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V0, V1, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+			break;
+		case EAST:
+			this.tPos(builder, V0, V1, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
+			this.tPos(builder, V0, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V1, V0, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V1, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+			break;
+		}
+	}
+
 	@Override
 	public void renderIntoBuffer(BufferBuilderWrapper builder, float partialTicks)
 	{
-		this.activate(EnumFacing.DOWN);
-		this.tPos(builder, V1, V0, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
-		this.tPos(builder, V0, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V0, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V1, V0, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
-
-		this.activate(EnumFacing.NORTH);
-		this.tPos(builder, V0, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
-		this.tPos(builder, V0, V0, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V0, V0, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V0, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
-
-		this.activate(EnumFacing.WEST);
-		this.tPos(builder, V1, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
-		this.tPos(builder, V1, V0, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V0, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V0, V1, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
-
-		this.activate(EnumFacing.EAST);
-		this.tPos(builder, V0, V1, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
-		this.tPos(builder, V0, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V1, V0, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V1, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
-
-		this.activate(EnumFacing.SOUTH);
-		this.tPos(builder, V1, V1, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
-		this.tPos(builder, V1, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V1, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V1, V1, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
-
-		this.activate(EnumFacing.UP);
-		this.tPos(builder, V1, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
-		this.tPos(builder, V0, V1, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V0, V1, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
-		this.tPos(builder, V1, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+		for(EnumFacing side : this.renderedSides)
+			this.renderSide(builder, side);
 	}
 }
