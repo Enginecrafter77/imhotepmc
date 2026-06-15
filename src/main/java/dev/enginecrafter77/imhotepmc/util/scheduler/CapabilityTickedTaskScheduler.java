@@ -1,10 +1,8 @@
 package dev.enginecrafter77.imhotepmc.util.scheduler;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
-import dev.enginecrafter77.imhotepmc.marker.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -12,7 +10,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -65,7 +63,7 @@ public class CapabilityTickedTaskScheduler {
 		MinecraftForge.EVENT_BUS.register(CapabilityTickedTaskScheduler.class);
 	}
 
-	public static class TickedTaskSchedulerWrapper implements ICapabilitySerializable<NBTTagCompound>
+	public static class TickedTaskSchedulerWrapper implements ICapabilityProvider
 	{
 		private final TickedTaskSchedulerImpl scheduler;
 
@@ -84,17 +82,10 @@ public class CapabilityTickedTaskScheduler {
 		@Override
 		public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
 		{
-			return CAPABILITY.cast(this.scheduler);
+			if(capability == CAPABILITY)
+				return CAPABILITY.cast(this.scheduler);
+			return null;
 		}
-
-		@Override
-		public NBTTagCompound serializeNBT()
-		{
-			return new NBTTagCompound();
-		}
-
-		@Override
-		public void deserializeNBT(NBTTagCompound nbt) {}
 	}
 
 	public static class TickedTaskSchedulerStorage implements Capability.IStorage<TickedTaskScheduler>

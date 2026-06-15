@@ -15,6 +15,10 @@ import dev.enginecrafter77.imhotepmc.net.*;
 import dev.enginecrafter77.imhotepmc.net.stream.PacketStreamWrapper;
 import dev.enginecrafter77.imhotepmc.net.stream.client.PacketStreamDispatcher;
 import dev.enginecrafter77.imhotepmc.net.stream.server.PacketStreamManager;
+import dev.enginecrafter77.imhotepmc.radar.CapabilityRadarHandler;
+import dev.enginecrafter77.imhotepmc.radar.RadarEchoUpdateHandler;
+import dev.enginecrafter77.imhotepmc.radar.RadarEchoUpdateMessage;
+import dev.enginecrafter77.imhotepmc.radar.RenderRadarOverlay;
 import dev.enginecrafter77.imhotepmc.render.*;
 import dev.enginecrafter77.imhotepmc.tile.*;
 import dev.enginecrafter77.imhotepmc.util.Vec3dSerializer;
@@ -103,6 +107,7 @@ public class ImhotepMod {
 	public static ItemRadarGlasses ITEM_RADAR_GLASSES;
 	public static BlockFluidPump BLOCK_FLUID_PUMP;
 	public static BlockCaveFiller BLOCK_CAVE_FILLER;
+	public static BlockRadar BLOCK_RADAR;
 
     private DefaultBOMProvider builderBomProvider;
     private DefaultDataVersionTranslator versionTranslator;
@@ -156,12 +161,13 @@ public class ImhotepMod {
 		this.netChannel.registerMessage(WorldStoredAreaMarkHandler.AreaUpdateHandler.class, AreaUpdateMessage.class, 3, Side.CLIENT);
 		this.netChannel.registerMessage(WorldStoredAreaMarkHandler.AreaRequestHandler.class, AreaUpdateRequest.class, 4, Side.SERVER);
 		this.netChannel.registerMessage(CaveFillerStateUpdateHandler.class, CaveFillerStateUpdate.class, 5, Side.CLIENT);
+		this.netChannel.registerMessage(RadarEchoUpdateHandler.class, RadarEchoUpdateMessage.class, 6, Side.CLIENT);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ImhotepMod.instance, new ImhotepGUIHandler());
 
 		CapabilityAreaMarker.register();
 		CapabilityTickedTaskScheduler.register();
-		ItemRadarGlasses.register();
+		CapabilityRadarHandler.register();
         MinecraftForge.EVENT_BUS.register(this.worldDataSyncHandler);
 		MinecraftForge.EVENT_BUS.register(ItemConstructionTape.class);
     }
@@ -192,7 +198,7 @@ public class ImhotepMod {
         RenderWorldAreaMarkers.register();
         TapeLinkingRenderHandler.register();
         RenderBlueprintPlacements.register();
-		RenderRadarEchoes.register();
+		RenderRadarOverlay.register();
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityPrimedRestorationCharge.class, RenderEntityPrimedRestorationCharge::new);
     }
@@ -335,6 +341,7 @@ public class ImhotepMod {
 		BLOCK_RESTORATION_CHARGE = new BlockRestorationCharge();
 		BLOCK_FLUID_PUMP = new BlockFluidPump();
 		BLOCK_CAVE_FILLER = new BlockCaveFiller();
+		BLOCK_RADAR = new BlockRadar();
     }
 
     public void registerTileEntities()
@@ -346,6 +353,7 @@ public class ImhotepMod {
         GameRegistry.registerTileEntity(TileEntityTerraformer.class, new ResourceLocation(ImhotepMod.MOD_ID, "terraformer"));
 		GameRegistry.registerTileEntity(TileEntityFluidPump.class, new ResourceLocation(ImhotepMod.MOD_ID, "fluid_pump"));
 		GameRegistry.registerTileEntity(TileEntityCaveFiller.class, new ResourceLocation(ImhotepMod.MOD_ID, "cave_filler"));
+		GameRegistry.registerTileEntity(TileEntityRadar.class, new ResourceLocation(ImhotepMod.MOD_ID, "radar"));
     }
 
 	@SubscribeEvent
@@ -387,6 +395,7 @@ public class ImhotepMod {
 		this.registerItemBlock(reg, BLOCK_RESTORATION_CHARGE);
 		this.registerItemBlock(reg, BLOCK_FLUID_PUMP);
 		this.registerItemBlock(reg, BLOCK_CAVE_FILLER);
+		this.registerItemBlock(reg, BLOCK_RADAR);
     }
 
     @SubscribeEvent
@@ -403,6 +412,7 @@ public class ImhotepMod {
 		reg.register(BLOCK_RESTORATION_CHARGE);
 		reg.register(BLOCK_FLUID_PUMP);
 		reg.register(BLOCK_CAVE_FILLER);
+		reg.register(BLOCK_RADAR);
     }
 
     private void registerItemBlock(IForgeRegistry<Item> reg, Block block)
@@ -440,5 +450,6 @@ public class ImhotepMod {
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_RESTORATION_CHARGE), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "restoration_charge"), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_FLUID_PUMP), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "fluid_pump"), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_CAVE_FILLER), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "cave_filler"), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BLOCK_RADAR), 0, new ModelResourceLocation(new ResourceLocation(ImhotepMod.MOD_ID, "radar"), "inventory"));
     }
 }

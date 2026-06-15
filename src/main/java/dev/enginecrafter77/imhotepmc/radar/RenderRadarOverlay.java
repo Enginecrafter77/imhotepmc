@@ -1,6 +1,9 @@
-package dev.enginecrafter77.imhotepmc.render;
+package dev.enginecrafter77.imhotepmc.radar;
 
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
+import dev.enginecrafter77.imhotepmc.render.RenderCustomSizedCube;
+import dev.enginecrafter77.imhotepmc.render.TesselatorRenderable;
+import dev.enginecrafter77.imhotepmc.render.TextureSlice;
 import dev.enginecrafter77.imhotepmc.util.FastBlockPosSet;
 import dev.enginecrafter77.imhotepmc.util.VecUtil;
 import dev.enginecrafter77.imhotepmc.util.math.Box3d;
@@ -13,34 +16,39 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Point3d;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class RenderRadarEchoes {
-	public static final RenderRadarEchoes INSTANCE = new RenderRadarEchoes();
+@SideOnly(Side.CLIENT)
+public class RenderRadarOverlay {
+	public static final RenderRadarOverlay INSTANCE = new RenderRadarOverlay();
 
 	private static final TextureSlice TEXTURE = TextureSlice.full(new ResourceLocation(ImhotepMod.MOD_ID, "textures/blocks/radar_overlay.png"), 32, 32);
 
-	private final List<RadarEchoGroup> groups;
+	private final Map<BlockPos, RenderRadarEcho> groups;
 
-	private RenderRadarEchoes()
+	private RenderRadarOverlay()
 	{
-		this.groups = new ArrayList<>();
+		this.groups = new TreeMap<BlockPos, RenderRadarEcho>();
 	}
 
-	public RadarEchoGroup newGroup()
+	public void setEchoGroup(BlockPos origin, FastBlockPosSet pinged)
 	{
-		if(this.groups.isEmpty())
-		{
-			this.groups.add(new RadarEchoGroup());
-		}
-		return this.groups.get(0);
+		this.groups.computeIfAbsent(origin, RenderRadarEcho::new).setPingedBlocks(pinged);
+	}
+
+	public void remove(BlockPos origin)
+	{
+		this.groups.remove(origin);
 	}
 
 	public void doRender(float partialTicks)
@@ -52,7 +60,7 @@ public class RenderRadarEchoes {
 		GlStateManager.disableDepth();
 		GlStateManager.enableAlpha();
 		GlStateManager.color(1F, 1F, 1F, alpha);
-		for(RadarEchoGroup group : this.groups)
+		for(RenderRadarEcho group : this.groups.values())
 			group.doRender(partialTicks);
 		GlStateManager.disableAlpha();
 		GlStateManager.enableDepth();
@@ -68,13 +76,21 @@ public class RenderRadarEchoes {
 		this.doRender(event.getPartialTicks());
 	}
 
-	public static void register()
+	@SubscribeEvent
+	public void onWorldUnload(WorldEvent.Unload event)
 	{
-		MinecraftForge.EVENT_BUS.register(RenderRadarEchoes.INSTANCE);
+		this.groups.clear();
 	}
 
-	public static class RadarEchoGroup extends TesselatorRenderable
+	public static void register()
 	{
+		MinecraftForge.EVENT_BUS.register(RenderRadarOverlay.INSTANCE);
+	}
+
+	public static class RenderRadarEcho extends TesselatorRenderable
+	{
+		private final BlockPos origin;
+
 		private final Point3d renderPoint;
 		private final Point3d originPoint;
 		private final Point3d playerPos;
@@ -82,28 +98,21 @@ public class RenderRadarEchoes {
 
 		@Nullable
 		private FastBlockPosSet pingedBlocks;
-		private BlockPos origin;
 
-		public RadarEchoGroup()
+		public RenderRadarEcho(BlockPos origin)
 		{
+			this.origin = origin;
 			this.pingedBlocks = null;
 			this.renderPoint = new Point3d();
 			this.originPoint = new Point3d();
 			this.playerPos = new Point3d();
 			this.boundingBox = new Box3d();
-			this.origin = BlockPos.ORIGIN;
-		}
-
-		public void setOrigin(BlockPos origin)
-		{
-			this.origin = origin;
 		}
 
 		public void setPingedBlocks(@Nullable FastBlockPosSet pingedBlocks)
 		{
 			this.pingedBlocks = pingedBlocks;
 			this.calculateBoundingBox();
-
 			if(pingedBlocks != null)
 				this.compile();
 		}

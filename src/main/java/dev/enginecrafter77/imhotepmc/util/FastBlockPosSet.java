@@ -1,12 +1,15 @@
 package dev.enginecrafter77.imhotepmc.util;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
 
-public class FastBlockPosSet extends AbstractSet<BlockPos> {
+public class FastBlockPosSet extends AbstractSet<BlockPos> implements INBTSerializable<NBTTagIntArray> {
 	private final IntRBTreeSet blocks;
 
 	public FastBlockPosSet()
@@ -49,6 +52,29 @@ public class FastBlockPosSet extends AbstractSet<BlockPos> {
 	public int size()
 	{
 		return this.blocks.size();
+	}
+
+	public int[] toIntArray()
+	{
+		return this.blocks.toIntArray();
+	}
+
+	public void fromIntArray(int[] array)
+	{
+		this.blocks.clear();
+		this.blocks.addAll(IntArrayList.wrap(array));
+	}
+
+	@Override
+	public NBTTagIntArray serializeNBT()
+	{
+		return new NBTTagIntArray(this.toIntArray());
+	}
+
+	@Override
+	public void deserializeNBT(NBTTagIntArray nbt)
+	{
+		this.fromIntArray(nbt.getIntArray());
 	}
 
 	public AbsolutePositionAdapter relativeTo(BlockPos pos)

@@ -113,7 +113,7 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable, ITile
 
 	private boolean canScanBlock(BlockPos pos)
 	{
-		if(pos.getY() > this.getScanOrigin().getY())
+		if(pos.getY() <= 0 || pos.getY() > this.getScanOrigin().getY())
 			return false;
 		if(!this.caveModel.relativeTo(this.getScanOrigin()).canAdd(pos))
 			return false;
