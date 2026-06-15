@@ -2,47 +2,10 @@ package dev.enginecrafter77.imhotepmc.util;
 
 import net.minecraft.util.math.BlockPos;
 
-public class RelativeBlockPosPacker {
+public class BlockPosIntegerPacker {
 	private static final int BIAS_X = 1024;
 	private static final int BIAS_Y = 512;
 	private static final int BIAS_Z = 1024;
-
-	private BlockPos origin;
-
-	public RelativeBlockPosPacker(BlockPos origin)
-	{
-		this.origin = origin;
-	}
-
-	public RelativeBlockPosPacker()
-	{
-		this(BlockPos.ORIGIN);
-	}
-
-	public void setOrigin(BlockPos origin)
-	{
-		this.origin = origin;
-	}
-
-	public BlockPos getOrigin()
-	{
-		return this.origin;
-	}
-
-	public int pack(BlockPos pos)
-	{
-		return RelativeBlockPosPacker.packRelativeBlockPos(pos.subtract(this.origin));
-	}
-
-	public BlockPos unpack(int data)
-	{
-		return RelativeBlockPosPacker.unpackRelativeBlockPos(data).add(this.origin);
-	}
-
-	public boolean canPack(BlockPos pos)
-	{
-		return RelativeBlockPosPacker.canRelativeBlockPosBePacked(pos.subtract(this.origin));
-	}
 
 	public static boolean canRelativeBlockPosBePacked(BlockPos relative)
 	{
@@ -52,7 +15,7 @@ public class RelativeBlockPosPacker {
 	public static int packRelativeBlockPos(BlockPos source)
 	{
 		if(!canRelativeBlockPosBePacked(source))
-			throw new IllegalArgumentException("Block pos out of range");
+			throw new IllegalArgumentException(String.format("Block pos %s out of range (-1024 < X < 1024, -512 < Y < 512, -1024 < Z < 1024)", source));
 		int rx = source.getX() + BIAS_X;
 		int ry = source.getY() + BIAS_Y;
 		int rz = source.getZ() + BIAS_Z;

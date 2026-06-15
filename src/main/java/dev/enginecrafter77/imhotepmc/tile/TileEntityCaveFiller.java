@@ -5,7 +5,7 @@ import dev.enginecrafter77.imhotepmc.ImhotepConfig;
 import dev.enginecrafter77.imhotepmc.ImhotepMod;
 import dev.enginecrafter77.imhotepmc.net.CaveFillerStateUpdate;
 import dev.enginecrafter77.imhotepmc.util.GraphBlockIterator;
-import dev.enginecrafter77.imhotepmc.util.RelativeBlockPosList;
+import dev.enginecrafter77.imhotepmc.util.FastBlockPosList;
 import dev.enginecrafter77.imhotepmc.util.TickModulator;
 import dev.enginecrafter77.imhotepmc.util.transaction.EnergyConsumeTransaction;
 import dev.enginecrafter77.imhotepmc.util.transaction.MatchingItemExtractTransaction;
@@ -36,7 +36,7 @@ import java.util.List;
 
 @Optional.Interface(iface = "cofh.api.tileentity.ITileInfo", modid = "cofhcore")
 public class TileEntityCaveFiller extends TileEntity implements ITickable, ITileInfo {
-	private final RelativeBlockPosList caveModel;
+	private final FastBlockPosList caveModel;
 	private final TickModulator scanModulator;
 	private final TickModulator fillModulator;
 	private final EnergyStorage battery;
@@ -56,7 +56,7 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable, ITile
 	public TileEntityCaveFiller()
 	{
 		this.battery = new EnergyStorage(16000, 1000, 1000);
-		this.caveModel = new RelativeBlockPosList(BlockPos.ORIGIN);
+		this.caveModel = new FastBlockPosList();
 		this.scanModulator = new TickModulator(this::scanNextBlock);
 		this.fillModulator = new TickModulator(this::fillOneBlock);
 		this.itemFetchTransaction = new MatchingItemExtractTransaction();
@@ -76,9 +76,9 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable, ITile
 		return this.state;
 	}
 
-	public RelativeBlockPosList getCaveModel()
+	public List<BlockPos> getCaveModel()
 	{
-		return this.caveModel;
+		return this.caveModel.relativeTo(this.getScanOrigin());
 	}
 
 	public int getFilledBlocks()
@@ -115,7 +115,7 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable, ITile
 	{
 		if(pos.getY() > this.getScanOrigin().getY())
 			return false;
-		if(!this.caveModel.canAdd(pos))
+		if(!this.caveModel.relativeTo(this.getScanOrigin()).canAdd(pos))
 			return false;
 		if(this.world.isAirBlock(pos))
 			return true;
@@ -141,7 +141,7 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable, ITile
 		}
 
 		BlockPos next = this.scanningIterator.next();
-		this.caveModel.add(next);
+		this.caveModel.relativeTo(this.getScanOrigin()).add(next);
 	}
 
 	private int getFillMappedIndex()
@@ -183,7 +183,7 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable, ITile
 		this.itemFetchTransaction.commit();
 
 		IBlockState fillBlock = ((ItemBlock)this.itemFetchTransaction.getExtractedItem().getItem()).getBlock().getDefaultState();
-		BlockPos pos = this.caveModel.get(this.getFillMappedIndex());
+		BlockPos pos = this.caveModel.relativeTo(this.getScanOrigin()).get(this.getFillMappedIndex());
 		this.world.setBlockState(pos, fillBlock);
 		++this.fillIndex;
 	}
@@ -229,7 +229,7 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable, ITile
 		case SCANNING:
 			if(this.scanningIterator == null)
 			{
-				this.caveModel.reset(this.getScanOrigin());
+				this.caveModel.clear();
 				this.scanningIterator = GraphBlockIterator.bfs()
 						.startingAt(this.getScanOrigin())
 						.filter(this::canScanBlock)
@@ -251,7 +251,6 @@ public class TileEntityCaveFiller extends TileEntity implements ITickable, ITile
 	public void readFromNBT(NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
-		this.caveModel.reset(this.getScanOrigin());
 		this.caveModel.deserializeNBT((NBTTagIntArray)compound.getTag("cave_model"));
 		this.fillIndex = compound.getInteger("fill_index");
 		this.state = State.values()[compound.getByte("state")];
