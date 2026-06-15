@@ -86,28 +86,28 @@ public class RenderCustomSizedCube extends TesselatorRenderable {
 			this.tPos(builder, V1, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
 			break;
 		case NORTH:
-			this.tPos(builder, V0, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
-			this.tPos(builder, V0, V0, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
-			this.tPos(builder, V0, V0, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
-			this.tPos(builder, V0, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
-			break;
-		case SOUTH:
-			this.tPos(builder, V1, V1, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
-			this.tPos(builder, V1, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
-			this.tPos(builder, V1, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
-			this.tPos(builder, V1, V1, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
-			break;
-		case WEST:
 			this.tPos(builder, V1, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
 			this.tPos(builder, V1, V0, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
 			this.tPos(builder, V0, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
 			this.tPos(builder, V0, V1, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
 			break;
-		case EAST:
+		case SOUTH:
 			this.tPos(builder, V0, V1, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
 			this.tPos(builder, V0, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
 			this.tPos(builder, V1, V0, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
 			this.tPos(builder, V1, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+			break;
+		case WEST:
+			this.tPos(builder, V0, V1, V0).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
+			this.tPos(builder, V0, V0, V0).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V0, V0, V1).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V0, V1, V1).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
+			break;
+		case EAST:
+			this.tPos(builder, V1, V1, V1).tex(this.activePosition.minU, this.activePosition.minV).endVertex();
+			this.tPos(builder, V1, V0, V1).tex(this.activePosition.minU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V1, V0, V0).tex(this.activePosition.maxU, this.activePosition.maxV).endVertex();
+			this.tPos(builder, V1, V1, V0).tex(this.activePosition.maxU, this.activePosition.minV).endVertex();
 			break;
 		}
 	}
