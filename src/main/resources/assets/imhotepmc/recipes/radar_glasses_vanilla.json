@@ -1,0 +1,37 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:not",
+			"value": {
+				"type": "forge:mod_loaded",
+				"modid": "thermalexpansion"
+			}
+		}
+	],
+	"pattern": [
+		"L L",
+		"SRS",
+		"EBE"
+	],
+	"key": {
+		"L": {
+			"item": "minecraft:leather"
+		},
+		"S": {
+			"item": "minecraft:redstone"
+		},
+		"R": {
+			"item": "imhotepmc:radar"
+		},
+		"E": {
+			"item": "minecraft:ender_eye"
+		},
+		"D": {
+			"item": "minecraft:diamond"
+		}
+	},
+	"result": {
+		"item": "imhotepmc:radar_glasses"
+	}
+}

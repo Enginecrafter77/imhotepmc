@@ -1,0 +1,43 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "thermalexpansion"
+		}
+	],
+	"pattern": [
+		"ASA",
+		"PHP",
+		"GCG"
+	],
+	"key": {
+		"A": {
+			"item": "thermalfoundation:material",
+			"data": 1026
+		},
+		"S": {
+			"item": "thermalfoundation:material",
+			"data": 512
+		},
+		"P": {
+			"item": "thermalfoundation:material",
+			"data": 320
+		},
+		"H": {
+			"item": "thermalexpansion:frame",
+			"data": 64
+		},
+		"G": {
+			"item": "thermalfoundation:material",
+			"data": 295
+		},
+		"C": {
+			"item": "thermalfoundation:material",
+			"data": 513
+		}
+	},
+	"result": {
+		"item": "imhotepmc:radar"
+	}
+}

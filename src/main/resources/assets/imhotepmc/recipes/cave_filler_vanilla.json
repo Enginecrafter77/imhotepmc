@@ -1,0 +1,37 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:not",
+			"value": {
+				"type": "forge:mod_loaded",
+				"modid": "thermalexpansion"
+			}
+		}
+	],
+	"pattern": [
+		" R ",
+		"ETE",
+		"DSD"
+	],
+	"key": {
+		"R": {
+			"item": "imhotepmc:radar"
+		},
+		"E": {
+			"item": "minecraft:ender_eye"
+		},
+		"T": {
+			"item": "imhotepmc:terraformer"
+		},
+		"D": {
+			"item": "minecraft:diamond"
+		},
+		"S": {
+			"item": "minecraft:redstone"
+		}
+	},
+	"result": {
+		"item": "imhotepmc:cave_filler"
+	}
+}

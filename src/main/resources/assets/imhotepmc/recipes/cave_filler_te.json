@@ -1,0 +1,37 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "thermalexpansion"
+		}
+	],
+	"pattern": [
+		" R ",
+		"PTP",
+		"GCG"
+	],
+	"key": {
+		"R": {
+			"item": "imhotepmc:radar"
+		},
+		"P": {
+			"item": "thermalfoundation:material",
+			"data": 357
+		},
+		"T": {
+			"item": "imhotepmc:terraformer"
+		},
+		"G": {
+			"item": "thermalfoundation:material",
+			"data": 295
+		},
+		"C": {
+			"item": "thermalfoundation:material",
+			"data": 513
+		}
+	},
+	"result": {
+		"item": "imhotepmc:cave_filler"
+	}
+}

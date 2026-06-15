@@ -1,0 +1,36 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "thermalexpansion"
+		}
+	],
+	"pattern": [
+		"L L",
+		"PRP",
+		"EBE"
+	],
+	"key": {
+		"L": {
+			"item": "minecraft:leather"
+		},
+		"P": {
+			"item": "thermalfoundation:material",
+			"data": 32
+		},
+		"R": {
+			"item": "imhotepmc:radar"
+		},
+		"E": {
+			"item": "minecraft:ender_eye"
+		},
+		"B": {
+			"item": "thermalfoundation:material",
+			"data": 359
+		}
+	},
+	"result": {
+		"item": "imhotepmc:radar_glasses"
+	}
+}
