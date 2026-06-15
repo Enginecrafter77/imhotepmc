@@ -19,6 +19,10 @@ item.insitu_exchanger.name=In-Situ Exchanger
 label.terraformer.mode=Mode
 label.energy.fill=%d / %d RF
 
+info.cave_filler.state=State: %s
+info.cave_filler.scanned_blocks=Cave blocks: %d
+info.cave_filler.filled_blocks=Filled blocks: %d
+
 message.missing_block.text=Missing Block
 message.not_enough_tape.text=Not enough tape
 message.anchors_not_aligned.text=Anchors are not on one axis
