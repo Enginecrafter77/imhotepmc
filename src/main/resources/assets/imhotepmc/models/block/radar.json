@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube",
+	"textures": {
+		"up": "imhotepmc:blocks/machine_blank",
+		"down": "imhotepmc:blocks/machine_blank",
+		"north": "imhotepmc:blocks/machine_radar",
+		"south": "imhotepmc:blocks/machine_radar",
+		"east": "imhotepmc:blocks/machine_radar",
+		"west": "imhotepmc:blocks/machine_radar",
+		"particle": "imhotepmc:blocks/machine_radar"
+	}
+}

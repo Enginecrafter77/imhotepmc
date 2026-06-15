@@ -10,11 +10,13 @@ tile.creative_build_cache.name=Creative Builder Cache
 tile.restoration_charge.name=Restoration Charge
 tile.fluid_pump.name=Fluid Pump
 tile.cave_filler.name=Cave Filler
+tile.radar.name=Radar
 
 item.schematic_blueprint.name=Schematic Blueprint
 item.construction_tape.name=Construction Tape
 item.shape_card.name=Shape Card
 item.insitu_exchanger.name=In-Situ Exchanger
+item.radar_glasses.name=Radar Glasses
 
 label.terraformer.mode=Mode
 label.energy.fill=%d / %d RF
