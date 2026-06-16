@@ -23,11 +23,14 @@ public abstract class TesselatorRenderable implements IRenderable {
 	@Nullable
 	private CompiledVertexBuffer compiledBuffer;
 
+	private boolean compileScheduled;
+
 	public TesselatorRenderable()
 	{
 		this.format = DefaultVertexFormats.POSITION_TEX;
 		this.glMode = GL11.GL_QUADS;
 		this.compiledBuffer = null;
+		this.compileScheduled = false;
 	}
 
 	public abstract void renderIntoBuffer(BufferBuilderWrapper bufferBuilder, float partialTicks);
@@ -68,11 +71,20 @@ public abstract class TesselatorRenderable implements IRenderable {
 		builder.begin(this.glMode, this.format);
 		this.renderIntoBuffer(new BufferBuilderWrapper(builder), 1F);
 		this.compiledBuffer = CompiledVertexBuffer.compile(builder);
+		this.compileScheduled = false;
+	}
+
+	public void scheduleCompilation()
+	{
+		this.compileScheduled = true;
 	}
 
 	@Override
 	public void doRender(double x, double y, double z, float partialTicks)
 	{
+		if(this.compileScheduled)
+			this.compile();
+
 		if(this.compiledBuffer != null)
 		{
 			GlStateManager.pushMatrix();

@@ -114,7 +114,7 @@ public class RenderRadarOverlay {
 			this.pingedBlocks = pingedBlocks;
 			this.calculateBoundingBox();
 			if(pingedBlocks != null)
-				this.compile();
+				this.scheduleCompilation();
 		}
 
 		private void calculateBoundingBox()
