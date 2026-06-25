@@ -443,9 +443,12 @@ public class ItemInsituExchanger extends Item {
 				return;
 			}
 
-			energyDrain.commit();
-			itemTransaction.commit();
-			this.replaceBlock(pos);
+			if(!this.world.isRemote)
+			{
+				energyDrain.commit();
+				itemTransaction.commit();
+				this.replaceBlock(pos);
+			}
 		}
 
 		private boolean isBlockCandidateForReplacement(BlockPos pos)
